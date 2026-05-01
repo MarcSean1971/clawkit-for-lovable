@@ -58,7 +58,7 @@ Require explicit user approval before:
 5. For a new app or major UI pass, call `lovable_make_prompt`.
 6. Call `lovable_build_url` and show or open the URL only when appropriate.
 7. After Lovable creates or updates the app, sync/export to GitHub.
-8. Call `lovable_repo_doctor` on the local GitHub-synced repo before code work.
+8. Gather Git/package evidence with trusted tools, then call `lovable_repo_doctor` before code work.
 9. Call `lovable_sync_risk_report` before asking Lovable for another broad UI pass.
 10. For an existing broken or messy app, call `lovable_rescue_plan`.
 11. Use OpenClaw's GitHub/local coding tools to inspect the repo, run install/build/tests, and make precise changes.
@@ -152,7 +152,7 @@ Respect explicit user preference unless the model is unavailable or too weak for
 
 ## Sync Doctor Workflow
 
-Use `lovable_repo_doctor` whenever the user provides a local repo path or GitHub-synced Lovable project. Treat its output as the source of truth for:
+Use trusted Git/package tools to gather evidence whenever the user provides a local repo path or GitHub-synced Lovable project, then call `lovable_repo_doctor`. Treat its output as the source of truth for:
 
 - Current branch.
 - Dirty files when checked by OpenClaw's trusted Git/shell tools.
@@ -241,7 +241,7 @@ Once Lovable has generated something useful:
 
 - Treat GitHub as the source of truth.
 - Create a branch before editing.
-- Run `lovable_repo_doctor` before direct code work.
+- Gather trusted Git/package evidence and run `lovable_repo_doctor` before direct code work.
 - Run `lovable_sync_risk_report` before another Lovable pass.
 - Run the project's actual verification commands.
 - Refactor generated code before shipping or presenting it as maintainable.

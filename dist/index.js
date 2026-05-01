@@ -1,5 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
-import { basename, join, resolve } from "node:path";
+import { basename, resolve } from "node:path";
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 import { Type } from "@sinclair/typebox";
 const text = (value) => ({
@@ -11,52 +10,25 @@ const optionalStringArray = (description) => Type.Optional(Type.Array(Type.Strin
 function asList(items, fallback) {
     return items && items.length > 0 ? items : fallback;
 }
-function readPackageJson(repoPath) {
-    const path = join(repoPath, "package.json");
-    if (!existsSync(path)) {
-        return null;
-    }
-    try {
-        return JSON.parse(readFileSync(path, "utf8"));
-    }
-    catch {
-        return null;
-    }
-}
-function detectPackageManager(repoPath) {
-    if (existsSync(join(repoPath, "pnpm-lock.yaml"))) {
-        return "pnpm";
-    }
-    if (existsSync(join(repoPath, "yarn.lock"))) {
-        return "yarn";
-    }
-    if (existsSync(join(repoPath, "bun.lockb")) || existsSync(join(repoPath, "bun.lock"))) {
-        return "bun";
-    }
-    if (existsSync(join(repoPath, "package-lock.json"))) {
-        return "npm";
-    }
-    return existsSync(join(repoPath, "package.json")) ? "npm" : null;
-}
-function detectFrameworks(repoPath, pkg) {
+function detectFrameworksFromPackage(pkg) {
     const deps = { ...(pkg?.dependencies ?? {}), ...(pkg?.devDependencies ?? {}) };
     const signals = new Set();
-    if ("vite" in deps || existsSync(join(repoPath, "vite.config.ts")) || existsSync(join(repoPath, "vite.config.js"))) {
+    if ("vite" in deps) {
         signals.add("Vite");
     }
-    if ("next" in deps || existsSync(join(repoPath, "next.config.js")) || existsSync(join(repoPath, "next.config.mjs"))) {
+    if ("next" in deps) {
         signals.add("Next.js");
     }
     if ("react" in deps) {
         signals.add("React");
     }
-    if ("typescript" in deps || existsSync(join(repoPath, "tsconfig.json"))) {
+    if ("typescript" in deps) {
         signals.add("TypeScript");
     }
-    if ("tailwindcss" in deps || existsSync(join(repoPath, "tailwind.config.ts")) || existsSync(join(repoPath, "tailwind.config.js"))) {
+    if ("tailwindcss" in deps) {
         signals.add("Tailwind CSS");
     }
-    if ("@supabase/supabase-js" in deps || existsSync(join(repoPath, "supabase"))) {
+    if ("@supabase/supabase-js" in deps) {
         signals.add("Supabase");
     }
     if ("stripe" in deps || "@stripe/stripe-js" in deps) {
@@ -93,43 +65,24 @@ function recommendedCommands(pkg, packageManager) {
 function hasLovableCommit(commit) {
     return /lovable|lovable-dev|lovable bot|generated with lovable/i.test(commit);
 }
-function readGitFile(repoPath, relativePath) {
-    try {
-        return readFileSync(join(repoPath, ".git", relativePath), "utf8").trim();
-    }
-    catch {
-        return "";
-    }
-}
-function detectCurrentBranch(repoPath) {
-    const head = readGitFile(repoPath, "HEAD");
-    const match = head.match(/^ref:\s+refs\/heads\/(.+)$/);
-    return match?.[1] ?? (head ? "detached" : null);
-}
-function detectRemoteUrl(repoPath) {
-    const config = readGitFile(repoPath, "config");
-    const originMatch = config.match(/\[remote "origin"\][\s\S]*?\n\s*url\s*=\s*(.+)/);
-    return originMatch?.[1]?.trim() ?? null;
-}
-async function inspectRepo(repoPathInput) {
-    const repoPath = resolve(repoPathInput);
-    const gitDir = join(repoPath, ".git");
-    const isGitRepo = existsSync(gitDir);
-    const pkg = readPackageJson(repoPath);
-    const packageManager = detectPackageManager(repoPath);
-    const dirtyFiles = [];
-    const recentCommits = [];
+async function inspectRepo(evidence) {
+    const repoPath = resolve(evidence.repoPath);
+    const packageManager = evidence.packageManager ?? null;
+    const dirtyFiles = evidence.dirtyFiles ?? [];
+    const recentCommits = evidence.recentCommits ?? [];
     const lovableSignals = recentCommits.filter(hasLovableCommit);
-    const currentBranch = isGitRepo ? detectCurrentBranch(repoPath) : null;
-    const remoteUrl = isGitRepo ? detectRemoteUrl(repoPath) : null;
-    const frameworkSignals = detectFrameworks(repoPath, pkg);
-    const availableScripts = pkg?.scripts ?? {};
+    const currentBranch = evidence.currentBranch ?? null;
+    const remoteUrl = evidence.remoteUrl ?? null;
+    const isGitRepo = evidence.isGitRepo ?? Boolean(currentBranch || remoteUrl || recentCommits.length > 0);
+    const availableScripts = evidence.availableScripts ?? {};
+    const pkg = { scripts: availableScripts };
+    const frameworkSignals = evidence.frameworkSignals ?? detectFrameworksFromPackage(pkg);
     const commands = recommendedCommands(pkg, packageManager);
     const risks = [];
     if (!isGitRepo) {
-        risks.push("This folder is not a Git repository, so OpenClaw cannot produce a durable branch/PR workflow yet.");
+        risks.push("No Git evidence was supplied, so OpenClaw should confirm this is a repository before making changes.");
     }
-    risks.push("Plugin-safe mode cannot run `git status`; OpenClaw should use its own trusted shell/Git tools to check dirty files before edits.");
+    risks.push("ClawKit marketplace-safe mode does not read files or run Git. OpenClaw should supply repo evidence from its trusted shell/Git tools.");
     if (currentBranch === "main" || currentBranch === "master") {
         risks.push(`Current branch is ${currentBranch}. Create a feature branch before Lovable or OpenClaw changes code.`);
     }
@@ -601,7 +554,7 @@ function makeMoodIndicator(params) {
     };
 }
 async function makeRescuePlan(params) {
-    const repoDoctor = params.repoPath ? await inspectRepo(params.repoPath) : null;
+    const repoDoctor = params.repoPath ? await inspectRepo({ ...params, repoPath: params.repoPath }) : null;
     const expectedChanges = asList(params.expectedVisibleChanges, [
         params.userGoal ?? "The app should visibly match the user's requested behavior.",
     ]);
@@ -824,12 +777,20 @@ export default definePluginEntry({
         api.registerTool({
             name: "lovable_repo_doctor",
             label: "Run Sync Doctor",
-            description: "Inspect a local Lovable/GitHub repository and report framework signals, Git state, Lovable commit signals, recommended verification commands, and next action.",
+            description: "Assess a Lovable/GitHub repository from caller-supplied Git/package evidence and report framework signals, Git state, Lovable commit signals, recommended verification commands, and next action.",
             parameters: Type.Object({
-                repoPath: Type.String({ description: "Absolute or relative path to the local repository." }),
+                repoPath: Type.String({ description: "Absolute or relative path to the local repository. ClawKit does not read this path; OpenClaw should provide evidence gathered by trusted tools." }),
+                isGitRepo: Type.Optional(Type.Boolean({ description: "Whether trusted Git tools confirmed this path is a Git repository." })),
+                currentBranch: Type.Optional(Type.String({ description: "Current branch from trusted Git tools." })),
+                remoteUrl: Type.Optional(Type.String({ description: "Origin remote URL from trusted Git tools, if safe to share." })),
+                dirtyFiles: optionalStringArray("Uncommitted changed files from trusted Git tools."),
+                recentCommits: optionalStringArray("Recent commit subjects from trusted Git tools."),
+                frameworkSignals: optionalStringArray("Frameworks detected by trusted code/package inspection, such as Vite, React, TypeScript, Supabase."),
+                packageManager: Type.Optional(Type.String({ description: "Detected package manager: npm, pnpm, yarn, or bun." })),
+                availableScripts: Type.Optional(Type.Record(Type.String(), Type.String(), { description: "Scripts from package.json supplied by trusted inspection." })),
             }),
             async execute(_id, params) {
-                return jsonText(await inspectRepo(params.repoPath));
+                return jsonText(await inspectRepo(params));
             },
         });
         api.registerTool({
@@ -839,7 +800,15 @@ export default definePluginEntry({
             parameters: Type.Object({
                 appName: Type.Optional(Type.String()),
                 problemDescription: Type.String({ description: "What is wrong with the existing Lovable app." }),
-                repoPath: Type.Optional(Type.String({ description: "Local GitHub-synced repository path, if available." })),
+                repoPath: Type.Optional(Type.String({ description: "Local GitHub-synced repository path, if available. ClawKit does not read this path; OpenClaw should provide trusted repo evidence separately." })),
+                isGitRepo: Type.Optional(Type.Boolean({ description: "Whether trusted Git tools confirmed this path is a Git repository." })),
+                currentBranch: Type.Optional(Type.String({ description: "Current branch from trusted Git tools." })),
+                remoteUrl: Type.Optional(Type.String({ description: "Origin remote URL from trusted Git tools, if safe to share." })),
+                dirtyFiles: optionalStringArray("Uncommitted changed files from trusted Git tools."),
+                recentCommits: optionalStringArray("Recent commit subjects from trusted Git tools."),
+                frameworkSignals: optionalStringArray("Frameworks detected by trusted code/package inspection."),
+                packageManager: Type.Optional(Type.String({ description: "Detected package manager: npm, pnpm, yarn, or bun." })),
+                availableScripts: Type.Optional(Type.Record(Type.String(), Type.String(), { description: "Scripts from package.json supplied by trusted inspection." })),
                 previewUrl: Type.Optional(Type.String({ description: "Lovable preview, deployed URL, or local dev server URL." })),
                 expectedVisibleChanges: optionalStringArray("What the user expects to see or be able to do in the app."),
                 buildPassed: Type.Optional(Type.Boolean({ description: "Whether current build/typecheck/test verification passed." })),
@@ -858,9 +827,17 @@ export default definePluginEntry({
             parameters: Type.Object({
                 repoPath: Type.String({ description: "Absolute or relative path to the local repository." }),
                 intendedAction: Type.Optional(Type.String({ description: "What the user wants to do next." })),
+                isGitRepo: Type.Optional(Type.Boolean({ description: "Whether trusted Git tools confirmed this path is a Git repository." })),
+                currentBranch: Type.Optional(Type.String({ description: "Current branch from trusted Git tools." })),
+                remoteUrl: Type.Optional(Type.String({ description: "Origin remote URL from trusted Git tools, if safe to share." })),
+                dirtyFiles: optionalStringArray("Uncommitted changed files from trusted Git tools."),
+                recentCommits: optionalStringArray("Recent commit subjects from trusted Git tools."),
+                frameworkSignals: optionalStringArray("Frameworks detected by trusted code/package inspection."),
+                packageManager: Type.Optional(Type.String({ description: "Detected package manager: npm, pnpm, yarn, or bun." })),
+                availableScripts: Type.Optional(Type.Record(Type.String(), Type.String(), { description: "Scripts from package.json supplied by trusted inspection." })),
             }),
             async execute(_id, params) {
-                const doctor = await inspectRepo(params.repoPath);
+                const doctor = await inspectRepo(params);
                 return jsonText(makeRiskReport(doctor, params.intendedAction));
             },
         });
@@ -873,9 +850,17 @@ export default definePluginEntry({
                 productGoal: Type.String(),
                 requestedChange: Type.String(),
                 previewUrl: Type.Optional(Type.String()),
+                isGitRepo: Type.Optional(Type.Boolean({ description: "Whether trusted Git tools confirmed this path is a Git repository." })),
+                currentBranch: Type.Optional(Type.String({ description: "Current branch from trusted Git tools." })),
+                remoteUrl: Type.Optional(Type.String({ description: "Origin remote URL from trusted Git tools, if safe to share." })),
+                dirtyFiles: optionalStringArray("Uncommitted changed files from trusted Git tools."),
+                recentCommits: optionalStringArray("Recent commit subjects from trusted Git tools."),
+                frameworkSignals: optionalStringArray("Frameworks detected by trusted code/package inspection."),
+                packageManager: Type.Optional(Type.String({ description: "Detected package manager: npm, pnpm, yarn, or bun." })),
+                availableScripts: Type.Optional(Type.Record(Type.String(), Type.String(), { description: "Scripts from package.json supplied by trusted inspection." })),
             }),
             async execute(_id, params) {
-                const doctor = params.repoPath ? await inspectRepo(params.repoPath) : null;
+                const doctor = params.repoPath ? await inspectRepo(params) : null;
                 const risk = doctor ? makeRiskReport(doctor, params.requestedChange) : null;
                 const useLovable = /ui|screen|page|layout|visual|responsive|design|landing|dashboard|polish|style/i.test(params.requestedChange) &&
                     risk?.safeToPromptLovable !== false;

@@ -46,7 +46,7 @@ Output: focused Lovable follow-up prompt for visual/product iteration.
 
 ## `lovable_repo_doctor`
 
-Input: local repository path.
+Input: local repository path plus optional caller-supplied evidence such as current branch, remote URL, dirty files, recent commits, package manager, package scripts, and framework signals.
 
 Output: JSON report with:
 
@@ -61,7 +61,7 @@ Output: JSON report with:
 - Recommended verification commands.
 - Risks and next action.
 
-This tool does not change files or branches. For marketplace safety it does not execute `git`; OpenClaw should use its own trusted shell/Git tools for dirty-file status and recent commit inspection.
+This tool does not change files or branches. For marketplace safety it does not read local files, execute `git`, run shell commands, or make network requests. OpenClaw should use its own trusted shell/Git/package tools for dirty-file status, recent commit inspection, framework detection, and package script evidence, then pass that evidence into ClawKit.
 
 ## `lovable_rescue_plan`
 

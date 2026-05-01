@@ -1,4 +1,5 @@
 node_modules/
+whispraiapp/
 dist/*.map
 *.tgz
 npm-debug.log*

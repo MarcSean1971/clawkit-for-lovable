@@ -65,4 +65,4 @@ Dry-run validation passed with these values.
 
 ## Safety Notes
 
-ClawKit is independent and is not affiliated with or endorsed by Lovable.dev. It is designed around explicit user approval for risky actions, local-first inspection, optional browser opening through OpenClaw's trusted browser tools, and GitHub-based review. The plugin package avoids direct shell execution for marketplace safety.
+ClawKit is independent and is not affiliated with or endorsed by Lovable.dev. It is designed around explicit user approval for risky actions, evidence supplied by OpenClaw's trusted tools, optional browser opening through OpenClaw's trusted browser tools, and GitHub-based review. The plugin package avoids direct shell execution, local file reads, and network requests for marketplace safety.

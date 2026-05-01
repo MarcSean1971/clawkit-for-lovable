@@ -57,7 +57,7 @@ OpenClaw can then:
 | `lovable_open_build_url` | Prepares a Lovable URL for OpenClaw's trusted browser tool to open after approval. |
 | `lovable_github_handoff` | Creates the checklist for moving from Lovable output to GitHub/code work. |
 | `lovable_iteration_brief` | Creates a focused follow-up prompt for Lovable UI iteration. |
-| `lovable_repo_doctor` | Inspects a GitHub-synced Lovable repo for Git state, framework, scripts, and risks. |
+| `lovable_repo_doctor` | Reviews caller-supplied Git/package evidence for Git state, framework, scripts, and risks without reading files itself. |
 | `lovable_rescue_plan` | Diagnoses and plans repairs for existing Lovable apps. |
 | `lovable_sync_risk_report` | Decides whether it is safe to prompt Lovable again without losing or tangling work. |
 | `lovable_delivery_plan` | Plans the next best move: Lovable UI pass or OpenClaw engineering pass. |
@@ -113,7 +113,7 @@ Browser opening is optional. `lovable_build_url` returns a URL without opening a
 6. OpenClaw calls `lovable_build_url` or, with approval, `lovable_open_build_url`.
 7. User or OpenClaw monitors the Lovable result.
 8. Lovable project is synced/exported to GitHub.
-9. OpenClaw runs `lovable_repo_doctor` and `lovable_sync_risk_report`.
+9. OpenClaw gathers Git/package evidence with trusted tools, then runs `lovable_repo_doctor` and `lovable_sync_risk_report`.
 10. For existing broken apps, OpenClaw calls `lovable_rescue_plan`.
 11. OpenClaw uses GitHub/local tools for code, tests, CI, security, and PR.
 12. OpenClaw runs `lovable_visible_result_check` to confirm the change is actually visible.
