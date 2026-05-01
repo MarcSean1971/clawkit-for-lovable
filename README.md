@@ -61,6 +61,14 @@ openclaw plugins install -l .
 openclaw gateway restart
 ```
 
+## Install From ClawHub
+
+```bash
+openclaw plugins install @clawkit/clawkit-for-lovable
+openclaw plugins enable clawkit-for-lovable
+openclaw gateway restart
+```
+
 ## Install From npm
 
 ```bash
