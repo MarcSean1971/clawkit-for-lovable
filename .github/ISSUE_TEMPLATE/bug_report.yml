@@ -1,0 +1,33 @@
+name: Bug report
+description: Report something that did not work as expected.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve ClawKit. Please include concrete evidence where possible.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the commands, prompts, or workflow steps.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Paste relevant build errors, console errors, screenshots, preview URLs, or repo state.
+  - type: input
+    id: version
+    attributes:
+      label: ClawKit version
+      placeholder: "0.1.0"

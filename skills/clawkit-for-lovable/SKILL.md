@@ -11,6 +11,8 @@ If the user is new, uncertain, or starting a project from scratch, call `lovable
 
 If the user sounds frustrated, disappointed, intense, or says OpenClaw/Lovable did the wrong thing, call `lovable_mood_indicator`. Use its funny mood line lightly, then follow the self-healing notes seriously. The mood indicator must never mock the user; it exists to reduce stress and make the agent repair its process.
 
+ClawKit is an early public release. Be honest that it will improve continuously, and invite constructive feedback when a workflow is confusing, a rescue fails, or the user discovers a missing verification step.
+
 ## Prime Directive
 
 Lovable is a specialist tool for product shaping, UI scaffolding, page generation, responsive layout, and visual iteration. OpenClaw remains the orchestrator and should use its own coding, shell, browser, GitHub, test, and review tools whenever precision matters.
@@ -103,6 +105,8 @@ Use `lovable_starter_guide` to explain:
 - What guardrails protect them.
 
 Keep this friendly and practical. The goal is not to lecture; the goal is to help the user see the menu of possibilities and choose a first move.
+
+When appropriate, add a short early-release note: `ClawKit is still evolving. If this workflow misses something, that feedback helps shape the next version.`
 
 ## Mood And Self-Healing
 

@@ -4,6 +4,22 @@ ClawKit for Lovable is an independent OpenClaw plugin that turns Lovable into on
 
 ClawKit is independent and is not affiliated with or endorsed by Lovable.dev.
 
+## Early Public Release
+
+ClawKit for Lovable is an early public release. It is useful now for building, rescuing, verifying, refactoring, and shipping Lovable.dev projects with OpenClaw, and it will be updated continuously.
+
+Constructive feedback is very welcome, especially:
+
+- Lovable apps ClawKit failed to rescue.
+- Workflows that felt confusing.
+- Missing verification checks.
+- Places where OpenClaw should use Lovable versus code tools differently.
+- Ideas for better agency/client delivery reports.
+
+Open an issue or discussion on GitHub:
+
+https://github.com/MarcSean1971/clawkit-for-lovable/issues
+
 Lovable is excellent for UI scaffolding, visual iteration, product flow, and fast app generation. OpenClaw is better at exact code, GitHub, tests, CI, debugging, integrations, security, and shipping discipline. This plugin gives OpenClaw tools and a bundled skill for choosing the right surface at the right time.
 
 The plugin assumes Lovable output is a product draft, not finished architecture. OpenClaw should refactor, harden, test, and review the generated code before the app is treated as production-ready.

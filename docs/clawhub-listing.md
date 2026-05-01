@@ -12,6 +12,10 @@ Build, rescue, verify, refactor, and ship Lovable.dev projects with OpenClaw.
 
 ClawKit for Lovable is an independent OpenClaw plugin that turns Lovable.dev into one tool inside a safer full-stack delivery workflow. It helps OpenClaw create better Lovable prompts, optionally open Lovable in the browser, inspect and rescue existing Lovable apps, check GitHub sync risk, verify that claimed changes actually build and appear on screen, refactor generated code, prepare PR summaries, and plan secure OpenClaw Inside assistant features.
 
+This is an early public release. It is useful now, and it will be updated continuously. Constructive feedback, especially rescue cases and workflow suggestions, is welcome at:
+
+https://github.com/MarcSean1971/clawkit-for-lovable/issues
+
 ## Install From ClawHub
 
 ```bash

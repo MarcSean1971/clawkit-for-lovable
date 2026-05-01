@@ -681,6 +681,7 @@ function makeStarterGuide(params: {
       "Checks whether Lovable's result actually appears on screen.",
       "Moves the project into GitHub so code can be cleaned, tested, and reviewed.",
       "Can plan optional OpenClaw-powered features inside your app.",
+      "Improves continuously from constructive feedback on real Lovable workflows.",
     ],
     bestFirstChoices: [
       "Start from a new app idea.",
@@ -714,6 +715,7 @@ function makeStarterGuide(params: {
       "Choose whether OpenClaw Inside should be included in the app.",
     ],
     guardrails: [
+      "ClawKit is an early public release. It is useful today and will improve quickly from real feedback.",
       "Never trust 'done' until build and visible-screen checks pass.",
       "Never ship raw Lovable code without a maintainability pass.",
       "Never send secrets or private production data to Lovable prompts.",

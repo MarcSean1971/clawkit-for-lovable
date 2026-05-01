@@ -21,6 +21,8 @@ Lovable got you 80% there. ClawKit rescues the last 20%.
 
 Lovable is great for getting an app started, but sometimes it says a feature is done and the screen disagrees. ClawKit for Lovable lets OpenClaw inspect the GitHub repo, diagnose sync and build issues, verify what is actually visible, fix the code directly, and prepare a clean PR. It is not a replacement for Lovable; it is the rescue, hardening, and shipping layer around it.
 
+ClawKit is an early public release and will improve continuously from real builder feedback. If it fails to rescue your app or the workflow feels confusing, open an issue with the details so the next version gets sharper.
+
 ## Example Prompt
 
 ```text

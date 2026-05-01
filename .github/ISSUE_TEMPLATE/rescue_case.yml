@@ -1,0 +1,32 @@
+name: Lovable rescue case
+description: Share an existing Lovable app that ClawKit could not rescue cleanly.
+title: "[Rescue]: "
+labels:
+  - rescue-case
+  - workflow-feedback
+body:
+  - type: markdown
+    attributes:
+      value: Rescue cases are extremely useful. Please remove secrets, private customer data, and credentials before sharing.
+  - type: textarea
+    id: app_problem
+    attributes:
+      label: What was broken?
+      description: Example blank preview, invisible feature, build error, GitHub sync issue, or messy generated code.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to see?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Build output, console errors, screenshots, preview URLs, PR links, or sanitized repo details.
+  - type: textarea
+    id: improvement
+    attributes:
+      label: What should ClawKit do better next time?

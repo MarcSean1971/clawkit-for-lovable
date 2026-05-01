@@ -4,6 +4,8 @@
 
 ClawKit for Lovable is an agentic app-building control plane. It lets Lovable be great at UI generation without forcing Lovable to own every engineering task.
 
+ClawKit is an early public release and should be positioned honestly. The product is useful today, but the fastest route to quality is constructive feedback from real rescue, hardening, and shipping workflows.
+
 ## Wedge
 
 The first winning use case is:
@@ -52,6 +54,18 @@ The MVP is successful when a user can:
 3. Generate the app in Lovable.
 4. Export/sync to GitHub.
 5. Have OpenClaw continue with code, verification, and a PR.
+
+## Feedback Loop
+
+Early users should be invited to share:
+
+- Failed rescue cases.
+- Confusing workflow steps.
+- Missing visible-result checks.
+- Incorrect Lovable-vs-code routing decisions.
+- Better PR/client-reporting needs.
+
+These should become the core product learning loop.
 
 ## Next Wedge: ClawKit Sync Doctor
 

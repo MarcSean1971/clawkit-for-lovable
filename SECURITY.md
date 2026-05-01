@@ -20,3 +20,7 @@ ClawKit for Lovable is an independent OpenClaw plugin. Treat plugin installs lik
 ## Reporting Issues
 
 Please open a private security advisory on GitHub or contact the maintainers before publicly disclosing security-sensitive issues.
+
+For non-security bugs, rescue cases, workflow feedback, or feature requests, please use GitHub Issues:
+
+https://github.com/MarcSean1971/clawkit-for-lovable/issues

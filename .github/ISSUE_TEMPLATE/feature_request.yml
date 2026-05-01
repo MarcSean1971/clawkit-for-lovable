@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest a new ClawKit capability or workflow.
+title: "[Feature]: "
+labels:
+  - feature
+body:
+  - type: textarea
+    id: workflow
+    attributes:
+      label: What workflow should ClawKit support?
+      description: Describe the user goal in plain language.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why does this matter?
+      description: Explain the pain, frequency, or business value.
+  - type: textarea
+    id: ideal
+    attributes:
+      label: Ideal behavior

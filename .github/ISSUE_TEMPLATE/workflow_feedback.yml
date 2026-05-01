@@ -1,0 +1,22 @@
+name: Workflow feedback
+description: Tell us where the ClawKit workflow felt confusing or incomplete.
+title: "[Workflow]: "
+labels:
+  - workflow-feedback
+body:
+  - type: textarea
+    id: confusing
+    attributes:
+      label: What felt confusing?
+      description: Tell us where the workflow, wording, install process, or tool choice was unclear.
+    validations:
+      required: true
+  - type: textarea
+    id: better
+    attributes:
+      label: What would have helped?
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Were you starting, rescuing, hardening, shipping, or adding OpenClaw Inside?
