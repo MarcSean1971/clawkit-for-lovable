@@ -1,0 +1,52 @@
+{
+  "id": "clawkit-for-lovable",
+  "name": "ClawKit for Lovable",
+  "description": "Helps OpenClaw build, verify, refactor, and ship Lovable.dev projects while keeping GitHub, tests, code edits, and delivery under OpenClaw control.",
+  "version": "0.1.0",
+  "skills": [
+    "skills/clawkit-for-lovable"
+  ],
+  "contracts": {
+    "tools": [
+      "lovable_decide_route",
+      "lovable_make_prompt",
+      "lovable_build_url",
+      "lovable_open_build_url",
+      "lovable_github_handoff",
+      "lovable_iteration_brief",
+      "lovable_repo_doctor",
+      "lovable_rescue_plan",
+      "lovable_sync_risk_report",
+      "lovable_delivery_plan",
+      "lovable_pr_summary",
+      "lovable_openclaw_integration_plan",
+      "lovable_visible_result_check",
+      "lovable_model_strategy",
+      "lovable_starter_guide",
+      "lovable_mood_indicator"
+    ]
+  },
+  "uiHints": {
+    "defaultGithubOwner": {
+      "label": "Default GitHub owner",
+      "help": "Optional owner or organization OpenClaw should prefer when creating repositories."
+    },
+    "requireApprovalForLaunch": {
+      "label": "Require approval before launching Lovable",
+      "help": "Recommended for shared or production machines."
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "defaultGithubOwner": {
+        "type": "string"
+      },
+      "requireApprovalForLaunch": {
+        "type": "boolean",
+        "default": true
+      }
+    }
+  }
+}

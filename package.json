@@ -1,0 +1,54 @@
+{
+  "name": "@clawkit/clawkit-for-lovable",
+  "version": "0.1.0",
+  "description": "ClawKit for Lovable helps OpenClaw build, verify, refactor, and ship Lovable.dev projects through GitHub-ready workflows.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "openclaw.plugin.json",
+    "skills",
+    "README.md",
+    "SECURITY.md",
+    "docs"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "openclaw",
+    "openclaw-plugin",
+    "lovable",
+    "lovable.dev",
+    "clawkit",
+    "github",
+    "agent-tools",
+    "ai-development"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@sinclair/typebox": "^0.34.49",
+    "openclaw": "^2026.4.29"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "openclaw": {
+    "extensions": [
+      "./dist/index.js"
+    ],
+    "compat": {
+      "pluginApi": ">=2026.3.24-beta.2",
+      "minGatewayVersion": "2026.3.24-beta.2"
+    },
+    "build": {
+      "openclawVersion": "2026.4.29",
+      "pluginSdkVersion": "2026.4.29"
+    }
+  }
+}
