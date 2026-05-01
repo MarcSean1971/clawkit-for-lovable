@@ -31,7 +31,7 @@ clawhub package publish . \
   --display-name "ClawKit for Lovable" \
   --version 0.1.0 \
   --source-repo MarcSean1971/clawkit-for-lovable \
-  --source-commit ab4656225d59a2bb15e1cfb7ec66ae9ed5af2977 \
+  --source-commit b64967d883cdc7ebc4ae51862a87a1160ada879d \
   --source-ref main \
   --changelog "Initial public release"
 ```
