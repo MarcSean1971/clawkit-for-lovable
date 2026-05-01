@@ -20,6 +20,24 @@ openclaw plugins enable clawkit-for-lovable
 openclaw gateway restart
 ```
 
+## Publish Command
+
+After logging in with `clawhub login`, publish with:
+
+```bash
+clawhub package publish . \
+  --family code-plugin \
+  --name clawkit-for-lovable \
+  --display-name "ClawKit for Lovable" \
+  --version 0.1.0 \
+  --source-repo MarcSean1971/clawkit-for-lovable \
+  --source-commit ab4656225d59a2bb15e1cfb7ec66ae9ed5af2977 \
+  --source-ref main \
+  --changelog "Initial public release"
+```
+
+Dry-run validation passed with these values.
+
 ## Keywords
 
 - Lovable
