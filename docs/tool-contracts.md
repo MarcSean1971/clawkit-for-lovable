@@ -38,6 +38,43 @@ Input: project URL, repo URL, branch, and requested outcome.
 
 Output: checklist for moving from Lovable generation to GitHub source-of-truth engineering.
 
+## `lovable_connect_github_repo`
+
+Input: Lovable project URL, GitHub repo URL, desired outcome, optional local repo path, optional trusted Git/package evidence, and optional preferred branch name.
+
+Output: JSON plan with:
+
+- Connection status.
+- Project and repo URLs.
+- Suggested local path.
+- Recommended branch.
+- Connection steps for OpenClaw's trusted GitHub/Git tools.
+- Evidence OpenClaw should collect.
+- Immediate verification checks.
+- Safe Lovable use.
+- OpenClaw engineering use.
+- Approval gates.
+- Next prompt for the user.
+- Repo doctor and sync-risk output when evidence is supplied.
+
+This tool does not authenticate to GitHub, clone repositories, run Git, read files, or call network APIs. It plans the workflow and expects OpenClaw's trusted tools to perform the actual GitHub operations.
+
+## `lovable_project_readiness`
+
+Input: booleans describing whether the workflow has Lovable project URL, GitHub repo URL, local repo, clean Git state, safe branch, verification, visible-result proof, PR summary, and intended next step.
+
+Output: JSON readiness report with:
+
+- Readiness state.
+- Evidence score.
+- Blockers.
+- Missing evidence.
+- Recommended next action.
+- Required evidence list.
+- Safe idea-to-PR workflow.
+
+Use it as a gate before another Lovable UI pass, OpenClaw engineering pass, PR, or deploy.
+
 ## `lovable_iteration_brief`
 
 Input: current state, problems, what to preserve, what to change, and what to avoid.

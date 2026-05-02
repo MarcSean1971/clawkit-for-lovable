@@ -10,7 +10,7 @@ Build, rescue, verify, refactor, and ship Lovable.dev projects with OpenClaw.
 
 ## Long Description
 
-ClawKit for Lovable is an independent OpenClaw plugin that turns Lovable.dev into one tool inside a safer full-stack delivery workflow. It helps OpenClaw create better Lovable prompts, optionally open Lovable in the browser, inspect and rescue existing Lovable apps, check GitHub sync risk, verify that claimed changes actually build and appear on screen, refactor generated code, prepare PR summaries, and plan secure OpenClaw Inside assistant features.
+ClawKit for Lovable is an independent OpenClaw plugin that turns Lovable.dev into one tool inside a safer full-stack delivery workflow. It helps OpenClaw create better Lovable prompts, optionally open Lovable in the browser, connect Lovable projects to GitHub repo workflows, inspect and rescue existing Lovable apps, check project readiness and GitHub sync risk, verify that claimed changes actually build and appear on screen, refactor generated code, prepare PR summaries, and plan secure OpenClaw Inside assistant features.
 
 This is an early public release. It is useful now, and it will be updated continuously. Constructive feedback, especially rescue cases and workflow suggestions, is welcome at:
 
@@ -39,13 +39,13 @@ After logging in with `clawhub login`, publish with:
 ```bash
 clawhub package publish . \
   --family code-plugin \
-  --name clawkit-for-lovable \
+  --name @clawkit/clawkit-for-lovable \
   --display-name "ClawKit for Lovable" \
-  --version 0.1.0 \
+  --version 0.1.3 \
   --source-repo MarcSean1971/clawkit-for-lovable \
   --source-commit "$(git rev-parse HEAD)" \
   --source-ref main \
-  --changelog "Initial public release"
+  --changelog "Add GitHub repo connection and project readiness workflows"
 ```
 
 Dry-run validation passed with these values.

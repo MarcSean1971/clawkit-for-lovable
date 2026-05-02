@@ -41,6 +41,8 @@ OpenClaw can then:
 - Turn rough app ideas into strong Lovable prompts.
 - Diagnose and rescue existing Lovable apps that are broken, messy, invisible, or hard to extend.
 - Launch Lovable's Build-with-URL flow.
+- Connect a Lovable project to its GitHub repository workflow.
+- Check whether the project is ready for Lovable UI work, OpenClaw engineering, PR, or deploy steps.
 - Route UI/product work to Lovable.
 - Verify that Lovable's promised changes actually appear on screen.
 - Route exact engineering work to GitHub and local code tools.
@@ -56,6 +58,8 @@ OpenClaw can then:
 | `lovable_build_url` | Creates a Lovable autosubmit Build-with-URL link. |
 | `lovable_open_build_url` | Prepares a Lovable URL for OpenClaw's trusted browser tool to open after approval. |
 | `lovable_github_handoff` | Creates the checklist for moving from Lovable output to GitHub/code work. |
+| `lovable_connect_github_repo` | Plans the safe connection from Lovable project to GitHub repo, branch, checks, and PR workflow. |
+| `lovable_project_readiness` | Scores whether the project has enough evidence to continue safely. |
 | `lovable_iteration_brief` | Creates a focused follow-up prompt for Lovable UI iteration. |
 | `lovable_repo_doctor` | Reviews caller-supplied Git/package evidence for Git state, framework, scripts, and risks without reading files itself. |
 | `lovable_rescue_plan` | Diagnoses and plans repairs for existing Lovable apps. |
@@ -113,13 +117,31 @@ Browser opening is optional. `lovable_build_url` returns a URL without opening a
 6. OpenClaw calls `lovable_build_url` or, with approval, `lovable_open_build_url`.
 7. User or OpenClaw monitors the Lovable result.
 8. Lovable project is synced/exported to GitHub.
-9. OpenClaw gathers Git/package evidence with trusted tools, then runs `lovable_repo_doctor` and `lovable_sync_risk_report`.
-10. For existing broken apps, OpenClaw calls `lovable_rescue_plan`.
-11. OpenClaw uses GitHub/local tools for code, tests, CI, security, and PR.
-12. OpenClaw runs `lovable_visible_result_check` to confirm the change is actually visible.
-13. OpenClaw refactors Lovable-generated code for maintainability before shipping.
-14. OpenClaw uses `lovable_iteration_brief` for another UI pass only when useful.
-15. OpenClaw uses `lovable_pr_summary` before opening a PR.
+9. OpenClaw calls `lovable_connect_github_repo` with the repo URL and creates/opens a safe branch with trusted GitHub tools.
+10. OpenClaw calls `lovable_project_readiness` to check whether enough evidence exists for the next step.
+11. OpenClaw gathers Git/package evidence with trusted tools, then runs `lovable_repo_doctor` and `lovable_sync_risk_report`.
+12. For existing broken apps, OpenClaw calls `lovable_rescue_plan`.
+13. OpenClaw uses GitHub/local tools for code, tests, CI, security, and PR.
+14. OpenClaw runs `lovable_visible_result_check` to confirm the change is actually visible.
+15. OpenClaw refactors Lovable-generated code for maintainability before shipping.
+16. OpenClaw uses `lovable_iteration_brief` for another UI pass only when useful.
+17. OpenClaw uses `lovable_pr_summary` before opening a PR.
+
+## GitHub Connection
+
+ClawKit does not log in to GitHub, clone repositories, or call GitHub APIs itself. It stays marketplace-safe and tells OpenClaw how to use its trusted GitHub/Git tools.
+
+`lovable_connect_github_repo` turns a Lovable project URL, GitHub repo URL, and optional trusted repo evidence into a clear plan:
+
+- confirm the repo belongs to the Lovable project;
+- clone or open it with OpenClaw's trusted tools;
+- create a safe working branch;
+- pull Lovable-synced changes;
+- run repo doctor and verification checks;
+- decide whether the next action belongs in Lovable or code;
+- prepare PR-ready evidence.
+
+`lovable_project_readiness` then acts as a gate before major actions. It checks whether there is a Lovable URL, GitHub repo URL, local repo, clean Git state, safe branch, verification output, visible-result proof, and PR summary.
 
 ## Rescue Existing Apps
 

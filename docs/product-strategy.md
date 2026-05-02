@@ -55,6 +55,8 @@ The MVP is successful when a user can:
 4. Export/sync to GitHub.
 5. Have OpenClaw continue with code, verification, and a PR.
 
+The next improvement is now a first-class GitHub connection layer: ClawKit should ask for or capture the Lovable-connected repo URL, tell OpenClaw how to open it with trusted GitHub tools, create a safe branch, collect evidence, run checks, and keep the user oriented through PR delivery.
+
 ## Feedback Loop
 
 Early users should be invited to share:
@@ -79,9 +81,11 @@ Sync Doctor should become the habit:
 
 1. Lovable creates or updates UI.
 2. User syncs/exports to GitHub.
-3. OpenClaw runs `lovable_repo_doctor`.
-4. OpenClaw reports whether the repo is safe for another Lovable pass or should move into code hardening.
-5. OpenClaw opens a PR with clear generated-vs-engineered notes.
+3. OpenClaw runs `lovable_connect_github_repo`.
+4. OpenClaw runs `lovable_project_readiness`.
+5. OpenClaw runs `lovable_repo_doctor`.
+6. OpenClaw reports whether the repo is safe for another Lovable pass or should move into code hardening.
+7. OpenClaw opens a PR with clear generated-vs-engineered notes.
 
 ## Product Expansion: OpenClaw Inside
 

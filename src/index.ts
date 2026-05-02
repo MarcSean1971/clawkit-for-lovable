@@ -56,6 +56,33 @@ type SyncRiskReport = {
   nextSteps: string[];
 };
 
+type GithubConnectionPlan = {
+  status: "needs-repo-url" | "ready-to-connect" | "connected-needs-stabilization" | "connected-ready";
+  projectUrl: string | null;
+  repoUrl: string | null;
+  suggestedLocalPath: string | null;
+  recommendedBranch: string;
+  connectionSteps: string[];
+  evidenceForOpenClaw: string[];
+  immediateChecks: string[];
+  safeLovableUse: string[];
+  openClawEngineeringUse: string[];
+  approvalGates: string[];
+  nextPromptForUser: string;
+  repoDoctor: RepoDoctor | null;
+  syncRisk: SyncRiskReport | null;
+};
+
+type ProjectReadinessReport = {
+  readiness: "not-ready" | "needs-checks" | "ready-for-lovable" | "ready-for-engineering" | "ready-for-pr";
+  score: number;
+  blockers: string[];
+  missingEvidence: string[];
+  recommendedNextAction: string;
+  requiredEvidence: string[];
+  workflow: string[];
+};
+
 type OpenClawIntegrationPlan = {
   appName: string;
   recommendation: "integrate" | "defer" | "do-not-integrate";
@@ -302,6 +329,185 @@ function makeRiskReport(doctor: RepoDoctor, intendedAction?: string): SyncRiskRe
             "Commit or stash local work and move off main/master.",
             "Run repo verification, then use Lovable only with a narrow iteration brief.",
           ],
+  };
+}
+
+async function makeGithubConnectionPlan(params: {
+  projectUrl?: string;
+  repoUrl?: string;
+  desiredOutcome: string;
+  repoPath?: string;
+  isGitRepo?: boolean;
+  currentBranch?: string | null;
+  remoteUrl?: string | null;
+  dirtyFiles?: string[];
+  recentCommits?: string[];
+  frameworkSignals?: string[];
+  packageManager?: string | null;
+  availableScripts?: Record<string, string>;
+  preferredBranchName?: string;
+}): Promise<GithubConnectionPlan> {
+  const repoDoctor = params.repoPath ? await inspectRepo({ ...params, repoPath: params.repoPath }) : null;
+  const syncRisk = repoDoctor ? makeRiskReport(repoDoctor, params.desiredOutcome) : null;
+  const repoUrl = params.repoUrl ?? repoDoctor?.remoteUrl ?? null;
+  const recommendedBranch =
+    params.preferredBranchName ??
+    syncRisk?.recommendedBranch ??
+    "openclaw/lovable-github-handoff";
+  const status: GithubConnectionPlan["status"] = !repoUrl
+    ? "needs-repo-url"
+    : repoDoctor && syncRisk?.riskLevel === "low"
+      ? "connected-ready"
+      : repoDoctor
+        ? "connected-needs-stabilization"
+        : "ready-to-connect";
+
+  return {
+    status,
+    projectUrl: params.projectUrl ?? null,
+    repoUrl,
+    suggestedLocalPath: params.repoPath ?? (repoUrl ? "<workspace>/<repo-name>" : null),
+    recommendedBranch,
+    connectionSteps: repoUrl
+      ? [
+          "Confirm this is the GitHub repository connected to the Lovable project.",
+          "OpenClaw should clone or open the repository using its trusted Git/GitHub tools.",
+          `Create or switch to branch \`${recommendedBranch}\` before making changes.`,
+          "Fetch/pull the latest Lovable-synced changes.",
+          "Collect Git/package evidence and pass it to `lovable_repo_doctor`.",
+          "Run verification commands before making engineering changes.",
+        ]
+      : [
+          "Ask the user to connect or export the Lovable project to GitHub.",
+          "Capture the GitHub repository URL from Lovable or GitHub.",
+          "Run this tool again with `repoUrl`.",
+        ],
+    evidenceForOpenClaw: [
+      "Repository URL and local path.",
+      "Current branch and origin remote.",
+      "Uncommitted changes from trusted Git tools.",
+      "Recent commit subjects, especially Lovable-generated commits.",
+      "Package manager and available scripts.",
+      "Framework signals such as React, Vite, Next.js, TypeScript, Tailwind, Supabase, or Stripe.",
+    ],
+    immediateChecks: [
+      "Confirm the repo is not on main/master before editing.",
+      "Run install/build/typecheck/lint/test where available.",
+      "Open the Lovable preview or local dev server and record visible-result evidence.",
+      "Check console/runtime errors before accepting Lovable's completion claim.",
+    ],
+    safeLovableUse:
+      status === "connected-ready"
+        ? [
+            "Focused UI/product iteration on a feature branch.",
+            "Responsive layout, visual polish, empty/loading/error states.",
+            "Screen-level design changes that can be reviewed as a GitHub diff.",
+          ]
+        : [
+            "Avoid broad Lovable prompts until the repo URL, branch, and verification state are clear.",
+            "Use Lovable only for narrow visual prompts after Git state is stabilized.",
+          ],
+    openClawEngineeringUse: [
+      "Clone/open the repo, branch, and protect the Git state.",
+      "Refactor generated code for maintainability.",
+      "Fix build/runtime/type/auth/data issues directly in code.",
+      "Add tests, CI notes, security checks, docs, and PR summary.",
+    ],
+    approvalGates: [
+      "Connecting GitHub on the user's behalf.",
+      "Pushing branches or opening PRs.",
+      "Deploying, publishing, deleting data, or changing production/billing settings.",
+      "Sending secrets, private customer data, or production credentials to Lovable.",
+    ],
+    nextPromptForUser: repoUrl
+      ? `I found the GitHub repo. I should open it, create \`${recommendedBranch}\`, run verification, and then decide whether the next pass belongs in Lovable or code.`
+      : "Please connect/export this Lovable project to GitHub and give me the repository URL. I will then inspect it, create a safe branch, run checks, and prepare the PR workflow.",
+    repoDoctor,
+    syncRisk,
+  };
+}
+
+function makeProjectReadinessReport(params: {
+  hasLovableProjectUrl?: boolean;
+  hasGithubRepoUrl?: boolean;
+  hasLocalRepo?: boolean;
+  hasCleanGitState?: boolean;
+  onSafeBranch?: boolean;
+  verificationPassed?: boolean;
+  visibleResultConfirmed?: boolean;
+  hasPrSummary?: boolean;
+  intendedNextStep?: "lovable-ui" | "openclaw-engineering" | "pr" | "deploy";
+}): ProjectReadinessReport {
+  const requiredEvidence = [
+    "Lovable project or preview URL.",
+    "GitHub repository URL.",
+    "Local repo path opened by OpenClaw's trusted Git tools.",
+    "Safe working branch, not main/master.",
+    "Clean or intentionally documented Git state.",
+    "Build/typecheck/lint/test output where available.",
+    "Visible-result evidence from preview, browser, or screenshots.",
+    "PR summary separating Lovable UI work from OpenClaw engineering work.",
+  ];
+  const checks = [
+    params.hasLovableProjectUrl,
+    params.hasGithubRepoUrl,
+    params.hasLocalRepo,
+    params.hasCleanGitState,
+    params.onSafeBranch,
+    params.verificationPassed,
+    params.visibleResultConfirmed,
+    params.hasPrSummary,
+  ];
+  const score = checks.filter(Boolean).length;
+  const missingEvidence = requiredEvidence.filter((_, index) => !checks[index]);
+  const blockers: string[] = [];
+
+  if (!params.hasGithubRepoUrl) blockers.push("No GitHub repository URL is connected yet.");
+  if (!params.hasLocalRepo) blockers.push("OpenClaw has not opened/cloned the GitHub repo yet.");
+  if (!params.onSafeBranch) blockers.push("Work is not confirmed on a safe feature branch.");
+  if (params.hasCleanGitState === false) blockers.push("Git state is dirty or unclear.");
+  if (params.verificationPassed === false) blockers.push("Verification has not passed.");
+  if (params.visibleResultConfirmed === false) blockers.push("Visible result has not been confirmed.");
+  if (params.intendedNextStep === "deploy" && (!params.verificationPassed || !params.visibleResultConfirmed)) {
+    blockers.push("Deployment is blocked until verification and visible-result checks pass.");
+  }
+
+  const readiness: ProjectReadinessReport["readiness"] =
+    blockers.length > 0
+      ? "not-ready"
+      : params.intendedNextStep === "pr" && params.hasPrSummary
+        ? "ready-for-pr"
+        : params.intendedNextStep === "openclaw-engineering"
+          ? "ready-for-engineering"
+          : params.intendedNextStep === "lovable-ui"
+            ? "ready-for-lovable"
+            : "needs-checks";
+
+  return {
+    readiness,
+    score,
+    blockers,
+    missingEvidence,
+    recommendedNextAction:
+      blockers.length > 0
+        ? "Collect the missing evidence and stabilize Git before continuing."
+        : readiness === "ready-for-lovable"
+          ? "Use a narrow Lovable prompt, then sync to GitHub and re-run verification."
+          : readiness === "ready-for-engineering"
+            ? "Proceed with OpenClaw code changes on the safe branch and keep verification evidence."
+            : readiness === "ready-for-pr"
+              ? "Open or update the PR with screenshots, verification, risks, and generated-vs-coded sections."
+              : "Run repo doctor and visible-result checks before choosing the next action.",
+    requiredEvidence,
+    workflow: [
+      "Connect/export Lovable to GitHub.",
+      "OpenClaw opens the repo and creates a safe branch.",
+      "Run Sync Doctor and verification commands.",
+      "Use Lovable for narrow UI work only when Git state is safe.",
+      "Use OpenClaw for exact code, tests, refactors, integrations, and security.",
+      "Verify the visible result in browser/screenshot evidence.",
+      "Prepare the PR summary and review risks before delivery.",
+    ],
   };
 }
 
@@ -996,6 +1202,57 @@ export default definePluginEntry({
           ],
           requestedOutcome: params.requestedOutcome,
         });
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_connect_github_repo",
+      label: "Connect GitHub Repo",
+      description:
+        "Plan the safe connection between a Lovable project and its GitHub repository so OpenClaw can clone/open it, branch, verify, refactor, and prepare PR work.",
+      parameters: Type.Object({
+        projectUrl: Type.Optional(Type.String({ description: "Lovable project or preview URL, if known." })),
+        repoUrl: Type.Optional(Type.String({ description: "GitHub repository URL connected to the Lovable project." })),
+        desiredOutcome: Type.String({ description: "What the user wants to achieve after connecting the repo." }),
+        repoPath: Type.Optional(Type.String({ description: "Local repo path if OpenClaw has already cloned/opened it. ClawKit does not read this path." })),
+        isGitRepo: Type.Optional(Type.Boolean({ description: "Whether trusted Git tools confirmed this path is a Git repository." })),
+        currentBranch: Type.Optional(Type.String({ description: "Current branch from trusted Git tools." })),
+        remoteUrl: Type.Optional(Type.String({ description: "Origin remote URL from trusted Git tools, if safe to share." })),
+        dirtyFiles: optionalStringArray("Uncommitted changed files from trusted Git tools."),
+        recentCommits: optionalStringArray("Recent commit subjects from trusted Git tools."),
+        frameworkSignals: optionalStringArray("Frameworks detected by trusted code/package inspection."),
+        packageManager: Type.Optional(Type.String({ description: "Detected package manager: npm, pnpm, yarn, or bun." })),
+        availableScripts: Type.Optional(Type.Record(Type.String(), Type.String(), { description: "Scripts from package.json supplied by trusted inspection." })),
+        preferredBranchName: Type.Optional(Type.String({ description: "Preferred feature branch name for Lovable/OpenClaw work." })),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(await makeGithubConnectionPlan(params));
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_project_readiness",
+      label: "Check Project Readiness",
+      description:
+        "Score whether a Lovable/GitHub project has enough evidence to continue with Lovable UI work, OpenClaw engineering, PR, or deploy steps.",
+      parameters: Type.Object({
+        hasLovableProjectUrl: Type.Optional(Type.Boolean()),
+        hasGithubRepoUrl: Type.Optional(Type.Boolean()),
+        hasLocalRepo: Type.Optional(Type.Boolean()),
+        hasCleanGitState: Type.Optional(Type.Boolean()),
+        onSafeBranch: Type.Optional(Type.Boolean()),
+        verificationPassed: Type.Optional(Type.Boolean()),
+        visibleResultConfirmed: Type.Optional(Type.Boolean()),
+        hasPrSummary: Type.Optional(Type.Boolean()),
+        intendedNextStep: Type.Optional(Type.Union([
+          Type.Literal("lovable-ui"),
+          Type.Literal("openclaw-engineering"),
+          Type.Literal("pr"),
+          Type.Literal("deploy"),
+        ])),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makeProjectReadinessReport(params));
       },
     });
 

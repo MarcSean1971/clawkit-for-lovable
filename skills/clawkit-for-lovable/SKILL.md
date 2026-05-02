@@ -58,14 +58,16 @@ Require explicit user approval before:
 5. For a new app or major UI pass, call `lovable_make_prompt`.
 6. Call `lovable_build_url` and show or open the URL only when appropriate.
 7. After Lovable creates or updates the app, sync/export to GitHub.
-8. Gather Git/package evidence with trusted tools, then call `lovable_repo_doctor` before code work.
-9. Call `lovable_sync_risk_report` before asking Lovable for another broad UI pass.
-10. For an existing broken or messy app, call `lovable_rescue_plan`.
-11. Use OpenClaw's GitHub/local coding tools to inspect the repo, run install/build/tests, and make precise changes.
-12. Call `lovable_visible_result_check` before accepting Lovable's completion claim.
-13. Run a hardening/refactor pass before considering the app production-ready.
-14. Use `lovable_iteration_brief` only when another Lovable UI pass is better than direct code edits.
-15. End with a PR, preview link, screenshots when available, verification notes, and remaining risks.
+8. Call `lovable_connect_github_repo` once the repo URL is known so OpenClaw has a safe branch/check/PR plan.
+9. Call `lovable_project_readiness` before major next steps such as another Lovable pass, engineering edits, PR, or deploy.
+10. Gather Git/package evidence with trusted tools, then call `lovable_repo_doctor` before code work.
+11. Call `lovable_sync_risk_report` before asking Lovable for another broad UI pass.
+12. For an existing broken or messy app, call `lovable_rescue_plan`.
+13. Use OpenClaw's GitHub/local coding tools to inspect the repo, run install/build/tests, and make precise changes.
+14. Call `lovable_visible_result_check` before accepting Lovable's completion claim.
+15. Run a hardening/refactor pass before considering the app production-ready.
+16. Use `lovable_iteration_brief` only when another Lovable UI pass is better than direct code edits.
+17. End with a PR, preview link, screenshots when available, verification notes, and remaining risks.
 
 ## Rescue Existing Apps
 
@@ -240,6 +242,8 @@ Avoid asking Lovable to solve deep engineering problems. Ask it to produce produ
 Once Lovable has generated something useful:
 
 - Treat GitHub as the source of truth.
+- Call `lovable_connect_github_repo` when the Lovable project has or needs a GitHub repo URL.
+- Call `lovable_project_readiness` before deciding the next action.
 - Create a branch before editing.
 - Gather trusted Git/package evidence and run `lovable_repo_doctor` before direct code work.
 - Run `lovable_sync_risk_report` before another Lovable pass.
