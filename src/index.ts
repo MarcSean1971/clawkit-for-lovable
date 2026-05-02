@@ -83,6 +83,19 @@ type ProjectReadinessReport = {
   workflow: string[];
 };
 
+type ProjectContext = {
+  projectName: string;
+  projectBrief: string;
+  sourceOfTruth: string;
+  projectProfile: Record<string, unknown>;
+  sessionMemory: Record<string, unknown>;
+  knownRisks: string[];
+  doNotTouch: string[];
+  recommendedNextAction: string;
+  reusableBrief: string;
+  suggestedToolOrder: string[];
+};
+
 type OpenClawIntegrationPlan = {
   appName: string;
   recommendation: "integrate" | "defer" | "do-not-integrate";
@@ -507,6 +520,103 @@ function makeProjectReadinessReport(params: {
       "Use OpenClaw for exact code, tests, refactors, integrations, and security.",
       "Verify the visible result in browser/screenshot evidence.",
       "Prepare the PR summary and review risks before delivery.",
+    ],
+  };
+}
+
+function makeProjectContext(params: {
+  projectName?: string;
+  productGoal: string;
+  lovableProjectUrl?: string;
+  githubRepoUrl?: string;
+  localRepoPath?: string;
+  preferredBranchPrefix?: string;
+  packageManager?: string;
+  frameworkStack?: string[];
+  verificationCommands?: string[];
+  deploymentTarget?: string;
+  lastLovablePrompt?: string;
+  lastVisibleResultStatus?: string;
+  lastRepoDoctorSummary?: string;
+  lastPrSummary?: string;
+  knownRisks?: string[];
+  blockers?: string[];
+  doNotTouch?: string[];
+  nextGoal?: string;
+}): ProjectContext {
+  const projectName = params.projectName ?? "Lovable project";
+  const knownRisks = asList(params.knownRisks, []);
+  const blockers = asList(params.blockers, []);
+  const doNotTouch = asList(params.doNotTouch, [
+    "Secrets, production credentials, billing settings, production data, and destructive actions without explicit approval.",
+  ]);
+  const frameworkStack = asList(params.frameworkStack, ["Unknown until OpenClaw inspects package evidence."]);
+  const verificationCommands = asList(params.verificationCommands, [
+    "Use `lovable_repo_doctor` to infer install/build/typecheck/test commands from trusted package evidence.",
+  ]);
+  const sourceOfTruth = params.githubRepoUrl
+    ? "GitHub repository is the source of truth. Lovable is a UI/product iteration surface."
+    : "GitHub repository is not connected yet. Connect/export Lovable to GitHub before exact engineering work.";
+  const recommendedNextAction = blockers.length > 0
+    ? "Resolve blockers before another broad Lovable prompt."
+    : params.githubRepoUrl
+      ? "Open the repo with trusted GitHub/Git tools, run readiness checks, then choose Lovable UI pass or OpenClaw engineering."
+      : "Ask the user for the Lovable project URL and GitHub repo URL, then run `lovable_connect_github_repo`.";
+
+  const profile = {
+    lovableProjectUrl: params.lovableProjectUrl ?? null,
+    githubRepoUrl: params.githubRepoUrl ?? null,
+    localRepoPath: params.localRepoPath ?? null,
+    preferredBranchPrefix: params.preferredBranchPrefix ?? "clawkit",
+    packageManager: params.packageManager ?? null,
+    frameworkStack,
+    verificationCommands,
+    deploymentTarget: params.deploymentTarget ?? null,
+  };
+  const sessionMemory = {
+    lastLovablePrompt: params.lastLovablePrompt ?? null,
+    lastVisibleResultStatus: params.lastVisibleResultStatus ?? null,
+    lastRepoDoctorSummary: params.lastRepoDoctorSummary ?? null,
+    lastPrSummary: params.lastPrSummary ?? null,
+    nextGoal: params.nextGoal ?? null,
+    blockers,
+  };
+
+  const reusableBrief = [
+    `Project: ${projectName}`,
+    `Goal: ${params.productGoal}`,
+    `Source of truth: ${sourceOfTruth}`,
+    `Lovable URL: ${params.lovableProjectUrl ?? "not provided"}`,
+    `GitHub repo: ${params.githubRepoUrl ?? "not connected"}`,
+    `Local repo: ${params.localRepoPath ?? "not opened"}`,
+    `Stack: ${frameworkStack.join(", ")}`,
+    `Package manager: ${params.packageManager ?? "unknown"}`,
+    `Verification: ${verificationCommands.join("; ")}`,
+    `Deployment target: ${params.deploymentTarget ?? "unknown"}`,
+    `Known risks: ${knownRisks.length ? knownRisks.join("; ") : "none recorded"}`,
+    `Blockers: ${blockers.length ? blockers.join("; ") : "none recorded"}`,
+    `Do not touch: ${doNotTouch.join("; ")}`,
+    `Next goal: ${params.nextGoal ?? "not specified"}`,
+  ].join("\n");
+
+  return {
+    projectName,
+    projectBrief: params.productGoal,
+    sourceOfTruth,
+    projectProfile: profile,
+    sessionMemory,
+    knownRisks,
+    doNotTouch,
+    recommendedNextAction,
+    reusableBrief,
+    suggestedToolOrder: [
+      "lovable_project_context",
+      "lovable_connect_github_repo",
+      "lovable_project_readiness",
+      "lovable_repo_doctor",
+      "lovable_sync_risk_report",
+      "lovable_visible_result_check",
+      "lovable_pr_summary",
     ],
   };
 }
@@ -1253,6 +1363,36 @@ export default definePluginEntry({
       }),
       async execute(_id, params: any) {
         return jsonText(makeProjectReadinessReport(params));
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_project_context",
+      label: "Create Project Context",
+      description:
+        "Create a reusable project memory brief for a Lovable/GitHub app so OpenClaw can carry project URLs, repo state, stack, verification commands, risks, and do-not-touch rules across sessions.",
+      parameters: Type.Object({
+        projectName: Type.Optional(Type.String()),
+        productGoal: Type.String({ description: "What the app is meant to do." }),
+        lovableProjectUrl: Type.Optional(Type.String()),
+        githubRepoUrl: Type.Optional(Type.String()),
+        localRepoPath: Type.Optional(Type.String()),
+        preferredBranchPrefix: Type.Optional(Type.String()),
+        packageManager: Type.Optional(Type.String()),
+        frameworkStack: optionalStringArray("Known stack/frameworks, such as React, Vite, Supabase, Tailwind."),
+        verificationCommands: optionalStringArray("Commands that prove the app is healthy."),
+        deploymentTarget: Type.Optional(Type.String()),
+        lastLovablePrompt: Type.Optional(Type.String()),
+        lastVisibleResultStatus: Type.Optional(Type.String()),
+        lastRepoDoctorSummary: Type.Optional(Type.String()),
+        lastPrSummary: Type.Optional(Type.String()),
+        knownRisks: optionalStringArray("Known technical, product, security, or delivery risks."),
+        blockers: optionalStringArray("Current blockers that should stop broad prompting or delivery."),
+        doNotTouch: optionalStringArray("Files, features, data, settings, or services Lovable/OpenClaw should avoid without approval."),
+        nextGoal: Type.Optional(Type.String()),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makeProjectContext(params));
       },
     });
 

@@ -59,15 +59,16 @@ Require explicit user approval before:
 6. Call `lovable_build_url` and show or open the URL only when appropriate.
 7. After Lovable creates or updates the app, sync/export to GitHub.
 8. Call `lovable_connect_github_repo` once the repo URL is known so OpenClaw has a safe branch/check/PR plan.
-9. Call `lovable_project_readiness` before major next steps such as another Lovable pass, engineering edits, PR, or deploy.
-10. Gather Git/package evidence with trusted tools, then call `lovable_repo_doctor` before code work.
-11. Call `lovable_sync_risk_report` before asking Lovable for another broad UI pass.
-12. For an existing broken or messy app, call `lovable_rescue_plan`.
-13. Use OpenClaw's GitHub/local coding tools to inspect the repo, run install/build/tests, and make precise changes.
-14. Call `lovable_visible_result_check` before accepting Lovable's completion claim.
-15. Run a hardening/refactor pass before considering the app production-ready.
-16. Use `lovable_iteration_brief` only when another Lovable UI pass is better than direct code edits.
-17. End with a PR, preview link, screenshots when available, verification notes, and remaining risks.
+9. Call `lovable_project_context` to create or refresh a reusable memory brief for the app.
+10. Call `lovable_project_readiness` before major next steps such as another Lovable pass, engineering edits, PR, or deploy.
+11. Gather Git/package evidence with trusted tools, then call `lovable_repo_doctor` before code work.
+12. Call `lovable_sync_risk_report` before asking Lovable for another broad UI pass.
+13. For an existing broken or messy app, call `lovable_rescue_plan`.
+14. Use OpenClaw's GitHub/local coding tools to inspect the repo, run install/build/tests, and make precise changes.
+15. Call `lovable_visible_result_check` before accepting Lovable's completion claim.
+16. Run a hardening/refactor pass before considering the app production-ready.
+17. Use `lovable_iteration_brief` only when another Lovable UI pass is better than direct code edits.
+18. End with a PR, preview link, screenshots when available, verification notes, and remaining risks.
 
 ## Rescue Existing Apps
 
@@ -175,6 +176,12 @@ Use `lovable_pr_summary` before opening a pull request so the review clearly sep
 - Screenshots/previews.
 - Risks and review notes.
 
+## Project Memory
+
+Call `lovable_project_context` once the project has a meaningful goal and especially after a Lovable URL, GitHub repo URL, or local repo path becomes known. Refresh it after major events: a Lovable prompt, repo doctor run, visible-result check, PR summary, deployment decision, or blocker discovery.
+
+Treat the returned reusable brief as orientation, not hidden authority. It should help OpenClaw remember the app goal, source of truth, stack, verification commands, known risks, do-not-touch rules, and recommended next action. If it conflicts with fresh repo evidence or the user's latest instruction, prefer the latest evidence and update the context.
+
 ## Visible Result Verification
 
 Lovable often says a change is complete even when the screen does not show it because the generated code has a build, runtime, route, state, or styling error. Do not accept Lovable's completion claim by text alone.
@@ -243,6 +250,7 @@ Once Lovable has generated something useful:
 
 - Treat GitHub as the source of truth.
 - Call `lovable_connect_github_repo` when the Lovable project has or needs a GitHub repo URL.
+- Call `lovable_project_context` to keep URLs, stack, checks, risks, and do-not-touch rules together.
 - Call `lovable_project_readiness` before deciding the next action.
 - Create a branch before editing.
 - Gather trusted Git/package evidence and run `lovable_repo_doctor` before direct code work.

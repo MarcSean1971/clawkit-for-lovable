@@ -20,12 +20,13 @@ This is stronger than "control Lovable from OpenClaw" because it produces durabl
 
 ## Product Modes
 
-ClawKit should expose five simple modes:
+ClawKit should expose six simple modes:
 
 - **Start**: build a new Lovable app from an idea.
 - **Rescue**: fix an existing Lovable app that is broken, invisible, messy, or hard to extend.
 - **Harden**: refactor and prepare generated code for production review.
 - **Ship**: turn Lovable output into a verified GitHub PR.
+- **Remember**: keep a lightweight project memory brief across Lovable, GitHub, checks, risks, and next actions.
 - **Inside**: add safe OpenClaw-powered assistant features to the app.
 
 Rescue is probably the highest-conversion mode because the user already has pain and a project to save.
@@ -55,7 +56,7 @@ The MVP is successful when a user can:
 4. Export/sync to GitHub.
 5. Have OpenClaw continue with code, verification, and a PR.
 
-The next improvement is now a first-class GitHub connection layer: ClawKit should ask for or capture the Lovable-connected repo URL, tell OpenClaw how to open it with trusted GitHub tools, create a safe branch, collect evidence, run checks, and keep the user oriented through PR delivery.
+The next improvement is now a first-class Project Memory layer: ClawKit should carry a reusable brief with the project goal, Lovable URL, GitHub repo, local path, stack, verification commands, deployment target, risks, blockers, do-not-touch rules, and next action. This keeps OpenClaw oriented across multi-session Lovable/GitHub work without the plugin reading files or calling external APIs itself.
 
 ## Feedback Loop
 
@@ -82,10 +83,17 @@ Sync Doctor should become the habit:
 1. Lovable creates or updates UI.
 2. User syncs/exports to GitHub.
 3. OpenClaw runs `lovable_connect_github_repo`.
-4. OpenClaw runs `lovable_project_readiness`.
-5. OpenClaw runs `lovable_repo_doctor`.
-6. OpenClaw reports whether the repo is safe for another Lovable pass or should move into code hardening.
-7. OpenClaw opens a PR with clear generated-vs-engineered notes.
+4. OpenClaw runs or refreshes `lovable_project_context`.
+5. OpenClaw runs `lovable_project_readiness`.
+6. OpenClaw runs `lovable_repo_doctor`.
+7. OpenClaw reports whether the repo is safe for another Lovable pass or should move into code hardening.
+8. OpenClaw opens a PR with clear generated-vs-engineered notes.
+
+## Product Expansion: Project Memory
+
+Project Memory is the practical bridge between a fun demo and a repeatable delivery framework. Users should not need to restate the same Lovable URL, GitHub repo, local branch habit, package manager, verification commands, deployment target, and risk rules every session.
+
+The memory brief should stay transparent and editable. It should never pretend to be a database or hidden state store; it is a structured summary that OpenClaw can refresh whenever the project changes.
 
 ## Product Expansion: OpenClaw Inside
 
@@ -161,7 +169,8 @@ Technical plugin id: `clawkit-for-lovable`
 
 1. Browser automation adapter for logged-in Lovable sessions.
 2. Screenshot capture and UI regression notes.
-3. GitHub repo creation/export helpers.
-4. Build/test command detection.
-5. PR generation with generated-vs-coded change sections.
-6. Approval hooks for publish, deploy, billing, and production branches.
+3. Persistable project memory handoff files when the user approves writing into the repo.
+4. GitHub repo creation/export helpers.
+5. Build/test command detection.
+6. PR generation with generated-vs-coded change sections.
+7. Approval hooks for publish, deploy, billing, and production branches.

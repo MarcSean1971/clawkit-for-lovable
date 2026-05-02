@@ -2,7 +2,7 @@
   "id": "clawkit-for-lovable",
   "name": "ClawKit for Lovable",
   "description": "Helps OpenClaw build, verify, refactor, and ship Lovable.dev projects while keeping GitHub, tests, code edits, and delivery under OpenClaw control.",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "skills": [
     "skills/clawkit-for-lovable"
   ],
@@ -15,6 +15,7 @@
       "lovable_github_handoff",
       "lovable_connect_github_repo",
       "lovable_project_readiness",
+      "lovable_project_context",
       "lovable_iteration_brief",
       "lovable_repo_doctor",
       "lovable_rescue_plan",

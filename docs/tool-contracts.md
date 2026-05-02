@@ -75,6 +75,24 @@ Output: JSON readiness report with:
 
 Use it as a gate before another Lovable UI pass, OpenClaw engineering pass, PR, or deploy.
 
+## `lovable_project_context`
+
+Input: project name, product goal, optional Lovable URL, GitHub repo URL, local repo path, branch prefix, package manager, framework stack, verification commands, deployment target, last Lovable prompt, last visible result status, repo doctor summary, PR summary, known risks, blockers, do-not-touch rules, and next goal.
+
+Output: JSON project context with:
+
+- Project brief.
+- Source-of-truth guidance.
+- Project profile.
+- Session memory.
+- Known risks.
+- Do-not-touch rules.
+- Recommended next action.
+- Reusable brief for future OpenClaw/Lovable sessions.
+- Suggested tool order.
+
+This tool does not read files, call GitHub, call Lovable, persist data, or send anything over the network. It packages caller-supplied evidence into a clean memory brief.
+
 ## `lovable_iteration_brief`
 
 Input: current state, problems, what to preserve, what to change, and what to avoid.
