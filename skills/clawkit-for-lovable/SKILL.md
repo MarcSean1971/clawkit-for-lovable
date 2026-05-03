@@ -3,13 +3,13 @@ name: clawkit-for-lovable
 description: Use Lovable.dev as a product/UI generation surface while keeping credit control, GitHub, exact code changes, tests, security, and delivery under OpenClaw control.
 ---
 
-# ClawKit for Lovable
+# ClawKit Studio for Lovable
 
 Use this skill when a user asks OpenClaw to build, improve, rescue, harden, or ship an app with Lovable.dev.
 
 If the user is new, uncertain, or starting a project from scratch, call `lovable_starter_guide` before planning. The most important usability feature is teaching the user what is possible before they start, without making them read documentation.
 
-If the user sounds frustrated, disappointed, intense, or says OpenClaw/Lovable did the wrong thing, call `lovable_mood_indicator`. Use its funny mood line lightly, then follow the self-healing notes seriously. The mood indicator must never mock the user; it exists to reduce stress and make the agent repair its process.
+If the user sounds frustrated, disappointed, intense, or says OpenClaw/Lovable.dev did the wrong thing, call `lovable_mood_indicator`. Use its funny mood line lightly, then follow the self-healing notes seriously. The mood indicator must never mock the user; it exists to reduce stress and make the agent repair its process.
 
 ClawKit is an early public release. Be honest that it will improve continuously, and invite constructive feedback when a workflow is confusing, a rescue fails, or the user discovers a missing verification step.
 
@@ -19,11 +19,11 @@ Lovable.dev is a specialist tool for product shaping, UI scaffolding, page gener
 
 Before spending Lovable.dev credits, create a credit-smart plan. Use Lovable.dev for the work it is good at, then move to OpenClaw/GitHub for exact implementation, verification, refactoring, and shipping. The user should feel that ClawKit is protecting their credits, not merely generating prettier prompts.
 
-Lovable-generated code must be treated as a strong product draft, not production-quality architecture. Always expect OpenClaw to perform a maintainability pass before shipping: refactor messy components, separate concerns, remove duplication, improve naming, stabilize state/data flow, add tests, and make the code clean, scalable, and reviewable.
+Lovable.dev-generated code must be treated as a strong product draft, not production-quality architecture. Always expect OpenClaw to perform a maintainability pass before shipping: refactor messy components, separate concerns, remove duplication, improve naming, stabilize state/data flow, add tests, and make the code clean, scalable, and reviewable.
 
 ## Tool Choice
 
-Use Lovable for:
+Use Lovable.dev for:
 
 - New app shells from product briefs.
 - First-pass UI generation.
@@ -34,7 +34,7 @@ Use Lovable for:
 Use GitHub and OpenClaw code tools for:
 
 - Repository setup, branches, commits, PRs, and release notes.
-- Refactoring Lovable-generated code into clean, scalable, maintainable modules.
+- Refactoring Lovable.dev-generated code into clean, scalable, maintainable modules.
 - Separating UI, data access, business rules, state management, and integration code.
 - Removing duplication, dead code, brittle generated patterns, and unclear naming.
 - TypeScript errors, runtime bugs, test failures, CI, package issues, and build problems.
@@ -50,13 +50,13 @@ Use Credit-Smart Planning for:
 - Proposed prompts that include debugging, architecture, tests, GitHub, auth, billing, integrations, or backend correctness.
 - Deciding whether to stop prompting and switch to verification/code repair.
 
-Use Rescue mode for existing Lovable apps that are broken, messy, not visibly updated, or hard to extend. Existing-app rescue is a first-class workflow, not an edge case.
+Use Rescue mode for existing Lovable.dev apps that are broken, messy, not visibly updated, or hard to extend. Existing-app rescue is a first-class workflow, not an edge case.
 
 Require explicit user approval before:
 
 - Publishing or deploying publicly.
 - Connecting GitHub, billing, payment, or production services.
-- Sending secrets or private customer data to Lovable.
+- Sending secrets or private customer data to Lovable.dev.
 - Deleting data, overwriting production branches, or making irreversible changes.
 
 ## Standard Workflow
@@ -89,9 +89,9 @@ Require explicit user approval before:
 
 ## Rescue Existing Apps
 
-Use `lovable_rescue_plan` when the user has an existing Lovable app that is:
+Use `lovable_rescue_plan` when the user has an existing Lovable.dev app that is:
 
-- Broken after a Lovable prompt.
+- Broken after a Lovable.dev prompt.
 - Showing a blank or stale screen.
 - Claiming a feature is done when it is not visible.
 - Failing build/typecheck/test/runtime checks.
@@ -105,12 +105,12 @@ Rescue mode should produce:
 - Likely failure modes.
 - First checks.
 - What OpenClaw should fix directly in code.
-- What Lovable should still be used for.
-- What Lovable should not be used for.
+- What Lovable.dev should still be used for.
+- What Lovable.dev should not be used for.
 - Required evidence before delivery.
 - PR sections for the repair.
 
-Do not send broad Lovable prompts while a rescue is unresolved. Stabilize Git, fix hard blockers in code, verify the visible result, then use Lovable only for narrow visual/product iteration.
+Do not send broad Lovable.dev prompts while a rescue is unresolved. Stabilize Git, fix hard blockers in code, verify the visible result, then use Lovable.dev only for narrow visual/product iteration.
 
 ## User Education
 
@@ -140,7 +140,7 @@ It has two jobs:
 Use it when:
 
 - The user says something is wrong, broken, invisible, frustrating, or not what they asked for.
-- Lovable claimed success but the app did not visibly change.
+- Lovable.dev claimed success but the app did not visibly change.
 - OpenClaw skipped a verification step.
 - The conversation is becoming tense.
 
@@ -156,7 +156,7 @@ How to respond after using it:
 
 Example tone:
 
-`Mood: Keyboard Steam Mode. Fair. Lovable said done, but the screen is the judge; I’ll verify the preview and fix the blocker.`
+`Mood: Keyboard Steam Mode. Fair. Lovable.dev said done, but the screen is the judge; I’ll verify the preview and fix the blocker.`
 
 ## Model Choice
 
@@ -172,22 +172,22 @@ Respect explicit user preference unless the model is unavailable or too weak for
 
 ## Sync Doctor Workflow
 
-Use trusted Git/package tools to gather evidence whenever the user provides a local repo path or GitHub-synced Lovable project, then call `lovable_repo_doctor`. Treat its output as the source of truth for:
+Use trusted Git/package tools to gather evidence whenever the user provides a local repo path or GitHub-synced Lovable.dev project, then call `lovable_repo_doctor`. Treat its output as the source of truth for:
 
 - Current branch.
 - Dirty files when checked by OpenClaw's trusted Git/shell tools.
-- Recent Lovable-generated commits.
+- Recent Lovable.dev-generated commits.
 - Framework and package manager signals.
 - Available verification commands.
-- Whether the repo is ready for Lovable prompting or OpenClaw code work.
+- Whether the repo is ready for Lovable.dev prompting or OpenClaw code work.
 
-Use `lovable_sync_risk_report` before any new Lovable prompt against an existing GitHub-synced project. If the report says risk is high, stabilize Git first: move off `main`/`master`, commit or stash local work, and avoid broad Lovable prompts.
+Use `lovable_sync_risk_report` before any new Lovable.dev prompt against an existing GitHub-synced project. If the report says risk is high, stabilize Git first: move off `main`/`master`, commit or stash local work, and avoid broad Lovable.dev prompts.
 
-Use `lovable_delivery_plan` when the user asks for end-to-end delivery. It should decide whether the next move is a Lovable UI pass or OpenClaw/GitHub engineering pass.
+Use `lovable_delivery_plan` when the user asks for end-to-end delivery. It should decide whether the next move is a Lovable.dev UI pass or OpenClaw/GitHub engineering pass.
 
 Use `lovable_pr_summary` before opening a pull request so the review clearly separates:
 
-- Lovable-generated UI/product work.
+- Lovable.dev-generated UI/product work.
 - OpenClaw engineering work.
 - Verification.
 - Screenshots/previews.
@@ -195,16 +195,16 @@ Use `lovable_pr_summary` before opening a pull request so the review clearly sep
 
 ## Project Memory
 
-Call `lovable_project_context` once the project has a meaningful goal and especially after a Lovable URL, GitHub repo URL, or local repo path becomes known. Refresh it after major events: a Lovable prompt, repo doctor run, visible-result check, PR summary, deployment decision, or blocker discovery.
+Call `lovable_project_context` once the project has a meaningful goal and especially after a Lovable.dev URL, GitHub repo URL, or local repo path becomes known. Refresh it after major events: a Lovable.dev prompt, repo doctor run, visible-result check, PR summary, deployment decision, or blocker discovery.
 
 Treat the returned reusable brief as orientation, not hidden authority. It should help OpenClaw remember the app goal, source of truth, stack, verification commands, known risks, do-not-touch rules, and recommended next action. If it conflicts with fresh repo evidence or the user's latest instruction, prefer the latest evidence and update the context.
 
 Use Project Memory v1 as the stronger continuity layer:
 
-- Call `lovable_project_memory` when the project has enough identity to preserve current goal, source of truth, stack, routes, bugs, refactor decisions, do-not-change rules, pending Lovable prompts, GitHub tasks, visual QA notes, and release readiness.
+- Call `lovable_project_memory` when the project has enough identity to preserve current goal, source of truth, stack, routes, bugs, refactor decisions, do-not-change rules, pending Lovable.dev prompts, GitHub tasks, visual QA notes, and release readiness.
 - Call `lovable_decision_log` whenever the user makes or approves a product, source-of-truth, refactor, visual, or delivery decision.
 - Call `lovable_session_brief` before continuing a project from an earlier session. It should answer what is true now, what changed, what not to touch, and what risk matters.
-- Call `lovable_next_action_plan` before choosing between Lovable prompting, GitHub inspection, local code edits, visible-result verification, PR prep, or shipping.
+- Call `lovable_next_action_plan` before choosing between Lovable.dev prompting, GitHub inspection, local code edits, visible-result verification, PR prep, or shipping.
 
 Before every big action, prefer this rhythm:
 
@@ -215,7 +215,7 @@ Before every big action, prefer this rhythm:
 
 ## Visible Result Verification
 
-Lovable often says a change is complete even when the screen does not show it because the generated code has a build, runtime, route, state, or styling error. Do not accept Lovable's completion claim by text alone.
+Lovable.dev often says a change is complete even when the screen does not show it because the generated code has a build, runtime, route, state, or styling error. Do not accept Lovable.dev's completion claim by text alone.
 
 Use `lovable_visible_result_check` before delivery, before PR summary, and whenever the user says the change is not visible.
 
@@ -225,11 +225,11 @@ The verification standard is:
 - Preview or local dev server opens.
 - Expected user-visible changes are confirmed in browser or screenshot observations.
 - Browser console and network errors are checked.
-- If not visible, OpenClaw fixes build/runtime issues directly or sends a narrow Lovable iteration brief for visual mismatch.
+- If not visible, OpenClaw fixes build/runtime issues directly or sends a narrow Lovable.dev iteration brief for visual mismatch.
 
 ## Browser Opening
 
-Opening Lovable in the browser is optional. Prefer `lovable_build_url` when the user wants a link, a dry run, or approval before leaving chat. Use `lovable_open_build_url` only when the user explicitly wants OpenClaw to open Lovable or has approved the browser-launching side effect. The plugin itself must remain marketplace-safe and should not execute shell/browser commands; OpenClaw should use its own trusted browser capability.
+Opening Lovable.dev in the browser is optional. Prefer `lovable_build_url` when the user wants a link, a dry run, or approval before leaving chat. Use `lovable_open_build_url` only when the user explicitly wants OpenClaw to open Lovable.dev or has approved the browser-launching side effect. The plugin itself must remain marketplace-safe and should not execute shell/browser commands; OpenClaw should use its own trusted browser capability.
 
 ## OpenClaw Inside Apps
 
@@ -237,7 +237,7 @@ If the app designer wants OpenClaw integrated into the app being built, use `lov
 
 Improve the request into an opt-in product feature called "OpenClaw Inside":
 
-- Lovable should build only the assistant UI surfaces: panel, command palette, approval cards, audit timeline, empty/error states, and role-aware navigation.
+- Lovable.dev should build only the assistant UI surfaces: panel, command palette, approval cards, audit timeline, empty/error states, and role-aware navigation.
 - OpenClaw should implement the backend adapter, auth, scopes, approvals, audit log, rate limits, tests, and deployment config in GitHub.
 - The frontend must never call privileged OpenClaw tools directly.
 - The browser must never receive OpenClaw gateway secrets, filesystem paths, repo tokens, or production credentials.
@@ -260,9 +260,9 @@ Bad in-app OpenClaw use cases:
 - Sending secrets or private customer data without redaction.
 - Letting non-admin users trigger privileged tools.
 
-## Prompting Lovable
+## Prompting Lovable.dev
 
-Good Lovable prompts should include:
+Good Lovable.dev prompts should include:
 
 - Product goal.
 - Target users.
@@ -273,22 +273,22 @@ Good Lovable prompts should include:
 - Acceptance criteria.
 - Explicit GitHub handoff expectations.
 
-Avoid asking Lovable to solve deep engineering problems. Ask it to produce product/UI structure that OpenClaw can harden in GitHub.
+Avoid asking Lovable.dev to solve deep engineering problems. Ask it to produce product/UI structure that OpenClaw can harden in GitHub.
 
 ## GitHub Handoff
 
-Once Lovable has generated something useful:
+Once Lovable.dev has generated something useful:
 
 - Treat GitHub as the source of truth.
-- Call `lovable_connect_github_repo` when the Lovable project has or needs a GitHub repo URL.
+- Call `lovable_connect_github_repo` when the Lovable.dev project has or needs a GitHub repo URL.
 - Call `lovable_project_context` to keep URLs, stack, checks, risks, and do-not-touch rules together.
 - Call `lovable_project_readiness` before deciding the next action.
 - Create a branch before editing.
 - Gather trusted Git/package evidence and run `lovable_repo_doctor` before direct code work.
-- Run `lovable_sync_risk_report` before another Lovable pass.
+- Run `lovable_sync_risk_report` before another Lovable.dev pass.
 - Run the project's actual verification commands.
 - Refactor generated code before shipping or presenting it as maintainable.
-- Keep Lovable-generated changes and OpenClaw code changes understandable in the PR.
+- Keep Lovable.dev-generated changes and OpenClaw code changes understandable in the PR.
 - Document what was generated, what was hand-edited, and what still needs human product review.
 
 ## Winning Product Behavior
@@ -296,7 +296,7 @@ Once Lovable has generated something useful:
 The user should feel like OpenClaw is their senior builder:
 
 - It chooses the right tool without making the user micromanage.
-- It uses Lovable for speed and taste.
+- It uses Lovable.dev for speed and taste.
 - It uses code tools for correctness.
 - It protects the user's secrets, repos, and production surfaces.
 - It produces inspectable GitHub output, not just a pretty demo.

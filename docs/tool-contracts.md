@@ -16,7 +16,7 @@ Output: JSON decision with:
 
 Input: rough product details.
 
-Output: a Lovable-ready prompt that explicitly assigns UI/product work to Lovable and deep engineering work to OpenClaw after GitHub handoff.
+Output: a Lovable.dev-ready prompt that explicitly assigns UI/product work to Lovable.dev and deep engineering work to OpenClaw after GitHub handoff.
 
 ## `lovable_credit_smart_plan`
 
@@ -86,13 +86,13 @@ Use it when Lovable.dev has claimed success but the result is not visible, the s
 
 ## `lovable_build_url`
 
-Input: prepared Lovable prompt.
+Input: prepared Lovable.dev prompt.
 
-Output: Lovable autosubmit URL.
+Output: Lovable.dev autosubmit URL.
 
 ## `lovable_open_build_url`
 
-Input: prepared Lovable prompt.
+Input: prepared Lovable.dev prompt.
 
 Side effect: none inside the plugin. It returns the URL and instructions for OpenClaw's trusted browser tool to open it.
 
@@ -102,11 +102,11 @@ This tool is optional because it has an external side effect.
 
 Input: project URL, repo URL, branch, and requested outcome.
 
-Output: checklist for moving from Lovable generation to GitHub source-of-truth engineering.
+Output: checklist for moving from Lovable.dev generation to GitHub source-of-truth engineering.
 
 ## `lovable_connect_github_repo`
 
-Input: Lovable project URL, GitHub repo URL, desired outcome, optional local repo path, optional trusted Git/package evidence, and optional preferred branch name.
+Input: Lovable.dev project URL, GitHub repo URL, desired outcome, optional local repo path, optional trusted Git/package evidence, and optional preferred branch name.
 
 Output: JSON plan with:
 
@@ -117,7 +117,7 @@ Output: JSON plan with:
 - Connection steps for OpenClaw's trusted GitHub/Git tools.
 - Evidence OpenClaw should collect.
 - Immediate verification checks.
-- Safe Lovable use.
+- Safe Lovable.dev use.
 - OpenClaw engineering use.
 - Approval gates.
 - Next prompt for the user.
@@ -127,7 +127,7 @@ This tool does not authenticate to GitHub, clone repositories, run Git, read fil
 
 ## `lovable_project_readiness`
 
-Input: booleans describing whether the workflow has Lovable project URL, GitHub repo URL, local repo, clean Git state, safe branch, verification, visible-result proof, PR summary, and intended next step.
+Input: booleans describing whether the workflow has Lovable.dev project URL, GitHub repo URL, local repo, clean Git state, safe branch, verification, visible-result proof, PR summary, and intended next step.
 
 Output: JSON readiness report with:
 
@@ -139,11 +139,11 @@ Output: JSON readiness report with:
 - Required evidence list.
 - Safe idea-to-PR workflow.
 
-Use it as a gate before another Lovable UI pass, OpenClaw engineering pass, PR, or deploy.
+Use it as a gate before another Lovable.dev UI pass, OpenClaw engineering pass, PR, or deploy.
 
 ## `lovable_project_context`
 
-Input: project name, product goal, optional Lovable URL, GitHub repo URL, local repo path, branch prefix, package manager, framework stack, verification commands, deployment target, last Lovable prompt, last visible result status, repo doctor summary, PR summary, known risks, blockers, do-not-touch rules, and next goal.
+Input: project name, product goal, optional Lovable.dev URL, GitHub repo URL, local repo path, branch prefix, package manager, framework stack, verification commands, deployment target, last Lovable.dev prompt, last visible result status, repo doctor summary, PR summary, known risks, blockers, do-not-touch rules, and next goal.
 
 Output: JSON project context with:
 
@@ -154,14 +154,14 @@ Output: JSON project context with:
 - Known risks.
 - Do-not-touch rules.
 - Recommended next action.
-- Reusable brief for future OpenClaw/Lovable sessions.
+- Reusable brief for future OpenClaw/Lovable.dev sessions.
 - Suggested tool order.
 
-This tool does not read files, call GitHub, call Lovable, persist data, or send anything over the network. It packages caller-supplied evidence into a clean memory brief.
+This tool does not read files, call GitHub, call Lovable.dev, persist data, or send anything over the network. It packages caller-supplied evidence into a clean memory brief.
 
 ## `lovable_project_memory`
 
-Input: current goal, Lovable URL, GitHub repo URL, local repo path, deployed URL, source-of-truth choice, stack, routes/screens, known bugs, refactor decisions, do-not-change rules, pending Lovable prompts, GitHub tasks, visual QA notes, changes since last session, and release readiness.
+Input: current goal, Lovable.dev URL, GitHub repo URL, local repo path, deployed URL, source-of-truth choice, stack, routes/screens, known bugs, refactor decisions, do-not-change rules, pending Lovable.dev prompts, GitHub tasks, visual QA notes, changes since last session, and release readiness.
 
 Output: durable project memory with:
 
@@ -171,14 +171,14 @@ Output: durable project memory with:
 - Known bugs.
 - Refactor decisions.
 - Do-not-change rules.
-- Pending Lovable prompts.
+- Pending Lovable.dev prompts.
 - GitHub tasks.
 - Visual QA notes.
 - Release readiness.
 - Reusable summary.
 - Suggested next memory updates.
 
-Use it after major events: Lovable prompts, GitHub commits, visible checks, PR updates, release decisions, and user-approved direction changes.
+Use it after major events: Lovable.dev prompts, GitHub commits, visible checks, PR updates, release decisions, and user-approved direction changes.
 
 ## `lovable_decision_log`
 
@@ -202,29 +202,29 @@ Output: session-opening brief with:
 - Recommended tool order.
 - User check-in.
 
-Use it at the beginning of repeat sessions or before major work on a messy Lovable/GitHub project.
+Use it at the beginning of repeat sessions or before major work on a messy Lovable.dev/GitHub project.
 
 ## `lovable_next_action_plan`
 
-Input: project memory, requested change, and optional evidence about GitHub repo, local repo, visible issues, failing builds, pending Lovable prompts, and PR readiness.
+Input: project memory, requested change, and optional evidence about GitHub repo, local repo, visible issues, failing builds, pending Lovable.dev prompts, and PR readiness.
 
 Output: next action plan choosing one of:
 
 - Ask the user.
-- Prompt Lovable.
+- Prompt Lovable.dev.
 - Inspect GitHub.
 - Edit code.
 - Verify visible result.
 - Prepare PR.
 - Ship.
 
-Also returns reason, immediate steps, what belongs in Lovable, what belongs in OpenClaw, required evidence, and stop conditions.
+Also returns reason, immediate steps, what belongs in Lovable.dev, what belongs in OpenClaw, required evidence, and stop conditions.
 
 ## `lovable_iteration_brief`
 
 Input: current state, problems, what to preserve, what to change, and what to avoid.
 
-Output: focused Lovable follow-up prompt for visual/product iteration.
+Output: focused Lovable.dev follow-up prompt for visual/product iteration.
 
 ## `lovable_repo_doctor`
 
@@ -237,7 +237,7 @@ Output: JSON report with:
 - Origin remote.
 - Dirty files when supplied by OpenClaw's trusted Git/shell tools.
 - Recent commits.
-- Lovable-generated commit signals.
+- Lovable.dev-generated commit signals.
 - Framework/package manager signals.
 - Available package scripts.
 - Recommended verification commands.
@@ -255,15 +255,15 @@ Output: JSON rescue plan with:
 - Likely failure modes.
 - First checks.
 - What to fix directly in code.
-- What to use Lovable for.
-- What to avoid using Lovable for.
+- What to use Lovable.dev for.
+- What to avoid using Lovable.dev for.
 - Recommended rescue workflow.
 - Required delivery evidence.
 - Suggested PR sections.
 - Repo doctor output when a repo path is provided.
 - Visible-result check output.
 
-Use it for existing Lovable apps that are broken, invisible, messy, hard to extend, or not production-ready.
+Use it for existing Lovable.dev apps that are broken, invisible, messy, hard to extend, or not production-ready.
 
 ## `lovable_sync_risk_report`
 
@@ -274,7 +274,7 @@ Output: JSON risk report with:
 - Risk level.
 - Findings.
 - Recommended branch.
-- Whether it is safe to prompt Lovable again.
+- Whether it is safe to prompt Lovable.dev again.
 - Required approvals.
 - Next steps.
 
@@ -282,11 +282,11 @@ Output: JSON risk report with:
 
 Input: product goal, requested change, optional repo path, optional preview URL.
 
-Output: end-to-end workflow deciding whether the next action should be Lovable UI prompting or OpenClaw/GitHub engineering.
+Output: end-to-end workflow deciding whether the next action should be Lovable.dev UI prompting or OpenClaw/GitHub engineering.
 
 ## `lovable_pr_summary`
 
-Input: PR title, Lovable changes, OpenClaw changes, verification, screenshots, and risks.
+Input: PR title, Lovable.dev changes, OpenClaw changes, verification, screenshots, and risks.
 
 Output: markdown PR body that separates generated UI/product work from engineered changes.
 
@@ -302,7 +302,7 @@ Output: JSON plan for adding "OpenClaw Inside" to the app:
 - Backend endpoints.
 - Permission model.
 - Safety controls.
-- Lovable prompt addendum for UI only.
+- Lovable.dev prompt addendum for UI only.
 - OpenClaw engineering tasks for backend/security/test work.
 - Risks.
 
@@ -319,7 +319,7 @@ Output: JSON verification report with:
 - Likely causes when not visible.
 - Next steps.
 
-Use this whenever Lovable claims success or when the user says the change is not visible.
+Use this whenever Lovable.dev claims success or when the user says the change is not visible.
 
 ## `lovable_model_strategy`
 
@@ -328,7 +328,7 @@ Input: user preference, task type, available model/profile names, and cost sensi
 Output: model-choice guidance for OpenClaw roles:
 
 - Product planner.
-- Lovable prompter.
+- Lovable.dev prompter.
 - Code implementer.
 - Reviewer.
 - Fast iteration.
@@ -364,4 +364,4 @@ Output: mood and self-healing object with:
 - De-escalation moves.
 - Execution rules.
 
-Use it when the user is frustrated or when OpenClaw/Lovable likely missed the requested outcome.
+Use it when the user is frustrated or when OpenClaw/Lovable.dev likely missed the requested outcome.

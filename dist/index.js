@@ -1178,7 +1178,7 @@ function makeStarterGuide(params) {
     const level = params.userLevel ?? "beginner";
     const goal = params.goal ?? "build a useful app with Lovable and OpenClaw";
     return {
-        headline: "ClawKit for Lovable turns Lovable into one tool inside a guided app-building framework.",
+        headline: "ClawKit Studio for Lovable turns Lovable into one tool inside a guided app-building framework.",
         whatThisDoes: [
             "Helps you decide what Lovable should do and what OpenClaw should do.",
             "Creates better Lovable prompts from rough ideas.",
@@ -1397,7 +1397,7 @@ async function makeRescuePlan(params) {
 }
 export default definePluginEntry({
     id: "clawkit-for-lovable",
-    name: "ClawKit for Lovable",
+    name: "ClawKit Studio for Lovable",
     description: "Plans Lovable.dev work with credit-smart prompts and routes precise engineering through OpenClaw, GitHub, tests, and code tools.",
     register(api) {
         api.registerTool({

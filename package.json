@@ -1,7 +1,7 @@
 {
   "name": "@clawkit/clawkit-for-lovable",
-  "version": "0.1.7",
-  "description": "Plan and rescue Lovable.dev apps with credit-smart prompts, visible verification, GitHub handoff, and OpenClaw refactoring to reduce wasted credits.",
+  "version": "0.1.8",
+  "description": "ClawKit Studio for Lovable plans and rescues Lovable.dev apps with credit-smart prompts, visible verification, GitHub handoff, and OpenClaw refactoring.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

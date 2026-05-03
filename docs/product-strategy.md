@@ -2,7 +2,7 @@
 
 ## Category
 
-ClawKit for Lovable is the OpenClaw control layer for serious Lovable.dev users. It lets Lovable.dev be great at UI generation without forcing Lovable.dev to own every engineering task, every fix, every GitHub workflow, or every production-readiness decision.
+ClawKit Studio for Lovable is the OpenClaw control layer for serious Lovable.dev users. It lets Lovable.dev be great at UI generation without forcing Lovable.dev to own every engineering task, every fix, every GitHub workflow, or every production-readiness decision.
 
 ClawKit is an early public release and should be positioned honestly. The product is useful today, but the fastest route to quality is constructive feedback from real rescue, hardening, and shipping workflows.
 
@@ -14,7 +14,7 @@ The first winning use case is:
 
 An equally strong, and likely more immediately painful, use case is:
 
-> Rescue my existing Lovable app.
+> Rescue my existing Lovable.dev app.
 
 This is stronger than "control Lovable.dev from OpenClaw" because it speaks to real Lovable.dev pain: repeated prompts, invisible results, blank screens, brittle code, weak architecture, GitHub confusion, and no clear path from exciting prototype to maintainable app. The durable output is a repo, branch, verification notes, visible-result proof, project memory, and a pull request.
 
@@ -42,7 +42,7 @@ ClawKit should expose seven simple modes:
 - **Rescue**: fix an existing Lovable.dev app that is broken, invisible, messy, or hard to extend.
 - **Harden**: refactor and prepare generated code for production review.
 - **Ship**: turn Lovable.dev output into a verified GitHub PR.
-- **Remember**: keep project memory, decision logs, session briefs, and next-action plans across Lovable, GitHub, checks, risks, and next actions.
+- **Remember**: keep project memory, decision logs, session briefs, and next-action plans across Lovable.dev, GitHub, checks, risks, and next actions.
 - **Inside**: add safe OpenClaw-powered assistant features to the app.
 
 Rescue is probably the highest-conversion mode because the user already has pain and a project to save.
@@ -53,18 +53,18 @@ Plan is the best first-use mode because it protects users before the pain starts
 
 ## Ideal Customer
 
-- Founders who prototype in Lovable but need production-quality code afterward.
+- Founders who prototype in Lovable.dev but need production-quality code afterward.
 - Agencies that build many client apps and want repeatable delivery.
 - Builders operating OpenClaw from chat/phone who want remote product creation.
 - Teams that like Lovable.dev's UI velocity but need GitHub review, CI, tests, and auditability.
 - Lovable.dev users frustrated by credits spent on fixes that should have been code changes.
-- Non-developers who need OpenClaw to tell them when Lovable is no longer the right tool for the next step.
+- Non-developers who need OpenClaw to tell them when Lovable.dev is no longer the right tool for the next step.
 
 ## Differentiation
 
-Most automations either prompt Lovable or edit code. This plugin does both, with a routing policy:
+Most automations either prompt Lovable.dev or edit code. This plugin does both, with a routing policy:
 
-- Lovable handles taste, layout, page scaffolds, and quick product iteration.
+- Lovable.dev handles taste, layout, page scaffolds, and quick product iteration.
 - OpenClaw handles exact implementation, repo control, tests, CI, browser verification, refactoring, maintainability, security, and delivery.
 - GitHub remains the source of truth.
 - Project Memory preserves what was decided so the project does not drift after each prompt.
@@ -79,7 +79,7 @@ The MVP is successful when a user can:
 4. Export/sync to GitHub.
 5. Have OpenClaw continue with code, verification, and a PR.
 
-The next improvement is now a first-class Project Memory layer: ClawKit should carry a reusable brief with the project goal, Lovable URL, GitHub repo, local path, stack, verification commands, deployment target, risks, blockers, do-not-touch rules, and next action. It should also keep a decision log, summarize what changed since last time, and choose the next safest action. This keeps OpenClaw oriented across multi-session Lovable/GitHub work without the plugin reading files or calling external APIs itself.
+The next improvement is now a first-class Project Memory layer: ClawKit should carry a reusable brief with the project goal, Lovable.dev URL, GitHub repo, local path, stack, verification commands, deployment target, risks, blockers, do-not-touch rules, and next action. It should also keep a decision log, summarize what changed since last time, and choose the next safest action. This keeps OpenClaw oriented across multi-session Lovable.dev/GitHub work without the plugin reading files or calling external APIs itself.
 
 ## Feedback Loop
 
@@ -88,7 +88,7 @@ Early users should be invited to share:
 - Failed rescue cases.
 - Confusing workflow steps.
 - Missing visible-result checks.
-- Incorrect Lovable-vs-code routing decisions.
+- Incorrect Lovable.dev-vs-code routing decisions.
 - Better PR/client-reporting needs.
 
 These should become the core product learning loop.
@@ -97,24 +97,24 @@ These should become the core product learning loop.
 
 The next product layer is Sync Doctor:
 
-> The safety layer between Lovable speed and production code.
+> The safety layer between Lovable.dev speed and production code.
 
-This solves the pain serious users feel when Lovable UI iteration, GitHub sync, local code edits, and PR review start to overlap.
+This solves the pain serious users feel when Lovable.dev UI iteration, GitHub sync, local code edits, and PR review start to overlap.
 
 Sync Doctor should become the habit:
 
-1. Lovable creates or updates UI.
+1. Lovable.dev creates or updates UI.
 2. User syncs/exports to GitHub.
 3. OpenClaw runs `lovable_connect_github_repo`.
 4. OpenClaw runs or refreshes `lovable_project_context`.
 5. OpenClaw runs `lovable_project_readiness`.
 6. OpenClaw runs `lovable_repo_doctor`.
-7. OpenClaw reports whether the repo is safe for another Lovable pass or should move into code hardening.
+7. OpenClaw reports whether the repo is safe for another Lovable.dev pass or should move into code hardening.
 8. OpenClaw opens a PR with clear generated-vs-engineered notes.
 
 ## Product Expansion: Project Memory
 
-Project Memory is the practical bridge between a fun demo and a repeatable delivery framework. Users should not need to restate the same Lovable URL, GitHub repo, local branch habit, package manager, verification commands, deployment target, and risk rules every session.
+Project Memory is the practical bridge between a fun demo and a repeatable delivery framework. Users should not need to restate the same Lovable.dev URL, GitHub repo, local branch habit, package manager, verification commands, deployment target, and risk rules every session.
 
 The memory brief should stay transparent and editable. It should never pretend to be a database or hidden state store; it is a structured summary that OpenClaw can refresh whenever the project changes.
 
@@ -154,9 +154,9 @@ This should not mean exposing OpenClaw directly in the browser. The winning vers
 
 > OpenClaw Inside: secure, scoped assistant features mediated by the app backend.
 
-Lovable creates the assistant UI and approval surfaces. OpenClaw implements the backend adapter, permissions, audit log, tests, and safety policy in GitHub.
+Lovable.dev creates the assistant UI and approval surfaces. OpenClaw implements the backend adapter, permissions, audit log, tests, and safety policy in GitHub.
 
-This turns the plugin from a builder tool into an app capability generator: every Lovable app can optionally ship with a safe AI operator built in.
+This turns the plugin from a builder tool into an app capability generator: every Lovable.dev app can optionally ship with a safe AI operator built in.
 
 ## Usability Layer: Guided Framework
 
@@ -166,7 +166,7 @@ The product should feel less like a plugin and more like a friendly framework:
 
 The key feature is not another command. It is the starter experience:
 
-- Explain what Lovable is good for.
+- Explain what Lovable.dev is good for.
 - Explain what OpenClaw is good for.
 - Show copyable example requests.
 - Let the user choose model/profile, browser opening, GitHub handoff, and OpenClaw Inside.
@@ -174,7 +174,7 @@ The key feature is not another command. It is the starter experience:
 
 ## Verification Layer
 
-ClawKit should become known for not trusting fake completion. Every Lovable result should pass:
+ClawKit should become known for not trusting fake completion. Every Lovable.dev result should pass:
 
 1. GitHub sync check.
 2. Build/typecheck/test check.
@@ -196,29 +196,33 @@ This is not decorative. It creates trust by making the agent admit uncertainty, 
 
 ## UX Principle
 
-The user should not need to say "use Lovable" or "use GitHub" every time. OpenClaw should choose:
+The user should not need to say "use Lovable.dev" or "use GitHub" every time. OpenClaw should choose:
 
-- If the change is visual, product-facing, or fuzzy: Lovable.
+- If the change is visual, product-facing, or fuzzy: Lovable.dev.
 - If the change is exact, risky, testable, or structural: GitHub/code tools.
 
 ## Naming
 
-Product name: **ClawKit for Lovable**
+Product name: **ClawKit Studio for Lovable**
 
 Package name: `@clawkit/clawkit-for-lovable`
 
 Technical plugin id: `clawkit-for-lovable`
+
+Marketplace display name: **ClawKit Studio for Lovable**
+
+The display name should stay Studio-branded for visibility. It includes the terms users are likely to search for: ClawKit, Studio, Lovable, and Lovable.dev. Do not rename the package id casually; the package id is the stable install surface.
 
 ## Pricing Possibilities
 
 - Free: prompt builder and Build-with-URL launch.
 - Pro: GitHub handoff memory, screenshots, session tracking, PR summaries.
 - Team: shared project workspaces, approval policies, Slack/Discord review.
-- Enterprise: audit trails, SSO, private Lovable/GitHub policy controls.
+- Enterprise: audit trails, SSO, private Lovable.dev/GitHub policy controls.
 
 ## Next Technical Milestones
 
-1. Browser automation adapter for logged-in Lovable sessions.
+1. Browser automation adapter for logged-in Lovable.dev sessions.
 2. Screenshot capture and UI regression notes.
 3. Persistable project memory handoff files when the user approves writing into the repo.
 4. GitHub repo creation/export helpers.

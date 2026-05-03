@@ -1,8 +1,8 @@
 {
   "id": "clawkit-for-lovable",
-  "name": "ClawKit for Lovable",
-  "description": "Plans and rescues Lovable.dev projects with credit-smart prompts, visible verification, GitHub handoff, OpenClaw refactoring, tests, and maintainable architecture.",
-  "version": "0.1.7",
+  "name": "ClawKit Studio for Lovable",
+  "description": "ClawKit Studio for Lovable plans and rescues Lovable.dev projects with credit-smart prompts, visible verification, GitHub handoff, OpenClaw refactoring, tests, and maintainable architecture.",
+  "version": "0.1.8",
   "skills": [
     "skills/clawkit-for-lovable"
   ],
@@ -43,7 +43,7 @@
       "help": "Optional owner or organization OpenClaw should prefer when creating repositories."
     },
     "requireApprovalForLaunch": {
-      "label": "Require approval before launching Lovable",
+      "label": "Require approval before launching Lovable.dev",
       "help": "Recommended for shared or production machines."
     }
   },
