@@ -96,6 +96,69 @@ type ProjectContext = {
   suggestedToolOrder: string[];
 };
 
+type ProjectMemory = {
+  projectName: string;
+  currentGoal: string;
+  sourceOfTruth: {
+    primary: "lovable" | "github" | "local-repo" | "deployed-app" | "unknown";
+    lovableProjectUrl: string | null;
+    githubRepoUrl: string | null;
+    localRepoPath: string | null;
+    deployedUrl: string | null;
+    notes: string[];
+  };
+  stack: string[];
+  importantRoutes: string[];
+  knownBugs: string[];
+  refactorDecisions: string[];
+  doNotChange: string[];
+  pendingLovablePrompts: string[];
+  githubTasks: string[];
+  visualQaNotes: string[];
+  releaseReadiness: "blocked" | "needs-work" | "ready-for-verification" | "ready-to-ship";
+  changedSinceLastSession: string[];
+  nextMemoryUpdate: string[];
+  reusableSummary: string;
+};
+
+type DecisionLog = {
+  projectName: string;
+  generatedAt: string;
+  entries: Array<{
+    date: string;
+    decision: string;
+    reason: string;
+    owner: "user" | "openclaw" | "lovable" | "github" | "shared";
+    status: "proposed" | "accepted" | "superseded" | "revisit";
+    followUp: string[];
+  }>;
+  openQuestions: string[];
+  doNotForget: string[];
+  markdown: string;
+};
+
+type SessionBrief = {
+  projectName: string;
+  openingSummary: string;
+  whatChangedSinceLastTime: string[];
+  currentTruth: string[];
+  doNotTouch: string[];
+  risks: string[];
+  recommendedToolOrder: string[];
+  userCheckIn: string;
+};
+
+type NextActionPlan = {
+  projectName: string;
+  recommendedAction: "ask-user" | "prompt-lovable" | "inspect-github" | "edit-code" | "verify-visible-result" | "prepare-pr" | "ship";
+  reason: string;
+  immediateSteps: string[];
+  useLovableFor: string[];
+  useOpenClawFor: string[];
+  requiredEvidence: string[];
+  stopConditions: string[];
+};
+
 type OpenClawIntegrationPlan = {
   appName: string;
   recommendation: "integrate" | "defer" | "do-not-integrate";
@@ -617,6 +680,296 @@ function makeProjectContext(params: {
       "lovable_sync_risk_report",
       "lovable_visible_result_check",
       "lovable_pr_summary",
+    ],
+  };
+}
+
+function makeProjectMemory(params: {
+  projectName?: string;
+  currentGoal: string;
+  lovableProjectUrl?: string;
+  githubRepoUrl?: string;
+  localRepoPath?: string;
+  deployedUrl?: string;
+  primarySourceOfTruth?: "lovable" | "github" | "local-repo" | "deployed-app" | "unknown";
+  stack?: string[];
+  importantRoutes?: string[];
+  knownBugs?: string[];
+  refactorDecisions?: string[];
+  doNotChange?: string[];
+  pendingLovablePrompts?: string[];
+  githubTasks?: string[];
+  visualQaNotes?: string[];
+  changedSinceLastSession?: string[];
+  releaseReadiness?: "blocked" | "needs-work" | "ready-for-verification" | "ready-to-ship";
+}): ProjectMemory {
+  const projectName = params.projectName ?? "Lovable project";
+  const primary =
+    params.primarySourceOfTruth ??
+    (params.githubRepoUrl ? "github" : params.lovableProjectUrl ? "lovable" : params.localRepoPath ? "local-repo" : "unknown");
+  const knownBugs = asList(params.knownBugs, []);
+  const doNotChange = asList(params.doNotChange, [
+    "Do not overwrite working Git changes, production data, secrets, billing settings, or user-approved UI decisions without explicit approval.",
+  ]);
+  const pendingLovablePrompts = asList(params.pendingLovablePrompts, []);
+  const githubTasks = asList(params.githubTasks, []);
+  const visualQaNotes = asList(params.visualQaNotes, []);
+  const releaseReadiness =
+    params.releaseReadiness ??
+    (knownBugs.length > 0 ? "needs-work" : githubTasks.length > 0 || visualQaNotes.length > 0 ? "ready-for-verification" : "blocked");
+
+  const reusableSummary = [
+    `Project: ${projectName}`,
+    `Current goal: ${params.currentGoal}`,
+    `Primary source of truth: ${primary}`,
+    `Lovable URL: ${params.lovableProjectUrl ?? "not recorded"}`,
+    `GitHub repo: ${params.githubRepoUrl ?? "not recorded"}`,
+    `Local repo: ${params.localRepoPath ?? "not recorded"}`,
+    `Deployed URL: ${params.deployedUrl ?? "not recorded"}`,
+    `Stack: ${asList(params.stack, ["not recorded"]).join(", ")}`,
+    `Important routes/screens: ${asList(params.importantRoutes, ["not recorded"]).join("; ")}`,
+    `Known bugs: ${knownBugs.length ? knownBugs.join("; ") : "none recorded"}`,
+    `Refactor decisions: ${asList(params.refactorDecisions, ["none recorded"]).join("; ")}`,
+    `Do not change: ${doNotChange.join("; ")}`,
+    `Pending Lovable prompts: ${pendingLovablePrompts.length ? pendingLovablePrompts.join("; ") : "none recorded"}`,
+    `GitHub tasks: ${githubTasks.length ? githubTasks.join("; ") : "none recorded"}`,
+    `Visual QA notes: ${visualQaNotes.length ? visualQaNotes.join("; ") : "none recorded"}`,
+    `Release readiness: ${releaseReadiness}`,
+  ].join("\n");
+
+  return {
+    projectName,
+    currentGoal: params.currentGoal,
+    sourceOfTruth: {
+      primary,
+      lovableProjectUrl: params.lovableProjectUrl ?? null,
+      githubRepoUrl: params.githubRepoUrl ?? null,
+      localRepoPath: params.localRepoPath ?? null,
+      deployedUrl: params.deployedUrl ?? null,
+      notes: [
+        primary === "github"
+          ? "Treat GitHub as canonical. Lovable should be used for focused UI/product prompts, then synced and verified."
+          : "Confirm the canonical source before major edits.",
+        "Record any source-of-truth change in `lovable_decision_log`.",
+      ],
+    },
+    stack: asList(params.stack, ["Unknown until OpenClaw inspects package evidence."]),
+    importantRoutes: asList(params.importantRoutes, []),
+    knownBugs,
+    refactorDecisions: asList(params.refactorDecisions, []),
+    doNotChange,
+    pendingLovablePrompts,
+    githubTasks,
+    visualQaNotes,
+    releaseReadiness,
+    changedSinceLastSession: asList(params.changedSinceLastSession, []),
+    nextMemoryUpdate: [
+      "Update memory after every Lovable prompt, GitHub commit/PR, visible-result check, and release decision.",
+      "Add new do-not-change rules immediately when the user approves or rejects a direction.",
+      "Record why a tool was chosen when switching between Lovable, GitHub, local code, or deployed-app verification.",
+    ],
+    reusableSummary,
+  };
+}
+
+function makeDecisionLog(params: {
+  projectName?: string;
+  generatedAt?: string;
+  decisions?: Array<{
+    date?: string;
+    decision: string;
+    reason?: string;
+    owner?: "user" | "openclaw" | "lovable" | "github" | "shared";
+    status?: "proposed" | "accepted" | "superseded" | "revisit";
+    followUp?: string[];
+  }>;
+  newDecision?: string;
+  newReason?: string;
+  openQuestions?: string[];
+  doNotForget?: string[];
+}): DecisionLog {
+  const projectName = params.projectName ?? "Lovable project";
+  const generatedAt = params.generatedAt ?? "not dated";
+  const entries = [
+    ...(params.decisions ?? []),
+    ...(params.newDecision
+      ? [{
+          decision: params.newDecision,
+          reason: params.newReason,
+          owner: "shared" as const,
+          status: "accepted" as const,
+          followUp: [] as string[],
+        }]
+      : []),
+  ].map((entry) => ({
+    date: entry.date ?? generatedAt,
+    decision: entry.decision,
+    reason: entry.reason ?? "Reason not recorded.",
+    owner: entry.owner ?? "shared" as const,
+    status: entry.status ?? "accepted" as const,
+    followUp: asList(entry.followUp, []),
+  }));
+  const openQuestions = asList(params.openQuestions, []);
+  const doNotForget = asList(params.doNotForget, [
+    "Keep GitHub as source of truth once connected.",
+    "Verify visible results before accepting Lovable completion claims.",
+    "Do not overwrite user or prior OpenClaw changes without approval.",
+  ]);
+
+  return {
+    projectName,
+    generatedAt,
+    entries,
+    openQuestions,
+    doNotForget,
+    markdown: [
+      `# ${projectName} Decision Log`,
+      "",
+      `Generated: ${generatedAt}`,
+      "",
+      "## Decisions",
+      ...(entries.length > 0
+        ? entries.map((entry) =>
+            `- ${entry.date} [${entry.status}] ${entry.decision} Owner: ${entry.owner}. Reason: ${entry.reason}${entry.followUp.length ? ` Follow-up: ${entry.followUp.join("; ")}` : ""}`,
+          )
+        : ["- No decisions recorded yet."]),
+      "",
+      "## Open Questions",
+      ...(openQuestions.length ? openQuestions.map((item) => `- ${item}`) : ["- None recorded."]),
+      "",
+      "## Do Not Forget",
+      ...doNotForget.map((item) => `- ${item}`),
+    ].join("\n"),
+  };
+}
+
+function makeSessionBrief(params: {
+  projectName?: string;
+  memory?: ProjectMemory;
+  decisionLog?: DecisionLog;
+  latestUserGoal?: string;
+  latestRepoState?: string;
+  latestVisualState?: string;
+  currentBlockers?: string[];
+  risks?: string[];
+}): SessionBrief {
+  const projectName = params.projectName ?? params.memory?.projectName ?? "Lovable project";
+  const memory = params.memory;
+  const blockers = asList(params.currentBlockers, memory?.knownBugs ?? []);
+  const risks = asList(params.risks, [
+    ...(memory?.knownBugs ?? []),
+    ...(memory?.visualQaNotes ?? []),
+  ]);
+  return {
+    projectName,
+    openingSummary: [
+      `Project: ${projectName}`,
+      `Goal: ${params.latestUserGoal ?? memory?.currentGoal ?? "not recorded"}`,
+      `Source of truth: ${memory?.sourceOfTruth.primary ?? "unknown"}`,
+      `Repo state: ${params.latestRepoState ?? "not supplied"}`,
+      `Visual state: ${params.latestVisualState ?? "not supplied"}`,
+      `Release readiness: ${memory?.releaseReadiness ?? "unknown"}`,
+    ].join("\n"),
+    whatChangedSinceLastTime: asList(memory?.changedSinceLastSession, []),
+    currentTruth: [
+      ...(memory ? [memory.reusableSummary] : ["No project memory supplied yet. Run `lovable_project_memory`."]),
+      ...(params.decisionLog?.entries.length
+        ? [`Latest decision: ${params.decisionLog.entries[params.decisionLog.entries.length - 1]?.decision}`]
+        : []),
+    ],
+    doNotTouch: asList(memory?.doNotChange, [
+      "Ask before changing protected areas, source-of-truth assumptions, or previously approved UX decisions.",
+    ]),
+    risks,
+    recommendedToolOrder: [
+      "lovable_session_brief",
+      "lovable_next_action_plan",
+      "lovable_sync_risk_report",
+      "lovable_visible_result_check",
+      "lovable_decision_log",
+      "lovable_project_memory",
+    ],
+    userCheckIn:
+      blockers.length > 0
+        ? "Before continuing, confirm which blocker should be handled first."
+        : "Confirm the next goal and whether Lovable, GitHub, local code, or deployed-app verification should lead.",
+  };
+}
+
+function makeNextActionPlan(params: {
+  projectName?: string;
+  memory?: ProjectMemory;
+  requestedChange: string;
+  hasGitHubRepo?: boolean;
+  hasLocalRepo?: boolean;
+  hasVisibleIssue?: boolean;
+  hasFailingBuild?: boolean;
+  hasPendingLovablePrompt?: boolean;
+  readyForPr?: boolean;
+}): NextActionPlan {
+  const projectName = params.projectName ?? params.memory?.projectName ?? "Lovable project";
+  const hasRepo = params.hasGitHubRepo ?? Boolean(params.memory?.sourceOfTruth.githubRepoUrl);
+  const hasLocalRepo = params.hasLocalRepo ?? Boolean(params.memory?.sourceOfTruth.localRepoPath);
+  const blockers = params.memory?.knownBugs ?? [];
+  const recommendedAction: NextActionPlan["recommendedAction"] =
+    !hasRepo
+      ? "ask-user"
+      : params.hasFailingBuild
+        ? "edit-code"
+        : params.hasVisibleIssue
+          ? "verify-visible-result"
+          : params.readyForPr
+            ? "prepare-pr"
+            : params.hasPendingLovablePrompt || params.requestedChange.toLowerCase().includes("ui")
+              ? "prompt-lovable"
+              : hasLocalRepo
+                ? "edit-code"
+                : "inspect-github";
+
+  return {
+    projectName,
+    recommendedAction,
+    reason:
+      recommendedAction === "ask-user"
+        ? "The project needs a confirmed GitHub/source-of-truth connection before exact engineering work."
+        : recommendedAction === "prompt-lovable"
+          ? "The change appears product/UI oriented and can be expressed as a focused Lovable prompt, then verified in GitHub."
+          : recommendedAction === "verify-visible-result"
+            ? "There is a visible-result concern, so OpenClaw should confirm the actual screen before accepting completion."
+            : recommendedAction === "prepare-pr"
+              ? "The work appears ready to package with evidence, risks, screenshots, and generated-vs-coded notes."
+              : "OpenClaw should use GitHub/local code tools because the request needs exact implementation or verification.",
+    immediateSteps: [
+      "Restate the current project memory and source of truth.",
+      "Confirm do-not-change rules before touching code or prompting Lovable.",
+      ...(recommendedAction === "prompt-lovable"
+        ? ["Create a narrow Lovable prompt with acceptance criteria.", "Sync or inspect generated changes in GitHub.", "Run visible-result verification."]
+        : recommendedAction === "edit-code"
+          ? ["Inspect repo evidence.", "Create or confirm a safe branch.", "Run build/typecheck/tests after changes."]
+          : recommendedAction === "prepare-pr"
+            ? ["Draft PR summary.", "Attach verification and screenshot notes.", "List remaining risks."]
+            : ["Collect missing source-of-truth evidence."]),
+      "Update `lovable_decision_log` and `lovable_project_memory` after the action.",
+    ],
+    useLovableFor: [
+      "UI layout, product flow, visual hierarchy, responsive polish, and screenshot-driven design fixes.",
+      "Narrow prompts that preserve approved behavior and do-not-change areas.",
+    ],
+    useOpenClawFor: [
+      "Repo inspection, code edits, refactors, tests, runtime fixes, GitHub PRs, source-of-truth checks, and visible verification.",
+      "Memory updates, decision logging, and deciding whether Lovable or code should lead next.",
+    ],
+    requiredEvidence: [
+      "Lovable project URL or GitHub repo URL.",
+      "Current branch and dirty-file state when code is involved.",
+      "Build/test/typecheck result when implementation changed.",
+      "Browser or screenshot evidence for user-visible changes.",
+      "Decision log entry for major product, source-of-truth, or do-not-change decisions.",
+    ],
+    stopConditions: [
+      "Stop before destructive Git operations or production changes without approval.",
+      "Stop before broad Lovable prompts when local or user changes may be overwritten.",
+      ...(blockers.length > 0 ? ["Stop if blockers are unrelated to the requested change and ask the user to prioritize."] : []),
     ],
   };
 }
@@ -1393,6 +1746,124 @@ export default definePluginEntry({
       }),
       async execute(_id, params: any) {
         return jsonText(makeProjectContext(params));
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_project_memory",
+      label: "Create Project Memory",
+      description:
+        "Create or refresh durable project memory with source of truth, stack, routes, bugs, decisions, do-not-change rules, pending Lovable prompts, GitHub tasks, visual QA notes, and release readiness.",
+      parameters: Type.Object({
+        projectName: Type.Optional(Type.String()),
+        currentGoal: Type.String({ description: "Current product or delivery goal." }),
+        lovableProjectUrl: Type.Optional(Type.String()),
+        githubRepoUrl: Type.Optional(Type.String()),
+        localRepoPath: Type.Optional(Type.String()),
+        deployedUrl: Type.Optional(Type.String()),
+        primarySourceOfTruth: Type.Optional(Type.Union([
+          Type.Literal("lovable"),
+          Type.Literal("github"),
+          Type.Literal("local-repo"),
+          Type.Literal("deployed-app"),
+          Type.Literal("unknown"),
+        ])),
+        stack: optionalStringArray("Known framework, package, backend, auth, database, deployment, or integration stack."),
+        importantRoutes: optionalStringArray("Important routes, screens, workflows, or app sections."),
+        knownBugs: optionalStringArray("Known bugs or visible failures."),
+        refactorDecisions: optionalStringArray("Maintainability or architecture decisions already made."),
+        doNotChange: optionalStringArray("User-approved areas, behavior, styling, or code that must not be changed without approval."),
+        pendingLovablePrompts: optionalStringArray("Lovable prompts prepared but not yet executed or verified."),
+        githubTasks: optionalStringArray("GitHub issues, PR tasks, branch work, CI fixes, or repo actions."),
+        visualQaNotes: optionalStringArray("Browser, screenshot, responsive, or visual QA notes."),
+        changedSinceLastSession: optionalStringArray("What changed since the last ClawKit session."),
+        releaseReadiness: Type.Optional(Type.Union([
+          Type.Literal("blocked"),
+          Type.Literal("needs-work"),
+          Type.Literal("ready-for-verification"),
+          Type.Literal("ready-to-ship"),
+        ])),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makeProjectMemory(params));
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_decision_log",
+      label: "Create Decision Log",
+      description:
+        "Create a dated decision log for product, source-of-truth, refactor, visual QA, and delivery decisions so future OpenClaw sessions know what was agreed.",
+      parameters: Type.Object({
+        projectName: Type.Optional(Type.String()),
+        generatedAt: Type.Optional(Type.String()),
+        decisions: Type.Optional(Type.Array(Type.Object({
+          date: Type.Optional(Type.String()),
+          decision: Type.String(),
+          reason: Type.Optional(Type.String()),
+          owner: Type.Optional(Type.Union([
+            Type.Literal("user"),
+            Type.Literal("openclaw"),
+            Type.Literal("lovable"),
+            Type.Literal("github"),
+            Type.Literal("shared"),
+          ])),
+          status: Type.Optional(Type.Union([
+            Type.Literal("proposed"),
+            Type.Literal("accepted"),
+            Type.Literal("superseded"),
+            Type.Literal("revisit"),
+          ])),
+          followUp: optionalStringArray("Follow-up work created by this decision."),
+        }))),
+        newDecision: Type.Optional(Type.String()),
+        newReason: Type.Optional(Type.String()),
+        openQuestions: optionalStringArray("Open questions still needing user or repo evidence."),
+        doNotForget: optionalStringArray("Important memory notes to preserve across sessions."),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makeDecisionLog(params));
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_session_brief",
+      label: "Create Session Brief",
+      description:
+        "Summarize what ClawKit knows at the start of a session: current goal, source of truth, changes since last time, do-not-touch rules, risks, and recommended tool order.",
+      parameters: Type.Object({
+        projectName: Type.Optional(Type.String()),
+        memory: Type.Optional(Type.Any()),
+        decisionLog: Type.Optional(Type.Any()),
+        latestUserGoal: Type.Optional(Type.String()),
+        latestRepoState: Type.Optional(Type.String()),
+        latestVisualState: Type.Optional(Type.String()),
+        currentBlockers: optionalStringArray("Current blockers or unresolved bugs."),
+        risks: optionalStringArray("Risks OpenClaw should keep in view for this session."),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makeSessionBrief(params));
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_next_action_plan",
+      label: "Plan Next Action",
+      description:
+        "Choose the safest next action from project memory: ask the user, prompt Lovable, inspect GitHub, edit code, verify the visible result, prepare a PR, or ship.",
+      parameters: Type.Object({
+        projectName: Type.Optional(Type.String()),
+        memory: Type.Optional(Type.Any()),
+        requestedChange: Type.String(),
+        hasGitHubRepo: Type.Optional(Type.Boolean()),
+        hasLocalRepo: Type.Optional(Type.Boolean()),
+        hasVisibleIssue: Type.Optional(Type.Boolean()),
+        hasFailingBuild: Type.Optional(Type.Boolean()),
+        hasPendingLovablePrompt: Type.Optional(Type.Boolean()),
+        readyForPr: Type.Optional(Type.Boolean()),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makeNextActionPlan(params));
       },
     });
 

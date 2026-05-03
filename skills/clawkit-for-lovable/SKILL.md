@@ -59,16 +59,19 @@ Require explicit user approval before:
 6. Call `lovable_build_url` and show or open the URL only when appropriate.
 7. After Lovable creates or updates the app, sync/export to GitHub.
 8. Call `lovable_connect_github_repo` once the repo URL is known so OpenClaw has a safe branch/check/PR plan.
-9. Call `lovable_project_context` to create or refresh a reusable memory brief for the app.
-10. Call `lovable_project_readiness` before major next steps such as another Lovable pass, engineering edits, PR, or deploy.
-11. Gather Git/package evidence with trusted tools, then call `lovable_repo_doctor` before code work.
-12. Call `lovable_sync_risk_report` before asking Lovable for another broad UI pass.
-13. For an existing broken or messy app, call `lovable_rescue_plan`.
-14. Use OpenClaw's GitHub/local coding tools to inspect the repo, run install/build/tests, and make precise changes.
-15. Call `lovable_visible_result_check` before accepting Lovable's completion claim.
-16. Run a hardening/refactor pass before considering the app production-ready.
-17. Use `lovable_iteration_brief` only when another Lovable UI pass is better than direct code edits.
-18. End with a PR, preview link, screenshots when available, verification notes, and remaining risks.
+9. Call `lovable_project_context` and `lovable_project_memory` to create or refresh reusable memory for the app.
+10. Call `lovable_session_brief` at the start of later sessions or before risky work.
+11. Call `lovable_next_action_plan` to choose the safest next move.
+12. Call `lovable_project_readiness` before major next steps such as another Lovable pass, engineering edits, PR, or deploy.
+13. Gather Git/package evidence with trusted tools, then call `lovable_repo_doctor` before code work.
+14. Call `lovable_sync_risk_report` before asking Lovable for another broad UI pass.
+15. For an existing broken or messy app, call `lovable_rescue_plan`.
+16. Use OpenClaw's GitHub/local coding tools to inspect the repo, run install/build/tests, and make precise changes.
+17. Call `lovable_visible_result_check` before accepting Lovable's completion claim.
+18. Record major decisions with `lovable_decision_log`.
+19. Run a hardening/refactor pass before considering the app production-ready.
+20. Use `lovable_iteration_brief` only when another Lovable UI pass is better than direct code edits.
+21. End with a PR, preview link, screenshots when available, verification notes, and remaining risks.
 
 ## Rescue Existing Apps
 
@@ -181,6 +184,20 @@ Use `lovable_pr_summary` before opening a pull request so the review clearly sep
 Call `lovable_project_context` once the project has a meaningful goal and especially after a Lovable URL, GitHub repo URL, or local repo path becomes known. Refresh it after major events: a Lovable prompt, repo doctor run, visible-result check, PR summary, deployment decision, or blocker discovery.
 
 Treat the returned reusable brief as orientation, not hidden authority. It should help OpenClaw remember the app goal, source of truth, stack, verification commands, known risks, do-not-touch rules, and recommended next action. If it conflicts with fresh repo evidence or the user's latest instruction, prefer the latest evidence and update the context.
+
+Use Project Memory v1 as the stronger continuity layer:
+
+- Call `lovable_project_memory` when the project has enough identity to preserve current goal, source of truth, stack, routes, bugs, refactor decisions, do-not-change rules, pending Lovable prompts, GitHub tasks, visual QA notes, and release readiness.
+- Call `lovable_decision_log` whenever the user makes or approves a product, source-of-truth, refactor, visual, or delivery decision.
+- Call `lovable_session_brief` before continuing a project from an earlier session. It should answer what is true now, what changed, what not to touch, and what risk matters.
+- Call `lovable_next_action_plan` before choosing between Lovable prompting, GitHub inspection, local code edits, visible-result verification, PR prep, or shipping.
+
+Before every big action, prefer this rhythm:
+
+1. Say what ClawKit knows.
+2. Say what changed since last time.
+3. Say what OpenClaw will not touch.
+4. Pick the next tool/action from evidence.
 
 ## Visible Result Verification
 

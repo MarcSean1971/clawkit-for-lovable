@@ -93,6 +93,67 @@ Output: JSON project context with:
 
 This tool does not read files, call GitHub, call Lovable, persist data, or send anything over the network. It packages caller-supplied evidence into a clean memory brief.
 
+## `lovable_project_memory`
+
+Input: current goal, Lovable URL, GitHub repo URL, local repo path, deployed URL, source-of-truth choice, stack, routes/screens, known bugs, refactor decisions, do-not-change rules, pending Lovable prompts, GitHub tasks, visual QA notes, changes since last session, and release readiness.
+
+Output: durable project memory with:
+
+- Current project goal.
+- Source-of-truth object.
+- Stack and important routes.
+- Known bugs.
+- Refactor decisions.
+- Do-not-change rules.
+- Pending Lovable prompts.
+- GitHub tasks.
+- Visual QA notes.
+- Release readiness.
+- Reusable summary.
+- Suggested next memory updates.
+
+Use it after major events: Lovable prompts, GitHub commits, visible checks, PR updates, release decisions, and user-approved direction changes.
+
+## `lovable_decision_log`
+
+Input: existing decisions, optional new decision, reason, generated date, open questions, and do-not-forget notes.
+
+Output: dated decision log with structured entries and markdown.
+
+Use it for product decisions, source-of-truth changes, refactor decisions, visual QA choices, user-approved constraints, and delivery decisions.
+
+## `lovable_session_brief`
+
+Input: project memory, optional decision log, latest user goal, latest repo state, latest visual state, blockers, and risks.
+
+Output: session-opening brief with:
+
+- Opening summary.
+- What changed since last time.
+- Current truth.
+- Do-not-touch rules.
+- Risks.
+- Recommended tool order.
+- User check-in.
+
+Use it at the beginning of repeat sessions or before major work on a messy Lovable/GitHub project.
+
+## `lovable_next_action_plan`
+
+Input: project memory, requested change, and optional evidence about GitHub repo, local repo, visible issues, failing builds, pending Lovable prompts, and PR readiness.
+
+Output: next action plan choosing one of:
+
+- Ask the user.
+- Prompt Lovable.
+- Inspect GitHub.
+- Edit code.
+- Verify visible result.
+- Prepare PR.
+- Ship.
+
+Also returns reason, immediate steps, what belongs in Lovable, what belongs in OpenClaw, required evidence, and stop conditions.
+
 ## `lovable_iteration_brief`
 
 Input: current state, problems, what to preserve, what to change, and what to avoid.

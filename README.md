@@ -47,6 +47,7 @@ OpenClaw can then:
 - Verify that Lovable's promised changes actually appear on screen.
 - Route exact engineering work to GitHub and local code tools.
 - Keep a reusable project memory brief with URLs, repo state, stack, risks, and do-not-touch rules.
+- Maintain a decision log and session brief so each new run starts from the latest agreed source of truth.
 - Produce a handoff checklist for PR-quality delivery.
 - Generate follow-up Lovable prompts from repo, test, or screenshot findings.
 
@@ -62,6 +63,10 @@ OpenClaw can then:
 | `lovable_connect_github_repo` | Plans the safe connection from Lovable project to GitHub repo, branch, checks, and PR workflow. |
 | `lovable_project_readiness` | Scores whether the project has enough evidence to continue safely. |
 | `lovable_project_context` | Creates a reusable project memory brief so OpenClaw can keep Lovable, GitHub, stack, verification, risk, and next-step context together. |
+| `lovable_project_memory` | Creates durable project memory with source of truth, routes, bugs, refactor decisions, do-not-change rules, GitHub tasks, and release readiness. |
+| `lovable_decision_log` | Records dated product, source-of-truth, refactor, visual QA, and delivery decisions. |
+| `lovable_session_brief` | Summarizes what changed, what is true now, what not to touch, risks, and recommended tool order at the start of a session. |
+| `lovable_next_action_plan` | Chooses the next safe action: ask the user, prompt Lovable, inspect GitHub, edit code, verify, prepare PR, or ship. |
 | `lovable_iteration_brief` | Creates a focused follow-up prompt for Lovable UI iteration. |
 | `lovable_repo_doctor` | Reviews caller-supplied Git/package evidence for Git state, framework, scripts, and risks without reading files itself. |
 | `lovable_rescue_plan` | Diagnoses and plans repairs for existing Lovable apps. |
@@ -120,15 +125,18 @@ Browser opening is optional. `lovable_build_url` returns a URL without opening a
 7. User or OpenClaw monitors the Lovable result.
 8. Lovable project is synced/exported to GitHub.
 9. OpenClaw calls `lovable_connect_github_repo` with the repo URL and creates/opens a safe branch with trusted GitHub tools.
-10. OpenClaw calls `lovable_project_context` to create or refresh reusable project memory.
-11. OpenClaw calls `lovable_project_readiness` to check whether enough evidence exists for the next step.
-12. OpenClaw gathers Git/package evidence with trusted tools, then runs `lovable_repo_doctor` and `lovable_sync_risk_report`.
-13. For existing broken apps, OpenClaw calls `lovable_rescue_plan`.
-14. OpenClaw uses GitHub/local tools for code, tests, CI, security, and PR.
-15. OpenClaw runs `lovable_visible_result_check` to confirm the change is actually visible.
-16. OpenClaw refactors Lovable-generated code for maintainability before shipping.
-17. OpenClaw uses `lovable_iteration_brief` for another UI pass only when useful.
-18. OpenClaw uses `lovable_pr_summary` before opening a PR.
+10. OpenClaw calls `lovable_project_context` and `lovable_project_memory` to create or refresh reusable project memory.
+11. OpenClaw calls `lovable_session_brief` at the start of each later session.
+12. OpenClaw calls `lovable_next_action_plan` to choose the safest next move.
+13. OpenClaw calls `lovable_project_readiness` to check whether enough evidence exists for the next step.
+14. OpenClaw gathers Git/package evidence with trusted tools, then runs `lovable_repo_doctor` and `lovable_sync_risk_report`.
+15. For existing broken apps, OpenClaw calls `lovable_rescue_plan`.
+16. OpenClaw uses GitHub/local tools for code, tests, CI, security, and PR.
+17. OpenClaw runs `lovable_visible_result_check` to confirm the change is actually visible.
+18. OpenClaw records important choices with `lovable_decision_log`.
+19. OpenClaw refactors Lovable-generated code for maintainability before shipping.
+20. OpenClaw uses `lovable_iteration_brief` for another UI pass only when useful.
+21. OpenClaw uses `lovable_pr_summary` before opening a PR.
 
 ## GitHub Connection
 
@@ -151,6 +159,15 @@ ClawKit does not log in to GitHub, clone repositories, or call GitHub APIs itsel
 `lovable_project_context` gives OpenClaw a reusable brief for each Lovable app. It records the product goal, Lovable URL, GitHub repo URL, local repo path, branch prefix, stack, package manager, verification commands, deployment target, last Lovable prompt, last visible result, repo doctor summary, PR summary, known risks, blockers, and do-not-touch rules.
 
 This is useful because Lovable builds, GitHub sync, local edits, browser verification, and PR work often happen across multiple sessions. The context brief gives OpenClaw a clean source of truth before it chooses whether the next move belongs in Lovable or in code.
+
+Project Memory v1 adds a stronger continuity layer:
+
+- `lovable_project_memory` records the current goal, source of truth, stack, routes, known bugs, refactor decisions, do-not-change rules, pending Lovable prompts, GitHub tasks, visual QA notes, release readiness, and what changed since last session.
+- `lovable_decision_log` records what was decided, why, who owns it, whether it is accepted or needs revisiting, and follow-up work.
+- `lovable_session_brief` gives OpenClaw a safe opening summary before work begins: current truth, recent changes, do-not-touch rules, risks, and tool order.
+- `lovable_next_action_plan` decides whether the next move should be user clarification, Lovable prompting, GitHub inspection, local code work, visible-result verification, PR preparation, or shipping.
+
+The practical promise is: before every big action, OpenClaw can say what it knows, what changed, and what it will not touch.
 
 ## Rescue Existing Apps
 

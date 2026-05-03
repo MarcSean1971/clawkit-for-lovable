@@ -26,7 +26,7 @@ ClawKit should expose six simple modes:
 - **Rescue**: fix an existing Lovable app that is broken, invisible, messy, or hard to extend.
 - **Harden**: refactor and prepare generated code for production review.
 - **Ship**: turn Lovable output into a verified GitHub PR.
-- **Remember**: keep a lightweight project memory brief across Lovable, GitHub, checks, risks, and next actions.
+- **Remember**: keep project memory, decision logs, session briefs, and next-action plans across Lovable, GitHub, checks, risks, and next actions.
 - **Inside**: add safe OpenClaw-powered assistant features to the app.
 
 Rescue is probably the highest-conversion mode because the user already has pain and a project to save.
@@ -56,7 +56,7 @@ The MVP is successful when a user can:
 4. Export/sync to GitHub.
 5. Have OpenClaw continue with code, verification, and a PR.
 
-The next improvement is now a first-class Project Memory layer: ClawKit should carry a reusable brief with the project goal, Lovable URL, GitHub repo, local path, stack, verification commands, deployment target, risks, blockers, do-not-touch rules, and next action. This keeps OpenClaw oriented across multi-session Lovable/GitHub work without the plugin reading files or calling external APIs itself.
+The next improvement is now a first-class Project Memory layer: ClawKit should carry a reusable brief with the project goal, Lovable URL, GitHub repo, local path, stack, verification commands, deployment target, risks, blockers, do-not-touch rules, and next action. It should also keep a decision log, summarize what changed since last time, and choose the next safest action. This keeps OpenClaw oriented across multi-session Lovable/GitHub work without the plugin reading files or calling external APIs itself.
 
 ## Feedback Loop
 
@@ -94,6 +94,15 @@ Sync Doctor should become the habit:
 Project Memory is the practical bridge between a fun demo and a repeatable delivery framework. Users should not need to restate the same Lovable URL, GitHub repo, local branch habit, package manager, verification commands, deployment target, and risk rules every session.
 
 The memory brief should stay transparent and editable. It should never pretend to be a database or hidden state store; it is a structured summary that OpenClaw can refresh whenever the project changes.
+
+Project Memory v1 adds four habits:
+
+- `lovable_project_memory`: durable project state.
+- `lovable_decision_log`: dated decisions and follow-ups.
+- `lovable_session_brief`: safe orientation at the start of work.
+- `lovable_next_action_plan`: evidence-based next move selection.
+
+The product line should make this sentence true: before every big action, ClawKit can say what it knows, what changed, and what it will not touch.
 
 ## Product Expansion: OpenClaw Inside
 
