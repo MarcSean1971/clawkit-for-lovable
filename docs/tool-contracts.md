@@ -335,6 +335,60 @@ Output: model-choice guidance for OpenClaw roles:
 
 This tool guides selection among models already configured in OpenClaw. It does not provide model access itself.
 
+## `lovable_workflow_state`
+
+Input: user goal, app/repo evidence, prompt count, failure state, budget sensitivity, and optional user stress signal.
+
+Output: JSON workflow state with:
+
+- Mode: new build, rescue, improve, harden, ship, or unknown.
+- Source of truth.
+- App status.
+- Repo status.
+- Credit risk.
+- User stress.
+- Current blocker.
+- Next best action.
+- Known facts.
+- Missing information.
+
+Use it when a session feels messy and OpenClaw needs a simple state object before choosing tools.
+
+## `lovable_studio_brain`
+
+Input: user goal, latest message, project/app/repo evidence, credit sensitivity, frustration/stress hints, browser preference, and model-choice preference.
+
+Output: JSON brain decision with:
+
+- Mode: start, rescue, improve, harden, ship, or orient user.
+- Confidence.
+- User-facing summary.
+- Next action and reason.
+- Recommended tool order.
+- Minimum questions to ask the user.
+- What belongs in Lovable.dev.
+- What belongs in OpenClaw/GitHub.
+- Stop conditions.
+- Evidence needed.
+- Embedded workflow state.
+
+Use it as the default first tool when the user asks ClawKit Studio to build, rescue, improve, harden, or ship a Lovable.dev app. The user should not need to know tool names.
+
+## `lovable_user_onboarding`
+
+Input: user level, goal, whether there is an existing app, and whether the user wants a fast start.
+
+Output: friendly first-run guide with:
+
+- Shortest path.
+- Minimum first questions.
+- Natural-language example requests.
+- User choices.
+- Reassuring rules.
+- Next prompt.
+
+Use it to make ClawKit Studio feel like a guided framework rather than a long plugin menu.
+
 ## `lovable_starter_guide`
 
 Input: user level and optional goal.

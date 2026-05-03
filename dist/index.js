@@ -912,6 +912,242 @@ function makeStopPromptingCheck(params) {
         ],
     };
 }
+function estimateUserStress(message, explicit) {
+    if (explicit) {
+        return explicit;
+    }
+    const text = (message ?? "").toLowerCase();
+    const strongSignals = ["angry", "frustrated", "terrible", "useless", "again", "broken", "not working", "waste"];
+    const hits = strongSignals.filter((signal) => text.includes(signal)).length;
+    const exclamations = (message?.match(/!/g) ?? []).length;
+    const score = hits * 2 + exclamations;
+    return score >= 7 ? "critical" : score >= 4 ? "heated" : score >= 1 ? "focused" : "calm";
+}
+function makeWorkflowState(params) {
+    const projectName = params.projectName ?? "Lovable.dev project";
+    const goal = (params.userGoal ?? "").toLowerCase();
+    const userStress = estimateUserStress(params.userMessage ?? params.userGoal, params.userStress);
+    const hasRepo = Boolean(params.hasGithubRepo || params.hasLocalRepo);
+    const hasHardFailure = Boolean(params.hasFailingBuild || params.hasRuntimeErrors);
+    const repeatedPromptRisk = Boolean((params.attemptedLovablePrompts ?? 0) >= 2 && params.sameIssueRepeated);
+    const mode = params.readyForPr
+        ? "ship"
+        : params.hasFailingBuild || params.hasRuntimeErrors || params.hasInvisibleChanges || goal.includes("rescue") || goal.includes("fix")
+            ? "rescue"
+            : params.needsArchitectureRefactor || goal.includes("refactor") || goal.includes("maintain")
+                ? "harden"
+                : params.hasExistingApp || params.hasLovableProjectUrl || hasRepo
+                    ? "improve"
+                    : params.userGoal
+                        ? "new-build"
+                        : "unknown";
+    const sourceOfTruth = params.hasLocalRepo ? "local-repo" : params.hasGithubRepo ? "github" : params.hasLovableProjectUrl ? "lovable.dev" : "unknown";
+    const appStatus = params.readyForPr
+        ? "ready-for-pr"
+        : params.hasInvisibleChanges
+            ? "invisible-change"
+            : hasHardFailure
+                ? "broken"
+                : params.needsArchitectureRefactor
+                    ? "needs-refactor"
+                    : params.hasExistingApp || params.hasLovableProjectUrl || hasRepo
+                        ? "generated"
+                        : params.userGoal
+                            ? "idea"
+                            : "ready-for-verification";
+    const repoStatus = params.hasDirtyGitState
+        ? "dirty"
+        : params.hasLocalRepo
+            ? "local-repo-known"
+            : params.hasGithubRepo
+                ? "repo-url-known"
+                : params.hasExistingApp || params.hasLovableProjectUrl
+                    ? "none"
+                    : "unknown";
+    const creditRisk = params.budgetSensitivity === "high" || repeatedPromptRisk || hasHardFailure || params.hasInvisibleChanges
+        ? "high"
+        : params.budgetSensitivity === "medium" || params.needsArchitectureRefactor || !hasRepo
+            ? "medium"
+            : "low";
+    const missingInfo = [
+        ...(!params.userGoal ? ["User goal or desired visible outcome."] : []),
+        ...(!params.hasLovableProjectUrl && mode !== "new-build" ? ["Lovable.dev project or preview URL."] : []),
+        ...(!hasRepo && mode !== "new-build" ? ["GitHub repo URL or local repo path."] : []),
+        ...(mode === "rescue" && !params.hasInvisibleChanges && !hasHardFailure ? ["Observed failure: blank screen, runtime error, failed build, or missing visible change."] : []),
+    ];
+    return {
+        projectName,
+        mode,
+        sourceOfTruth,
+        appStatus,
+        repoStatus,
+        creditRisk,
+        userStress,
+        currentBlocker: params.hasFailingBuild
+            ? "Build is failing."
+            : params.hasRuntimeErrors
+                ? "Runtime or console errors are blocking the app."
+                : params.hasInvisibleChanges
+                    ? "Lovable.dev claimed a change but the screen does not show it."
+                    : params.hasDirtyGitState
+                        ? "Git state is dirty; avoid broad Lovable.dev prompts."
+                        : !hasRepo && mode !== "new-build"
+                            ? "GitHub/source-of-truth handoff is missing."
+                            : "No hard blocker recorded yet.",
+        nextBestAction: mode === "new-build"
+            ? "Create a credit-smart plan, then a short Lovable.dev prompt sequence."
+            : mode === "rescue"
+                ? "Verify the visible result and inspect GitHub/local repo evidence before prompting Lovable.dev again."
+                : mode === "harden"
+                    ? "Use OpenClaw/GitHub for maintainability refactor, tests, and architecture cleanup."
+                    : mode === "ship"
+                        ? "Prepare PR summary with verification evidence and residual risks."
+                        : mode === "improve"
+                            ? "Run a credit-risk audit, then choose a narrow Lovable.dev UI pass or OpenClaw code work."
+                            : "Orient the user and ask for the minimum project facts.",
+        knownFacts: asList(params.knownFacts, [
+            `Mode: ${mode}.`,
+            `Source of truth: ${sourceOfTruth}.`,
+            `App status: ${appStatus}.`,
+            `Repo status: ${repoStatus}.`,
+            `Credit risk: ${creditRisk}.`,
+        ]),
+        missingInfo,
+    };
+}
+function makeStudioBrain(params) {
+    const workflowState = makeWorkflowState(params);
+    const mode = workflowState.mode === "new-build"
+        ? "start"
+        : workflowState.mode === "rescue"
+            ? "rescue"
+            : workflowState.mode === "harden"
+                ? "harden"
+                : workflowState.mode === "ship"
+                    ? "ship"
+                    : workflowState.mode === "improve"
+                        ? "improve"
+                        : "orient-user";
+    const needsMood = workflowState.userStress === "heated" || workflowState.userStress === "critical";
+    const needsRepo = workflowState.sourceOfTruth === "unknown" && mode !== "start";
+    const stopPrompting = workflowState.creditRisk === "high" || params.hasFailingBuild || params.hasRuntimeErrors || params.hasInvisibleChanges || params.sameIssueRepeated;
+    const recommendedToolOrder = [
+        ...(needsMood ? ["lovable_mood_indicator"] : []),
+        "lovable_studio_brain",
+        ...(params.wantsModelChoice ? ["lovable_model_strategy"] : []),
+        ...(mode === "orient-user" ? ["lovable_user_onboarding", "lovable_starter_guide"] : []),
+        ...(mode === "start" ? ["lovable_credit_smart_plan", "lovable_prompt_sequence", "lovable_credit_risk_audit", "lovable_make_prompt"] : []),
+        ...(params.wantsBrowserOpen && mode === "start" ? ["lovable_build_url or lovable_open_build_url"] : []),
+        ...(mode === "rescue" ? ["lovable_stop_prompting_check", "lovable_visible_result_check", "lovable_connect_github_repo", "lovable_repo_doctor", "lovable_rescue_plan"] : []),
+        ...(mode === "improve" ? ["lovable_credit_risk_audit", "lovable_next_action_plan", "lovable_sync_risk_report", "lovable_iteration_brief or OpenClaw code tools"] : []),
+        ...(mode === "harden" ? ["lovable_repo_doctor", "lovable_sync_risk_report", "OpenClaw code tools", "lovable_visible_result_check"] : []),
+        ...(mode === "ship" ? ["lovable_project_readiness", "lovable_visible_result_check", "lovable_pr_summary"] : []),
+        "lovable_project_memory",
+        "lovable_decision_log",
+    ];
+    return {
+        projectName: workflowState.projectName,
+        mode,
+        confidence: workflowState.missingInfo.length > 2 ? "low" : workflowState.missingInfo.length ? "medium" : "high",
+        userFacingSummary: mode === "start"
+            ? "I will turn the idea into a credit-smart Lovable.dev plan before spending prompts, then hand off exact engineering to OpenClaw/GitHub."
+            : mode === "rescue"
+                ? "I will stop blind Lovable.dev prompting, verify what is actually visible, inspect the repo state, and fix the real blocker with OpenClaw where appropriate."
+                : mode === "harden"
+                    ? "I will treat the Lovable.dev output as a draft and use OpenClaw/GitHub to make the code cleaner, scalable, testable, and reviewable."
+                    : mode === "ship"
+                        ? "I will package the work for delivery with verification evidence, screenshots or browser notes, risks, and a PR summary."
+                        : mode === "improve"
+                            ? "I will decide whether the next improvement belongs in a narrow Lovable.dev UI prompt or in OpenClaw code tools."
+                            : "I will ask only for the minimum details, then choose the correct ClawKit Studio workflow for the user.",
+        nextAction: workflowState.nextBestAction,
+        why: stopPrompting
+            ? "The situation has high credit-waste risk, so OpenClaw should gather evidence before another Lovable.dev prompt."
+            : mode === "start"
+                ? "A rough idea is cheapest when planned first, then turned into a small prompt sequence."
+                : "The current state determines whether Lovable.dev, GitHub, browser verification, code repair, or PR tooling should lead.",
+        recommendedToolOrder,
+        askUserFor: [
+            ...workflowState.missingInfo,
+            ...(params.wantsModelChoice ? ["Preferred OpenClaw model/profile, if the user cares."] : []),
+            ...(params.wantsBrowserOpen === undefined ? ["Whether OpenClaw should open Lovable.dev in the browser or only prepare links."] : []),
+        ],
+        useLovableDevFor: [
+            "New app shell, screen structure, visual direction, responsive layout, and narrow UI/product iteration.",
+            "Subjective polish when the repo is safe and visible-result acceptance criteria are clear.",
+        ],
+        useOpenClawFor: [
+            "Choosing the workflow, preserving project memory, and asking for missing facts.",
+            "GitHub/source-of-truth handoff, build/runtime diagnosis, exact code changes, tests, security, refactoring, and PR delivery.",
+            "Stopping Lovable.dev prompt loops when the same issue repeats or evidence is missing.",
+        ],
+        stopConditions: [
+            "Stop before another broad Lovable.dev prompt if build/runtime errors, invisible changes, dirty Git state, or repeated failed prompts exist.",
+            "Stop before destructive Git operations, production deploys, billing, secrets, or public publishing without explicit approval.",
+            "Stop and ask the user when the desired visible result or source of truth is unclear.",
+        ],
+        evidenceNeeded: [
+            "User goal and expected visible result.",
+            "Lovable.dev project or preview URL when an app already exists.",
+            "GitHub repo URL or local repo path before exact engineering work.",
+            "Build/typecheck/test result when implementation changed.",
+            "Browser or screenshot evidence before accepting completion.",
+        ],
+        workflowState,
+    };
+}
+function makeUserOnboarding(params) {
+    const level = params.userLevel ?? "beginner";
+    const goal = params.goal ?? "build or rescue a Lovable.dev app";
+    const existing = params.hasExistingApp === true;
+    return {
+        headline: "ClawKit Studio Brain lets you describe the outcome in plain language; OpenClaw chooses the Lovable.dev, GitHub, verification, or code workflow.",
+        shortestPath: existing
+            ? [
+                "Tell OpenClaw what is broken or what should change.",
+                "Provide the Lovable.dev URL and GitHub repo if available.",
+                "Let ClawKit Studio verify the visible result before spending more Lovable.dev credits.",
+                "Move exact fixes, refactors, tests, and PR work into OpenClaw/GitHub.",
+            ]
+            : [
+                "Describe the app idea roughly.",
+                "Let ClawKit Studio create a credit-smart plan before prompting Lovable.dev.",
+                "Generate a short prompt sequence with evidence gates.",
+                "Sync/export to GitHub when the product shape is clear.",
+            ],
+        askOnlyThisFirst: [
+            `User level: ${level}.`,
+            `Goal: ${goal}.`,
+            existing ? "What is the Lovable.dev project/preview URL?" : "What is the rough app idea?",
+            "Is there a GitHub repo already?",
+            "Should OpenClaw open Lovable.dev in the browser, or only prepare links?",
+            "Are you trying to save credits aggressively?",
+        ],
+        userCanSay: [
+            "Build this properly with Lovable.dev and do not waste my credits.",
+            "Rescue this Lovable.dev app and make it production-ready.",
+            "Lovable.dev says it worked, but I cannot see the change.",
+            "Turn this rough idea into a plan first, then tell me what to prompt.",
+            "Check whether this should go to Lovable.dev or be fixed in code.",
+        ],
+        choices: [
+            "New build, rescue, improve, harden, ship, or OpenClaw Inside.",
+            "Browser opening: prepare link only, or open Lovable.dev after approval.",
+            "Budget sensitivity: normal, careful, or very credit-conscious.",
+            "Model/profile preference if OpenClaw has multiple configured models.",
+        ],
+        reassuringRules: [
+            "The user does not need to know tool names.",
+            "Lovable.dev is used for UI/product speed, not every engineering task.",
+            "ClawKit Studio should stop prompt loops before they waste credits.",
+            "OpenClaw verifies visible results before accepting done.",
+            "GitHub becomes the durable source of truth for serious work.",
+        ],
+        nextPrompt: params.wantsFastStart
+            ? "Tell me the app idea or existing problem, and I will choose the safest ClawKit Studio workflow."
+            : "Tell me whether this is a new app or an existing Lovable.dev project, what outcome you want, and whether you already have a GitHub repo.",
+    };
+}
 function makeBuildUrl(prompt) {
     const encoded = encodeURIComponent(prompt);
     return `https://lovable.dev/?autosubmit=true#prompt=${encoded}`;
@@ -2019,6 +2255,101 @@ export default definePluginEntry({
             }),
             async execute(_id, params) {
                 return jsonText(makeModelStrategy(params));
+            },
+        });
+        api.registerTool({
+            name: "lovable_workflow_state",
+            label: "Create Workflow State",
+            description: "Summarize a Lovable.dev project situation into a simple ClawKit Studio workflow state: mode, source of truth, app status, repo status, credit risk, stress level, blocker, and next action.",
+            parameters: Type.Object({
+                projectName: Type.Optional(Type.String()),
+                userGoal: Type.Optional(Type.String()),
+                hasExistingApp: Type.Optional(Type.Boolean()),
+                hasLovableProjectUrl: Type.Optional(Type.Boolean()),
+                hasGithubRepo: Type.Optional(Type.Boolean()),
+                hasLocalRepo: Type.Optional(Type.Boolean()),
+                hasDirtyGitState: Type.Optional(Type.Boolean()),
+                hasFailingBuild: Type.Optional(Type.Boolean()),
+                hasRuntimeErrors: Type.Optional(Type.Boolean()),
+                hasInvisibleChanges: Type.Optional(Type.Boolean()),
+                needsArchitectureRefactor: Type.Optional(Type.Boolean()),
+                readyForPr: Type.Optional(Type.Boolean()),
+                attemptedLovablePrompts: Type.Optional(Type.Number()),
+                sameIssueRepeated: Type.Optional(Type.Boolean()),
+                budgetSensitivity: Type.Optional(Type.Union([
+                    Type.Literal("low"),
+                    Type.Literal("medium"),
+                    Type.Literal("high"),
+                ])),
+                userMessage: Type.Optional(Type.String()),
+                userStress: Type.Optional(Type.Union([
+                    Type.Literal("calm"),
+                    Type.Literal("focused"),
+                    Type.Literal("heated"),
+                    Type.Literal("critical"),
+                ])),
+                knownFacts: optionalStringArray("Project facts already known to OpenClaw."),
+            }),
+            async execute(_id, params) {
+                return jsonText(makeWorkflowState(params));
+            },
+        });
+        api.registerTool({
+            name: "lovable_studio_brain",
+            label: "Run Studio Brain",
+            description: "Choose the next ClawKit Studio workflow automatically from the user's situation, so they do not need to know tool names or decide between Lovable.dev, GitHub, verification, code repair, or PR work.",
+            parameters: Type.Object({
+                projectName: Type.Optional(Type.String()),
+                userGoal: Type.Optional(Type.String()),
+                userMessage: Type.Optional(Type.String()),
+                hasExistingApp: Type.Optional(Type.Boolean()),
+                hasLovableProjectUrl: Type.Optional(Type.Boolean()),
+                hasGithubRepo: Type.Optional(Type.Boolean()),
+                hasLocalRepo: Type.Optional(Type.Boolean()),
+                hasDirtyGitState: Type.Optional(Type.Boolean()),
+                hasFailingBuild: Type.Optional(Type.Boolean()),
+                hasRuntimeErrors: Type.Optional(Type.Boolean()),
+                hasInvisibleChanges: Type.Optional(Type.Boolean()),
+                needsArchitectureRefactor: Type.Optional(Type.Boolean()),
+                readyForPr: Type.Optional(Type.Boolean()),
+                attemptedLovablePrompts: Type.Optional(Type.Number()),
+                sameIssueRepeated: Type.Optional(Type.Boolean()),
+                budgetSensitivity: Type.Optional(Type.Union([
+                    Type.Literal("low"),
+                    Type.Literal("medium"),
+                    Type.Literal("high"),
+                ])),
+                userStress: Type.Optional(Type.Union([
+                    Type.Literal("calm"),
+                    Type.Literal("focused"),
+                    Type.Literal("heated"),
+                    Type.Literal("critical"),
+                ])),
+                wantsBrowserOpen: Type.Optional(Type.Boolean()),
+                wantsModelChoice: Type.Optional(Type.Boolean()),
+                knownFacts: optionalStringArray("Project facts already known to OpenClaw."),
+            }),
+            async execute(_id, params) {
+                return jsonText(makeStudioBrain(params));
+            },
+        });
+        api.registerTool({
+            name: "lovable_user_onboarding",
+            label: "Guide User Onboarding",
+            description: "Give a friendly first-run guide that asks only the minimum questions and teaches users how to ask ClawKit Studio for new builds, rescues, improvements, hardening, and shipping.",
+            parameters: Type.Object({
+                userLevel: Type.Optional(Type.Union([
+                    Type.Literal("beginner"),
+                    Type.Literal("builder"),
+                    Type.Literal("developer"),
+                    Type.Literal("agency"),
+                ])),
+                goal: Type.Optional(Type.String()),
+                hasExistingApp: Type.Optional(Type.Boolean()),
+                wantsFastStart: Type.Optional(Type.Boolean()),
+            }),
+            async execute(_id, params) {
+                return jsonText(makeUserOnboarding(params));
             },
         });
         api.registerTool({

@@ -1,8 +1,8 @@
 {
   "id": "clawkit-for-lovable",
   "name": "ClawKit Studio for Lovable",
-  "description": "ClawKit Studio for Lovable plans and rescues Lovable.dev projects with credit-smart prompts, visible verification, GitHub handoff, OpenClaw refactoring, tests, and maintainable architecture.",
-  "version": "0.1.8",
+  "description": "ClawKit Studio for Lovable adds a Brain for Lovable.dev projects: credit-smart planning, rescue, visible verification, GitHub handoff, OpenClaw refactoring, tests, and maintainable architecture.",
+  "version": "0.1.9",
   "skills": [
     "skills/clawkit-for-lovable"
   ],
@@ -33,6 +33,9 @@
       "lovable_openclaw_integration_plan",
       "lovable_visible_result_check",
       "lovable_model_strategy",
+      "lovable_workflow_state",
+      "lovable_studio_brain",
+      "lovable_user_onboarding",
       "lovable_starter_guide",
       "lovable_mood_indicator"
     ]

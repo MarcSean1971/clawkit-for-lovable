@@ -6,7 +6,7 @@ ClawKit Studio for Lovable
 
 ## Short Description
 
-ClawKit Studio for Lovable reduces wasted Lovable.dev credits with planning, rescue workflows, visible verification, GitHub handoff, and OpenClaw refactoring.
+ClawKit Studio for Lovable adds a Brain for Lovable.dev projects: reduce wasted credits, rescue broken apps, verify visible results, hand off to GitHub, and refactor with OpenClaw.
 
 ## Long Description
 
@@ -17,6 +17,8 @@ It turns Lovable.dev into one specialized UI/product tool inside a broader OpenC
 Use it to build new Lovable.dev apps more safely, or to rescue existing Lovable.dev apps that are blank, stale, broken, messy, expensive to keep prompting, or not production-ready. ClawKit helps OpenClaw decide whether the next action should be a credit-smart Lovable.dev plan, a narrow Lovable.dev prompt, a GitHub/code fix, a visible-result check, a refactor pass, or a PR.
 
 Credit-Smart Planning is the key workflow: ClawKit Studio turns a rough idea into a staged Lovable.dev plan, limits prompt count, defines evidence gates, warns when a proposed prompt is likely to waste credits, and tells OpenClaw when to stop prompting and switch to GitHub, code, tests, browser checks, or refactoring.
+
+ClawKit Studio Brain is the user-friendly entry point. Users do not need to know tool names. They can describe the desired outcome in plain language, and the Brain chooses start, rescue, improve, harden, ship, or orient-user mode, then tells OpenClaw what to do next and what evidence is needed.
 
 Search visibility note: the product name intentionally includes ClawKit, Studio, Lovable, and Lovable.dev positioning. The package stays `@clawkit/clawkit-for-lovable` for install stability, while the marketplace display name is **ClawKit Studio for Lovable**.
 
@@ -51,11 +53,11 @@ clawhub package publish . \
   --family code-plugin \
   --name @clawkit/clawkit-for-lovable \
   --display-name "ClawKit Studio for Lovable" \
-  --version 0.1.8 \
+  --version 0.1.9 \
   --source-repo MarcSean1971/clawkit-for-lovable \
   --source-commit "$(git rev-parse HEAD)" \
   --source-ref main \
-  --changelog "Rename marketplace display to ClawKit Studio for Lovable and sharpen Lovable.dev marketing"
+  --changelog "Add ClawKit Studio Brain orchestration and user onboarding"
 ```
 
 Dry-run validation passed with these values.

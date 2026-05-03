@@ -9,6 +9,10 @@ Use this skill when a user asks OpenClaw to build, improve, rescue, harden, or s
 
 If the user is new, uncertain, or starting a project from scratch, call `lovable_starter_guide` before planning. The most important usability feature is teaching the user what is possible before they start, without making them read documentation.
 
+Use `lovable_studio_brain` as the default first move when the user asks to build, rescue, improve, harden, or ship a Lovable.dev app. The user should not need to know the tool list. The Brain should choose the mode, recommend the next action, identify missing facts, and prevent credit-wasting prompt loops.
+
+Use `lovable_user_onboarding` when the user needs a friendlier first-run experience or when they ask what ClawKit Studio can do. Use `lovable_workflow_state` when the facts are scattered and OpenClaw needs a simple state object before acting.
+
 If the user sounds frustrated, disappointed, intense, or says OpenClaw/Lovable.dev did the wrong thing, call `lovable_mood_indicator`. Use its funny mood line lightly, then follow the self-healing notes seriously. The mood indicator must never mock the user; it exists to reduce stress and make the agent repair its process.
 
 ClawKit is an early public release. Be honest that it will improve continuously, and invite constructive feedback when a workflow is confusing, a rescue fails, or the user discovers a missing verification step.
@@ -62,13 +66,13 @@ Require explicit user approval before:
 ## Standard Workflow
 
 1. If helpful, call `lovable_starter_guide` to educate the user on options, workflow, and guardrails.
-2. Understand the user's app goal and success criteria.
-3. If model choice matters or the user asks, call `lovable_model_strategy`.
-4. Call `lovable_credit_smart_plan` before the first Lovable.dev prompt or any broad rebuild.
-5. Call `lovable_prompt_sequence` to limit prompts and define evidence gates.
-6. Call `lovable_credit_risk_audit` before spending credits on the next prompt.
+2. Call `lovable_studio_brain` to choose the mode, next action, tool order, missing facts, and stop conditions.
+3. If the user needs a softer start, call `lovable_user_onboarding`.
+4. If model choice matters or the user asks, call `lovable_model_strategy`.
+5. For a new build, call `lovable_credit_smart_plan`, `lovable_prompt_sequence`, and `lovable_credit_risk_audit` before the first Lovable.dev prompt.
+6. For an existing broken or messy app, call `lovable_stop_prompting_check`, `lovable_visible_result_check`, and `lovable_rescue_plan`.
 7. Call `lovable_decide_route` to decide what belongs in Lovable.dev versus OpenClaw/GitHub.
-8. For a new app or major UI pass, call `lovable_make_prompt`.
+8. For a new app or major UI pass, call `lovable_make_prompt` only when the Brain says Lovable.dev is the right tool.
 9. Call `lovable_build_url` and show or open the URL only when appropriate.
 10. After Lovable.dev creates or updates the app, sync/export to GitHub.
 11. Call `lovable_connect_github_repo` once the repo URL is known so OpenClaw has a safe branch/check/PR plan.
@@ -78,14 +82,12 @@ Require explicit user approval before:
 15. Call `lovable_project_readiness` before major next steps such as another Lovable.dev pass, engineering edits, PR, or deploy.
 16. Gather Git/package evidence with trusted tools, then call `lovable_repo_doctor` before code work.
 17. Call `lovable_sync_risk_report` before asking Lovable.dev for another broad UI pass.
-18. For an existing broken or messy app, call `lovable_rescue_plan`.
-19. Call `lovable_stop_prompting_check` when prompts repeat, changes are invisible, build/runtime errors appear, or maintainability work is needed.
-20. Use OpenClaw's GitHub/local coding tools to inspect the repo, run install/build/tests, and make precise changes.
-21. Call `lovable_visible_result_check` before accepting Lovable.dev's completion claim.
-22. Record major decisions with `lovable_decision_log`.
-23. Run a hardening/refactor pass before considering the app production-ready.
-24. Use `lovable_iteration_brief` only when another Lovable.dev UI pass is better than direct code edits.
-25. End with a PR, preview link, screenshots when available, verification notes, and remaining risks.
+18. Use OpenClaw's GitHub/local coding tools to inspect the repo, run install/build/tests, and make precise changes.
+19. Call `lovable_visible_result_check` before accepting Lovable.dev's completion claim.
+20. Record major decisions with `lovable_decision_log`.
+21. Run a hardening/refactor pass before considering the app production-ready.
+22. Use `lovable_iteration_brief` only when another Lovable.dev UI pass is better than direct code edits.
+23. End with a PR, preview link, screenshots when available, verification notes, and remaining risks.
 
 ## Rescue Existing Apps
 

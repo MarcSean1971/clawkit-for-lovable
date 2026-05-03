@@ -25,6 +25,7 @@ Lovable.dev is powerful, but serious users often hit the same wall:
 
 ClawKit Studio sits above Lovable.dev and helps OpenClaw decide the right next move:
 
+- Run ClawKit Studio Brain so the user does not need to know tool names.
 - Create a credit-smart plan before spending Lovable.dev credits.
 - Send a narrow, high-quality prompt to Lovable.dev only when Lovable.dev is the right tool.
 - Stop wasting Lovable.dev credits on jobs OpenClaw should handle directly in code.
@@ -49,6 +50,31 @@ ClawKit Studio adds a Credit-Smart Planning layer:
 Example request:
 
 > I have a rough idea for a client portal. Create a credit-smart Lovable.dev plan first, then give me the smallest prompt sequence that gets the UI direction right without wasting credits on backend details.
+
+## ClawKit Studio Brain
+
+ClawKit Studio Brain is the user-friendly orchestration layer. Instead of asking the user to choose between 20+ tools, OpenClaw can call `lovable_studio_brain` and get the next best workflow.
+
+The user can simply say:
+
+> Build this properly with Lovable.dev and do not waste my credits.
+
+Or:
+
+> Rescue this Lovable.dev app and make it production-ready.
+
+The Brain decides whether the situation is a new build, rescue, improvement, hardening pass, shipping pass, or user-orientation moment. It returns:
+
+- The recommended mode.
+- The next action and why.
+- The tools OpenClaw should use next.
+- What to ask the user for, if anything.
+- What belongs in Lovable.dev.
+- What belongs in OpenClaw/GitHub.
+- Stop conditions that prevent credit-wasting prompt loops.
+- Evidence needed before accepting “done”.
+
+This makes ClawKit Studio feel like a guided product framework rather than a command list.
 
 ## Early Public Release
 
@@ -154,6 +180,9 @@ Use ClawKit Studio for Lovable when:
 | `lovable_openclaw_integration_plan` | Plans an optional secure "OpenClaw Inside" feature for the app being built. |
 | `lovable_visible_result_check` | Verifies that Lovable.dev's claimed change actually builds and appears on screen. |
 | `lovable_model_strategy` | Helps the user choose a configured OpenClaw model/profile for the task. |
+| `lovable_workflow_state` | Turns messy project facts into a simple state: mode, source of truth, app status, repo status, credit risk, blocker, and next action. |
+| `lovable_studio_brain` | Chooses the next ClawKit Studio workflow automatically so the user does not need to know tool names. |
+| `lovable_user_onboarding` | Gives a friendly first-run guide that asks only the minimum questions before choosing a workflow. |
 | `lovable_starter_guide` | Educates the user before building with examples, workflow, choices, and guardrails. |
 | `lovable_mood_indicator` | Adds a playful frustration meter plus serious self-healing notes for the agent. |
 
@@ -194,14 +223,14 @@ Browser opening is optional. `lovable_build_url` returns a URL without opening a
 
 ## Suggested User Flow
 
-1. OpenClaw shows `lovable_starter_guide` when the user needs orientation.
-2. User describes the product or existing app problem.
-3. OpenClaw optionally calls `lovable_model_strategy`.
-4. OpenClaw calls `lovable_credit_smart_plan` so Lovable.dev credits are spent on the right work.
-5. OpenClaw calls `lovable_prompt_sequence` to limit prompting and define evidence gates.
-6. OpenClaw calls `lovable_credit_risk_audit` before spending credits on the next Lovable.dev prompt.
+1. OpenClaw calls `lovable_studio_brain` to choose the mode and next action.
+2. OpenClaw calls `lovable_user_onboarding` or `lovable_starter_guide` when the user needs orientation.
+3. User describes the product or existing app problem.
+4. OpenClaw optionally calls `lovable_model_strategy`.
+5. For a new build, OpenClaw calls `lovable_credit_smart_plan`, `lovable_prompt_sequence`, and `lovable_credit_risk_audit`.
+6. For an existing broken app, OpenClaw calls `lovable_stop_prompting_check`, `lovable_visible_result_check`, and `lovable_rescue_plan`.
 7. OpenClaw calls `lovable_decide_route`.
-8. OpenClaw calls `lovable_make_prompt`.
+8. OpenClaw calls `lovable_make_prompt` only when Lovable.dev is the right tool.
 9. OpenClaw calls `lovable_build_url` or, with approval, `lovable_open_build_url`.
 10. User or OpenClaw monitors the Lovable.dev result.
 11. Lovable.dev project is synced/exported to GitHub.
@@ -211,14 +240,12 @@ Browser opening is optional. `lovable_build_url` returns a URL without opening a
 15. OpenClaw calls `lovable_next_action_plan` to choose the safest next move.
 16. OpenClaw calls `lovable_project_readiness` to check whether enough evidence exists for the next step.
 17. OpenClaw gathers Git/package evidence with trusted tools, then runs `lovable_repo_doctor` and `lovable_sync_risk_report`.
-18. For existing broken apps, OpenClaw calls `lovable_rescue_plan`.
-19. OpenClaw calls `lovable_stop_prompting_check` when prompts repeat, changes are invisible, or errors appear.
-20. OpenClaw uses GitHub/local tools for code, tests, CI, security, and PR.
-21. OpenClaw runs `lovable_visible_result_check` to confirm the change is actually visible.
-22. OpenClaw records important choices with `lovable_decision_log`.
-23. OpenClaw refactors Lovable.dev-generated code for maintainability before shipping.
-24. OpenClaw uses `lovable_iteration_brief` for another UI pass only when useful.
-25. OpenClaw uses `lovable_pr_summary` before opening a PR.
+18. OpenClaw uses GitHub/local tools for code, tests, CI, security, and PR.
+19. OpenClaw runs `lovable_visible_result_check` to confirm the change is actually visible.
+20. OpenClaw records important choices with `lovable_decision_log`.
+21. OpenClaw refactors Lovable.dev-generated code for maintainability before shipping.
+22. OpenClaw uses `lovable_iteration_brief` for another UI pass only when useful.
+23. OpenClaw uses `lovable_pr_summary` before opening a PR.
 
 ## GitHub Connection
 

@@ -51,6 +51,28 @@ Plan is the best first-use mode because it protects users before the pain starts
 
 > Spend Lovable.dev credits on product shape, not on repair loops OpenClaw can solve with GitHub, tests, browser checks, and code.
 
+## Product Expansion: ClawKit Studio Brain
+
+ClawKit Studio Brain is the next usability leap. It turns the plugin from a set of tools into a guided product framework.
+
+The user should be able to say:
+
+> Build this properly with Lovable.dev and do not waste my credits.
+
+Or:
+
+> Rescue this Lovable.dev app and make it production-ready.
+
+The Brain decides whether the session is start, rescue, improve, harden, ship, or orient-user. It returns the next action, why, tool order, missing facts, stop conditions, and evidence needed. This is the difference between a power-user plugin and a product a non-developer can trust.
+
+The Brain should become the default entry point before all major work:
+
+1. Determine the mode.
+2. Create or refresh workflow state.
+3. Ask only for missing facts.
+4. Prevent wasteful Lovable.dev prompt loops.
+5. Route work to Lovable.dev, GitHub, browser verification, OpenClaw code tools, or PR delivery.
+
 ## Ideal Customer
 
 - Founders who prototype in Lovable.dev but need production-quality code afterward.
