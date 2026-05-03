@@ -1,7 +1,7 @@
 {
   "name": "@clawkit/clawkit-for-lovable",
-  "version": "0.1.6",
-  "description": "Rescue Lovable apps from wasted credits, invisible changes, messy code, and weak architecture with OpenClaw's GitHub, testing, browser, and refactoring tools.",
+  "version": "0.1.7",
+  "description": "Plan and rescue Lovable.dev apps with credit-smart prompts, visible verification, GitHub handoff, and OpenClaw refactoring to reduce wasted credits.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

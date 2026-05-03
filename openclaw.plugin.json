@@ -1,8 +1,8 @@
 {
   "id": "clawkit-for-lovable",
   "name": "ClawKit for Lovable",
-  "description": "Rescues Lovable.dev projects from wasted credits, invisible changes, messy generated code, and weak architecture by routing work through OpenClaw, GitHub, browser verification, tests, and refactoring.",
-  "version": "0.1.6",
+  "description": "Plans and rescues Lovable.dev projects with credit-smart prompts, visible verification, GitHub handoff, OpenClaw refactoring, tests, and maintainable architecture.",
+  "version": "0.1.7",
   "skills": [
     "skills/clawkit-for-lovable"
   ],
@@ -10,6 +10,10 @@
     "tools": [
       "lovable_decide_route",
       "lovable_make_prompt",
+      "lovable_credit_smart_plan",
+      "lovable_prompt_sequence",
+      "lovable_credit_risk_audit",
+      "lovable_stop_prompting_check",
       "lovable_build_url",
       "lovable_open_build_url",
       "lovable_github_handoff",

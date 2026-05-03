@@ -18,6 +18,72 @@ Input: rough product details.
 
 Output: a Lovable-ready prompt that explicitly assigns UI/product work to Lovable and deep engineering work to OpenClaw after GitHub handoff.
 
+## `lovable_credit_smart_plan`
+
+Input: rough app idea, target users, must-have features, nice-to-have features, integrations, data objects, design direction, budget sensitivity, and optional GitHub/local repo context.
+
+Output: JSON plan with:
+
+- Planning goal.
+- Credit strategy.
+- What Lovable.dev should do.
+- What OpenClaw should do.
+- What to defer until the product shape is clear.
+- First prompt scope.
+- Screen plan.
+- Data model assumptions.
+- Integration strategy.
+- Acceptance criteria before another Lovable.dev prompt.
+- Stop-prompting rules.
+- Recommended tool order.
+- Draft Lovable.dev prompt.
+
+Use it before the first Lovable.dev prompt so OpenClaw spends credits on product shape, screens, and visual direction instead of debugging, refactoring, tests, GitHub sync, backend logic, auth, billing, integrations, or security.
+
+## `lovable_prompt_sequence`
+
+Input: project name, optional `lovable_credit_smart_plan` output, rough idea, maximum Lovable.dev prompt count, and whether to include GitHub handoff.
+
+Output: JSON prompt sequence with:
+
+- Maximum Lovable.dev prompts.
+- Step-by-step prompt goals.
+- Prompt text.
+- Expected evidence after each prompt.
+- Stop conditions after each prompt.
+- After-sequence OpenClaw/GitHub work.
+
+Use it to avoid endless Lovable.dev prompting. The default sequence is first app shell, one focused UI/product improvement, final polish, then OpenClaw/GitHub verification and engineering.
+
+## `lovable_credit_risk_audit`
+
+Input: proposed Lovable.dev prompt, planned features, integrations, known bugs, build/runtime/visible-result state, GitHub/local repo state, and credit sensitivity.
+
+Output: JSON risk audit with:
+
+- Risk level.
+- Whether Lovable.dev should be used now.
+- Likely credit wastes.
+- Work OpenClaw should handle instead.
+- Prompt-tightening rules.
+- Recommended next action.
+
+Use it before spending credits on a proposed prompt, especially when the prompt mentions TypeScript, runtime errors, tests, CI, auth, billing, webhooks, migrations, database behavior, security, refactoring, GitHub, integrations, or invisible changes.
+
+## `lovable_stop_prompting_check`
+
+Input: prompt count, whether the same issue repeated, build/runtime/visible-result state, GitHub/local repo state, architecture/refactor need, and user satisfaction state.
+
+Output: JSON stop-prompting decision with:
+
+- Whether to stop prompting Lovable.dev.
+- Reason.
+- What OpenClaw should switch to.
+- Next OpenClaw steps.
+- Evidence required before another Lovable.dev prompt.
+
+Use it when Lovable.dev has claimed success but the result is not visible, the same issue keeps repeating, the build fails, runtime errors appear, or the next work is maintainability/refactoring.
+
 ## `lovable_build_url`
 
 Input: prepared Lovable prompt.

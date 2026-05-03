@@ -159,6 +159,55 @@ type NextActionPlan = {
   stopConditions: string[];
 };
 
+type CreditSmartPlan = {
+  projectName: string;
+  planningGoal: string;
+  creditStrategy: string[];
+  useLovableDevFor: string[];
+  useOpenClawFor: string[];
+  deferUntilAfterShapeIsClear: string[];
+  firstPromptScope: string[];
+  screenPlan: string[];
+  dataModelAssumptions: string[];
+  integrationStrategy: string[];
+  acceptanceCriteriaBeforeNextPrompt: string[];
+  stopPromptingRules: string[];
+  recommendedToolOrder: string[];
+  lovablePromptDraft: string;
+};
+
+type PromptSequence = {
+  projectName: string;
+  maxLovablePrompts: number;
+  sequence: Array<{
+    step: number;
+    goal: string;
+    prompt: string;
+    expectedEvidence: string[];
+    stopAfter: string[];
+  }>;
+  afterSequence: string[];
+};
+
+type CreditRiskAudit = {
+  projectName: string;
+  riskLevel: "low" | "medium" | "high";
+  shouldUseLovableDev: boolean;
+  likelyCreditWastes: string[];
+  useOpenClawInsteadFor: string[];
+  promptTighteningRules: string[];
+  nextAction: string;
+};
+
+type StopPromptingCheck = {
+  projectName: string;
+  shouldStopPrompting: boolean;
+  reason: string;
+  switchTo: string[];
+  openClawNextSteps: string[];
+  evidenceBeforeAnotherPrompt: string[];
+};
+
 type OpenClawIntegrationPlan = {
   appName: string;
   recommendation: "integrate" | "defer" | "do-not-integrate";
@@ -974,6 +1023,377 @@ function makeNextActionPlan(params: {
   };
 }
 
+function makeCreditSmartPlan(params: {
+  projectName?: string;
+  roughIdea: string;
+  targetUsers?: string;
+  mustHaveFeatures?: string[];
+  niceToHaveFeatures?: string[];
+  integrations?: string[];
+  dataObjects?: string[];
+  designDirection?: string;
+  budgetSensitivity?: "low" | "medium" | "high";
+  hasExistingApp?: boolean;
+  githubRepoUrl?: string;
+  localRepoPath?: string;
+}): CreditSmartPlan {
+  const projectName = params.projectName ?? "Lovable.dev project";
+  const mustHave = asList(params.mustHaveFeatures, [
+    "Primary user journey",
+    "Core dashboard or workspace",
+    "Settings or account flow",
+  ]);
+  const niceToHave = asList(params.niceToHaveFeatures, [
+    "Secondary polish, advanced automation, analytics, and optional integrations",
+  ]);
+  const integrations = asList(params.integrations, [
+    "Use placeholders first; connect real services after GitHub handoff and verification.",
+  ]);
+  const dataObjects = asList(params.dataObjects, [
+    "User",
+    "Project",
+    "Item or task",
+    "Activity/event",
+  ]);
+  const isHighSensitivity = params.budgetSensitivity === "high";
+  const hasRepo = Boolean(params.githubRepoUrl || params.localRepoPath);
+
+  const creditStrategy = [
+    "Spend Lovable.dev credits on product shape, screen structure, interaction states, and visual direction.",
+    "Do not spend Lovable.dev credits on repeated debugging loops, refactors, tests, GitHub sync confusion, CI, secrets, auth rules, billing, or exact backend behavior.",
+    "Ask Lovable.dev for one coherent app shell first, then verify the visible result before buying more iteration.",
+    "Move to OpenClaw/GitHub as soon as the UI direction is clear enough to inspect, refactor, and test.",
+    ...(isHighSensitivity ? ["Use the smallest useful Lovable.dev prompt sequence and stop after any repeated failure."] : []),
+  ];
+
+  const firstPromptScope = [
+    `Build the first usable product shell for ${projectName}.`,
+    `Target users: ${params.targetUsers ?? "the primary users implied by the product idea"}.`,
+    `Core idea: ${params.roughIdea}`,
+    "Include only the must-have screens and workflow needed to prove the product direction.",
+    "Use realistic sample data and empty states, but avoid fake production integrations or irreversible setup.",
+  ];
+
+  const screenPlan = [
+    ...mustHave.map((feature) => `Must-have: ${feature}`),
+    ...niceToHave.map((feature) => `Defer or stub: ${feature}`),
+  ];
+
+  const dataModelAssumptions = dataObjects.map((item) =>
+    `${item}: keep simple in Lovable.dev; OpenClaw can normalize, type, migrate, and secure it after GitHub handoff.`,
+  );
+
+  const acceptanceCriteriaBeforeNextPrompt = [
+    "The app builds or previews without a blank screen.",
+    "The main workflow is visible in browser or screenshot evidence.",
+    "Navigation between the primary screens works.",
+    "No obvious console/runtime error blocks the requested experience.",
+    "GitHub sync/export is ready before exact engineering work starts.",
+  ];
+
+  const promptDraft = [
+    `Build ${projectName} in Lovable.dev as a credit-smart first pass.`,
+    "",
+    "Product idea:",
+    params.roughIdea,
+    "",
+    "Target users:",
+    params.targetUsers ?? "Infer from the product idea and optimize for a serious, production-minded first version.",
+    "",
+    "Spend effort on:",
+    "- Clear product flow, screen layout, responsive behavior, visual hierarchy, empty states, and interaction states.",
+    "",
+    "Must-have features:",
+    ...mustHave.map((feature) => `- ${feature}`),
+    "",
+    "Defer or stub for later OpenClaw/GitHub work:",
+    ...niceToHave.map((feature) => `- ${feature}`),
+    ...integrations.map((integration) => `- ${integration}`),
+    "",
+    "Data objects:",
+    ...dataObjects.map((item) => `- ${item}`),
+    "",
+    "Design direction:",
+    params.designDirection ?? "Modern, credible, practical product UI with strong workflow clarity and maintainable structure.",
+    "",
+    "Important:",
+    "- Do not attempt deep backend correctness, production auth rules, billing, webhooks, migrations, CI, or test strategy.",
+    "- Keep the project easy to sync/export to GitHub so OpenClaw can inspect, refactor, test, and implement exact logic.",
+    "- Avoid broad rewrites after the first usable shell; preserve approved screens and behavior.",
+  ].join("\n");
+
+  return {
+    projectName,
+    planningGoal:
+      "Convert a rough product idea into a Lovable.dev plan that reduces wasted credits over the full project lifecycle.",
+    creditStrategy,
+    useLovableDevFor: [
+      "First product shell, screen architecture, layout, visual direction, responsive states, and fast UI iteration.",
+      "Subjective product and design changes where a prompt is faster than exact component editing.",
+      "Narrow follow-up UI prompts after OpenClaw confirms Git state and visible result evidence.",
+    ],
+    useOpenClawFor: [
+      "GitHub connection, source-of-truth decisions, local code edits, exact bug fixes, tests, CI, security, backend rules, and PRs.",
+      "Refactoring Lovable.dev output into cleaner modules, reusable components, typed data flow, and maintainable architecture.",
+      "Browser verification, screenshots, console/runtime diagnosis, and deciding when to stop prompting Lovable.dev.",
+      ...(hasRepo ? ["Inspect the connected repository before the next Lovable.dev prompt."] : ["Connect or export to GitHub after the first useful UI pass."]),
+    ],
+    deferUntilAfterShapeIsClear: [
+      "Production authentication rules, billing, webhooks, migrations, permissions, analytics, email delivery, and third-party API keys.",
+      "Advanced admin tools, complex reporting, automation, and large-scale state refactors.",
+      "Any change that needs exact correctness more than product exploration.",
+    ],
+    firstPromptScope,
+    screenPlan,
+    dataModelAssumptions,
+    integrationStrategy: integrations.map((integration) =>
+      `${integration}: represent visually or with safe placeholders in Lovable.dev; implement and test for real through OpenClaw after GitHub handoff.`,
+    ),
+    acceptanceCriteriaBeforeNextPrompt,
+    stopPromptingRules: [
+      "Stop after two Lovable.dev attempts at the same bug or invisible change.",
+      "Stop immediately when build, runtime, routing, Git sync, auth, data, or TypeScript errors appear.",
+      "Stop before broad prompts if GitHub/local changes are uncommitted or source of truth is unclear.",
+      "Stop when the requested change needs exact code behavior rather than UI/product exploration.",
+    ],
+    recommendedToolOrder: [
+      "lovable_credit_smart_plan",
+      "lovable_prompt_sequence",
+      "lovable_credit_risk_audit",
+      "lovable_make_prompt or lovable_build_url",
+      "lovable_connect_github_repo",
+      "lovable_visible_result_check",
+      "lovable_stop_prompting_check",
+      "lovable_repo_doctor",
+      "lovable_project_memory",
+    ],
+    lovablePromptDraft: promptDraft,
+  };
+}
+
+function makePromptSequence(params: {
+  projectName?: string;
+  plan?: CreditSmartPlan;
+  roughIdea?: string;
+  maxLovablePrompts?: number;
+  includeGitHubHandoff?: boolean;
+}): PromptSequence {
+  const projectName = params.projectName ?? params.plan?.projectName ?? "Lovable.dev project";
+  const maxLovablePrompts = Math.max(1, Math.min(params.maxLovablePrompts ?? 3, 5));
+  const roughIdea = params.roughIdea ?? params.plan?.planningGoal ?? "Build the app shell from the approved ClawKit plan.";
+  const basePrompt = params.plan?.lovablePromptDraft ?? [
+    `Build ${projectName} in Lovable.dev.`,
+    "",
+    "Product idea:",
+    roughIdea,
+    "",
+    "Focus Lovable.dev on UI/product shape. OpenClaw will handle exact code, tests, GitHub, refactoring, and production hardening.",
+  ].join("\n");
+
+  const sequence = [
+    {
+      step: 1,
+      goal: "Create the first usable app shell without overbuilding.",
+      prompt: basePrompt,
+      expectedEvidence: [
+        "Preview opens without a blank screen.",
+        "Primary screens and navigation are visible.",
+        "The main workflow can be demonstrated with safe sample data.",
+      ],
+      stopAfter: [
+        "Stop if the app fails to render, throws runtime errors, or misses the main workflow.",
+        "Stop and sync/export to GitHub before exact engineering starts.",
+      ],
+    },
+    {
+      step: 2,
+      goal: "Make one focused UI/product improvement from visible evidence.",
+      prompt: [
+        `Improve the existing ${projectName} Lovable.dev app with one focused UI/product pass.`,
+        "Preserve approved screens, navigation, data model assumptions, and working behavior.",
+        "Only change the specific visual hierarchy, layout, responsive, empty-state, or workflow issues observed in screenshots/browser evidence.",
+        "Do not attempt deep backend logic, auth, billing, tests, CI, or broad rewrites.",
+      ].join("\n"),
+      expectedEvidence: [
+        "Before/after screenshot or browser observation shows the requested change.",
+        "No approved behavior disappeared.",
+        "OpenClaw can identify the generated diff in GitHub.",
+      ],
+      stopAfter: [
+        "Stop if Lovable.dev claims completion but the change is not visible.",
+        "Stop if GitHub sync state becomes unclear.",
+      ],
+    },
+    {
+      step: 3,
+      goal: "Final narrow polish pass, then hand off to OpenClaw/GitHub.",
+      prompt: [
+        `Apply a final narrow polish pass to ${projectName}.`,
+        "Keep all approved product behavior intact.",
+        "Only address named visual polish issues, spacing, responsiveness, empty/loading/error states, and microcopy.",
+        "Prepare the project for GitHub handoff so OpenClaw can refactor, test, secure, and ship.",
+      ].join("\n"),
+      expectedEvidence: [
+        "Visible polish issues are fixed.",
+        "The app remains usable on mobile and desktop.",
+        "The repo is ready for OpenClaw verification and PR work.",
+      ],
+      stopAfter: [
+        "Stop prompting Lovable.dev and move to OpenClaw engineering.",
+        "Run visible-result verification and repo doctor before any more product prompts.",
+      ],
+    },
+  ].slice(0, maxLovablePrompts);
+
+  return {
+    projectName,
+    maxLovablePrompts,
+    sequence,
+    afterSequence: [
+      ...(params.includeGitHubHandoff === false ? [] : ["Connect/sync/export to GitHub and make GitHub the source of truth."]),
+      "Run `lovable_visible_result_check` and `lovable_repo_doctor`.",
+      "Use OpenClaw for maintainability refactors, exact logic, tests, CI, security, and PR preparation.",
+      "Only return to Lovable.dev with a new `lovable_credit_risk_audit` when the requested work is clearly UI/product exploration.",
+    ],
+  };
+}
+
+function makeCreditRiskAudit(params: {
+  projectName?: string;
+  proposedPrompt?: string;
+  plannedFeatures?: string[];
+  integrations?: string[];
+  existingKnownBugs?: string[];
+  hasFailingBuild?: boolean;
+  hasGitHubRepo?: boolean;
+  hasLocalRepo?: boolean;
+  hasRuntimeErrors?: boolean;
+  hasInvisibleChanges?: boolean;
+  creditSensitivity?: "low" | "medium" | "high";
+}): CreditRiskAudit {
+  const projectName = params.projectName ?? "Lovable.dev project";
+  const proposedPrompt = (params.proposedPrompt ?? "").toLowerCase();
+  const plannedFeatures = asList(params.plannedFeatures, []);
+  const integrations = asList(params.integrations, []);
+  const knownBugs = asList(params.existingKnownBugs, []);
+  const exactEngineeringSignals = [
+    "typescript",
+    "runtime",
+    "test",
+    "ci",
+    "auth",
+    "billing",
+    "webhook",
+    "migration",
+    "database",
+    "security",
+    "refactor",
+    "github",
+    "api key",
+  ];
+  const promptHasExactSignals = exactEngineeringSignals.some((signal) => proposedPrompt.includes(signal));
+  const blockers = [
+    ...(params.hasFailingBuild ? ["Current build is failing."] : []),
+    ...(params.hasRuntimeErrors ? ["Runtime or console errors are present."] : []),
+    ...(params.hasInvisibleChanges ? ["Lovable.dev changes are not visibly appearing."] : []),
+    ...(knownBugs.length ? knownBugs.map((bug) => `Known bug: ${bug}`) : []),
+  ];
+  const hasRepo = Boolean(params.hasGitHubRepo || params.hasLocalRepo);
+  const riskScore =
+    blockers.length +
+    (promptHasExactSignals ? 2 : 0) +
+    (integrations.length > 0 ? 1 : 0) +
+    (params.creditSensitivity === "high" ? 1 : 0) +
+    (!hasRepo ? 1 : 0);
+  const riskLevel: CreditRiskAudit["riskLevel"] = riskScore >= 4 ? "high" : riskScore >= 2 ? "medium" : "low";
+  const shouldUseLovableDev = riskLevel === "low" && !promptHasExactSignals && blockers.length === 0;
+
+  return {
+    projectName,
+    riskLevel,
+    shouldUseLovableDev,
+    likelyCreditWastes: [
+      ...blockers,
+      ...(promptHasExactSignals ? ["The proposed prompt asks Lovable.dev for exact engineering work better handled by OpenClaw."] : []),
+      ...(integrations.length ? integrations.map((item) => `Integration risk: ${item} should be stubbed in Lovable.dev and implemented/tested in code.`) : []),
+      ...(!hasRepo ? ["No confirmed GitHub/local repo handoff, so repeated Lovable.dev prompting may hide source-of-truth problems."] : []),
+      ...(plannedFeatures.length > 5 ? ["The planned feature list is broad; split it into one Lovable.dev UI pass plus OpenClaw engineering tasks."] : []),
+    ],
+    useOpenClawInsteadFor: [
+      "Build/runtime/typecheck/test failures.",
+      "GitHub sync, branch, PR, and source-of-truth work.",
+      "Architecture, refactoring, maintainability, reusable components, and exact business logic.",
+      "Production auth, billing, integrations, API keys, migrations, webhooks, CI, and security.",
+    ],
+    promptTighteningRules: [
+      "Ask Lovable.dev for one visible UI/product outcome at a time.",
+      "Tell Lovable.dev what to preserve and what not to touch.",
+      "Use placeholders for risky integrations until OpenClaw handles real implementation.",
+      "Require visible acceptance criteria before another Lovable.dev prompt.",
+      "Avoid asking Lovable.dev to fix the same invisible or code-level issue repeatedly.",
+    ],
+    nextAction: shouldUseLovableDev
+      ? "Proceed with a narrow Lovable.dev prompt, then verify the visible result and GitHub diff."
+      : "Do not spend more Lovable.dev credits yet. Switch to OpenClaw verification, repo inspection, or code repair first.",
+  };
+}
+
+function makeStopPromptingCheck(params: {
+  projectName?: string;
+  attemptedPrompts?: number;
+  sameIssueRepeated?: boolean;
+  hasFailingBuild?: boolean;
+  hasRuntimeErrors?: boolean;
+  hasInvisibleChanges?: boolean;
+  hasGitHubRepo?: boolean;
+  hasLocalRepo?: boolean;
+  needsArchitectureRefactor?: boolean;
+  userStillUnsatisfied?: boolean;
+}): StopPromptingCheck {
+  const projectName = params.projectName ?? "Lovable.dev project";
+  const attemptedPrompts = params.attemptedPrompts ?? 0;
+  const reasons = [
+    ...(attemptedPrompts >= 2 && params.sameIssueRepeated ? ["The same issue has already consumed multiple Lovable.dev prompts."] : []),
+    ...(params.hasFailingBuild ? ["The app has a failing build, which should be fixed with OpenClaw code tools."] : []),
+    ...(params.hasRuntimeErrors ? ["Runtime errors need diagnosis in browser/code, not another broad prompt."] : []),
+    ...(params.hasInvisibleChanges ? ["The visible result does not match Lovable.dev's claimed completion."] : []),
+    ...(params.needsArchitectureRefactor ? ["The next work is maintainability/refactoring, which belongs in OpenClaw/GitHub."] : []),
+    ...(params.userStillUnsatisfied && attemptedPrompts >= 3 ? ["The user remains unsatisfied after several prompts, so the strategy needs evidence and repair, not more prompting."] : []),
+  ];
+  const hasRepo = Boolean(params.hasGitHubRepo || params.hasLocalRepo);
+  const shouldStopPrompting = reasons.length > 0 || attemptedPrompts >= 4;
+
+  return {
+    projectName,
+    shouldStopPrompting,
+    reason: shouldStopPrompting
+      ? reasons.join(" ") || "Lovable.dev prompt count is high enough that OpenClaw should verify and stabilize before continuing."
+      : "Another narrow Lovable.dev UI/product prompt may be reasonable if acceptance criteria are clear.",
+    switchTo: shouldStopPrompting
+      ? [
+          "OpenClaw browser verification.",
+          "GitHub/local repo inspection.",
+          "Build/typecheck/test diagnosis.",
+          "Maintainability refactor or exact code fix.",
+        ]
+      : ["A single narrow Lovable.dev prompt with explicit preservation rules and visible acceptance criteria."],
+    openClawNextSteps: [
+      ...(hasRepo ? ["Confirm branch, dirty files, and latest Lovable.dev sync state."] : ["Connect or export the Lovable.dev project to GitHub before exact engineering work."]),
+      "Run visible-result verification with screenshot/browser evidence.",
+      "Inspect build/runtime errors and fix them directly in code.",
+      "Refactor fragile generated code only as much as needed to make the requested change stable.",
+      "Update project memory and decision log before any later Lovable.dev prompt.",
+    ],
+    evidenceBeforeAnotherPrompt: [
+      "Clean or intentionally documented Git state.",
+      "Build/runtime status.",
+      "Browser or screenshot proof of current behavior.",
+      "A one-screen or one-workflow prompt with preserve/change/avoid sections.",
+      "A clear reason Lovable.dev is the best tool for the next step.",
+    ],
+  };
+}
+
 function makeBuildUrl(prompt: string): string {
   const encoded = encodeURIComponent(prompt);
   return `https://lovable.dev/?autosubmit=true#prompt=${encoded}`;
@@ -1558,7 +1978,7 @@ export default definePluginEntry({
   id: "clawkit-for-lovable",
   name: "ClawKit for Lovable",
   description:
-    "Routes product/UI work through Lovable and precise engineering work through OpenClaw, GitHub, tests, and code tools.",
+    "Plans Lovable.dev work with credit-smart prompts and routes precise engineering through OpenClaw, GitHub, tests, and code tools.",
   register(api) {
     api.registerTool({
       name: "lovable_decide_route",
@@ -1595,6 +2015,100 @@ export default definePluginEntry({
       }),
       async execute(_id, params: any) {
         return text(makePrompt(params));
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_credit_smart_plan",
+      label: "Create Credit-Smart Plan",
+      description:
+        "Turn a rough app idea into a Lovable.dev build plan that reduces wasted credits by separating UI/product prompting from OpenClaw/GitHub engineering work.",
+      parameters: Type.Object({
+        projectName: Type.Optional(Type.String()),
+        roughIdea: Type.String({ description: "The user's rough app idea or product goal." }),
+        targetUsers: Type.Optional(Type.String({ description: "Who the app is for." })),
+        mustHaveFeatures: optionalStringArray("Features Lovable.dev should include in the first useful app shell."),
+        niceToHaveFeatures: optionalStringArray("Features to defer, stub, or handle later."),
+        integrations: optionalStringArray("Integrations or external services that may waste credits if built too early."),
+        dataObjects: optionalStringArray("Main domain objects or records."),
+        designDirection: Type.Optional(Type.String()),
+        budgetSensitivity: Type.Optional(Type.Union([
+          Type.Literal("low"),
+          Type.Literal("medium"),
+          Type.Literal("high"),
+        ])),
+        hasExistingApp: Type.Optional(Type.Boolean({ description: "Whether this is for an existing Lovable.dev app rather than a new build." })),
+        githubRepoUrl: Type.Optional(Type.String({ description: "Connected GitHub repository URL, if known." })),
+        localRepoPath: Type.Optional(Type.String({ description: "Local repo path if OpenClaw already has the project open. ClawKit does not read this path." })),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makeCreditSmartPlan(params));
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_prompt_sequence",
+      label: "Plan Prompt Sequence",
+      description:
+        "Create a short Lovable.dev prompt sequence with evidence gates so OpenClaw avoids expensive repeated prompting.",
+      parameters: Type.Object({
+        projectName: Type.Optional(Type.String()),
+        plan: Type.Optional(Type.Any({ description: "Output from lovable_credit_smart_plan, if available." })),
+        roughIdea: Type.Optional(Type.String()),
+        maxLovablePrompts: Type.Optional(Type.Number({ description: "Maximum Lovable.dev prompts to allow before GitHub/OpenClaw verification. Clamped to 1-5." })),
+        includeGitHubHandoff: Type.Optional(Type.Boolean({ description: "Whether the sequence should explicitly include GitHub handoff after Lovable.dev prompting." })),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makePromptSequence(params));
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_credit_risk_audit",
+      label: "Audit Credit Risk",
+      description:
+        "Check whether a proposed Lovable.dev prompt is likely to waste credits and whether OpenClaw should verify or code first.",
+      parameters: Type.Object({
+        projectName: Type.Optional(Type.String()),
+        proposedPrompt: Type.Optional(Type.String({ description: "The Lovable.dev prompt being considered." })),
+        plannedFeatures: optionalStringArray("Features included in the next planned prompt."),
+        integrations: optionalStringArray("Integrations or external services in scope."),
+        existingKnownBugs: optionalStringArray("Known bugs or visible failures."),
+        hasFailingBuild: Type.Optional(Type.Boolean()),
+        hasGitHubRepo: Type.Optional(Type.Boolean()),
+        hasLocalRepo: Type.Optional(Type.Boolean()),
+        hasRuntimeErrors: Type.Optional(Type.Boolean()),
+        hasInvisibleChanges: Type.Optional(Type.Boolean()),
+        creditSensitivity: Type.Optional(Type.Union([
+          Type.Literal("low"),
+          Type.Literal("medium"),
+          Type.Literal("high"),
+        ])),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makeCreditRiskAudit(params));
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_stop_prompting_check",
+      label: "Check Stop Prompting",
+      description:
+        "Decide whether OpenClaw should stop spending Lovable.dev credits and switch to browser verification, GitHub inspection, code repair, or refactoring.",
+      parameters: Type.Object({
+        projectName: Type.Optional(Type.String()),
+        attemptedPrompts: Type.Optional(Type.Number()),
+        sameIssueRepeated: Type.Optional(Type.Boolean()),
+        hasFailingBuild: Type.Optional(Type.Boolean()),
+        hasRuntimeErrors: Type.Optional(Type.Boolean()),
+        hasInvisibleChanges: Type.Optional(Type.Boolean()),
+        hasGitHubRepo: Type.Optional(Type.Boolean()),
+        hasLocalRepo: Type.Optional(Type.Boolean()),
+        needsArchitectureRefactor: Type.Optional(Type.Boolean()),
+        userStillUnsatisfied: Type.Optional(Type.Boolean()),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makeStopPromptingCheck(params));
       },
     });
 

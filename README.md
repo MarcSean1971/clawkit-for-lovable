@@ -1,34 +1,52 @@
 # ClawKit for Lovable
 
-ClawKit for Lovable is an independent OpenClaw plugin for people who love Lovable's speed but are tired of wasted credits, invisible changes, fragile generated code, and apps that are hard to maintain after the first exciting demo.
+ClawKit for Lovable is an independent OpenClaw plugin for people who love Lovable.dev's speed but are tired of wasted credits, invisible changes, fragile generated code, and apps that are hard to maintain after the first exciting demo.
 
-It turns Lovable into one focused UI/product tool inside a larger OpenClaw workflow. Lovable can move fast on screens, layout, product flow, and visual polish. OpenClaw then brings the rest of the toolbelt: GitHub, local code editing, tests, browser verification, refactoring, PRs, project memory, and shipping discipline.
+It turns Lovable.dev into one focused UI/product tool inside a larger OpenClaw workflow. Lovable.dev can move fast on screens, layout, product flow, and visual polish. OpenClaw then brings the rest of the toolbelt: GitHub, local code editing, tests, browser verification, refactoring, PRs, project memory, and shipping discipline.
 
 The promise is simple:
 
-> Use Lovable for speed. Use ClawKit to stop the project becoming expensive, messy, invisible, or impossible to scale.
+> Use Lovable.dev for speed. Use ClawKit to stop the project becoming expensive, messy, invisible, or impossible to scale.
 
 ClawKit is independent and is not affiliated with or endorsed by Lovable.dev.
 
-## Why Lovable Users Need This
+## Why Lovable.dev Users Need This
 
-Lovable is powerful, but serious users often hit the same wall:
+Lovable.dev is powerful, but serious users often hit the same wall:
 
-- Lovable spends credits trying to fix the same issue again and again.
-- Lovable says something is done, but the screen does not visibly change.
+- Lovable.dev spends credits trying to fix the same issue again and again.
+- Lovable.dev says something is done, but the screen does not visibly change.
 - The app looks promising, but the generated code is duplicated, brittle, or hard to extend.
-- GitHub sync becomes confusing once Lovable, local edits, and PR work overlap.
+- GitHub sync becomes confusing once Lovable.dev, local edits, and PR work overlap.
 - Fixing one screen breaks another route, layout, state flow, or build.
 - The user needs real engineering tools, not another broad prompt.
 
-ClawKit sits above Lovable and helps OpenClaw decide the right next move:
+ClawKit sits above Lovable.dev and helps OpenClaw decide the right next move:
 
-- Send a narrow, high-quality prompt to Lovable only when Lovable is the right tool.
-- Stop wasting credits on jobs OpenClaw should handle directly in code.
+- Create a credit-smart plan before spending Lovable.dev credits.
+- Send a narrow, high-quality prompt to Lovable.dev only when Lovable.dev is the right tool.
+- Stop wasting Lovable.dev credits on jobs OpenClaw should handle directly in code.
 - Connect the project to GitHub as the source of truth.
 - Verify builds, screenshots, browser state, console errors, and visible results.
-- Refactor Lovable-generated code into cleaner, scalable, maintainable architecture.
+- Refactor Lovable.dev-generated code into cleaner, scalable, maintainable architecture.
 - Keep project memory, decisions, do-not-change rules, and next actions across sessions.
+
+## Credit-Smart Planning
+
+The highest-leverage feature is planning before prompting. A rough idea can burn through Lovable.dev credits if it is sent as one broad request, especially when the project later needs debugging, refactoring, GitHub repair, or production logic.
+
+ClawKit adds a Credit-Smart Planning layer:
+
+- Turn a rough app idea into a staged Lovable.dev plan.
+- Spend Lovable.dev credits on product shape, screens, visual direction, and workflow clarity.
+- Move debugging, refactoring, architecture, tests, GitHub, CI, backend logic, auth, billing, integrations, and security to OpenClaw.
+- Create a short prompt sequence with evidence gates instead of endless “try again” prompts.
+- Audit a proposed Lovable.dev prompt before credits are spent.
+- Stop prompting when the same issue repeats, the build fails, runtime errors appear, or the visible result does not change.
+
+Example request:
+
+> I have a rough idea for a client portal. Create a credit-smart Lovable.dev plan first, then give me the smallest prompt sequence that gets the UI direction right without wasting credits on backend details.
 
 ## Early Public Release
 
@@ -36,7 +54,7 @@ ClawKit for Lovable is an early public release. It is useful now for building, r
 
 Constructive feedback is very welcome, especially:
 
-- Lovable apps ClawKit failed to rescue.
+- Lovable.dev apps ClawKit failed to rescue.
 - Workflows that felt confusing.
 - Missing verification checks.
 - Places where OpenClaw should use Lovable versus code tools differently.
@@ -48,11 +66,11 @@ https://github.com/MarcSean1971/clawkit-for-lovable/issues
 
 Lovable is excellent for UI scaffolding, visual iteration, product flow, and fast app generation. OpenClaw is better at exact code, GitHub, tests, CI, debugging, integrations, browser checks, security, and shipping discipline. This plugin gives OpenClaw tools and a bundled skill for choosing the right surface at the right time.
 
-The plugin assumes Lovable output is a product draft, not finished architecture. OpenClaw should refactor, harden, test, and review the generated code before the app is treated as production-ready.
+The plugin assumes Lovable.dev output is a product draft, not finished architecture. OpenClaw should refactor, harden, test, and review the generated code before the app is treated as production-ready.
 
 ## Product Promise
 
-> Build with Lovable's speed. Rescue, verify, refactor, and ship with OpenClaw.
+> Build with Lovable.dev's speed. Rescue, verify, refactor, and ship with OpenClaw.
 
 > Lovable got you 80% there. ClawKit stops the last 20% from eating the whole project.
 
@@ -68,29 +86,29 @@ OpenClaw can then:
 
 - Show users what is possible before they start.
 - Help users choose a suitable configured OpenClaw model/profile.
-- Turn rough app ideas into strong Lovable prompts.
-- Diagnose and rescue existing Lovable apps that are broken, messy, invisible, expensive to keep prompting, or hard to extend.
-- Launch Lovable's Build-with-URL flow.
+- Turn rough app ideas into credit-smart Lovable.dev plans and strong prompts.
+- Diagnose and rescue existing Lovable.dev apps that are broken, messy, invisible, expensive to keep prompting, or hard to extend.
+- Launch Lovable.dev's Build-with-URL flow.
 - Connect a Lovable project to its GitHub repository workflow.
 - Check whether the project is ready for Lovable UI work, OpenClaw engineering, PR, or deploy steps.
 - Route UI/product work to Lovable.
-- Verify that Lovable's promised changes actually appear on screen.
-- Route exact engineering work to GitHub and local code tools instead of burning more Lovable credits.
+- Verify that Lovable.dev's promised changes actually appear on screen.
+- Route exact engineering work to GitHub and local code tools instead of burning more Lovable.dev credits.
 - Keep a reusable project memory brief with URLs, repo state, stack, risks, and do-not-touch rules.
 - Maintain a decision log and session brief so each new run starts from the latest agreed source of truth.
 - Produce a handoff checklist for PR-quality delivery.
-- Generate follow-up Lovable prompts from repo, test, or screenshot findings.
+- Generate follow-up Lovable.dev prompts from repo, test, or screenshot findings.
 
 ## What You Get
 
 With ClawKit for Lovable, OpenClaw can help you move from a fragile Lovable draft to a serious project workflow:
 
-- **Better prompts**: narrower Lovable prompts with acceptance criteria and preservation rules.
+- **Better prompts**: narrower Lovable.dev prompts with acceptance criteria and preservation rules.
 - **Credit discipline**: stop using Lovable for bugs, refactors, tests, GitHub work, and exact code changes.
 - **Rescue mode**: diagnose blank screens, invisible changes, build errors, runtime failures, routing issues, and messy generated code.
 - **GitHub handoff**: treat GitHub as the source of truth, with branches, PRs, verification notes, and generated-vs-coded sections.
 - **Visible proof**: do not accept “done” until the build works and the expected change appears in browser or screenshot evidence.
-- **Maintainability pass**: refactor Lovable output into cleaner modules, better boundaries, stable state flow, reusable components, and reviewable code.
+- **Maintainability pass**: refactor Lovable.dev output into cleaner modules, better boundaries, stable state flow, reusable components, and reviewable code.
 - **Project memory**: remember the goal, source of truth, routes, known bugs, decisions, do-not-change rules, and next action.
 - **Tool routing**: let OpenClaw choose Lovable, GitHub, local code tools, browser tools, or PR tooling based on the task.
 
@@ -111,9 +129,13 @@ Use ClawKit for Lovable when:
 | --- | --- |
 | `lovable_decide_route` | Decides which work belongs in Lovable, GitHub, or OpenClaw code tools. |
 | `lovable_make_prompt` | Converts rough product ideas into Lovable-ready build prompts. |
+| `lovable_credit_smart_plan` | Turns rough app ideas into Lovable.dev plans that reduce wasted credits across the project lifecycle. |
+| `lovable_prompt_sequence` | Creates a short prompt sequence with evidence gates instead of open-ended Lovable.dev prompting. |
+| `lovable_credit_risk_audit` | Checks whether a proposed Lovable.dev prompt is likely to waste credits and should be handled by OpenClaw first. |
+| `lovable_stop_prompting_check` | Decides when to stop spending Lovable.dev credits and switch to verification, GitHub, code repair, or refactoring. |
 | `lovable_build_url` | Creates a Lovable autosubmit Build-with-URL link. |
 | `lovable_open_build_url` | Prepares a Lovable URL for OpenClaw's trusted browser tool to open after approval. |
-| `lovable_github_handoff` | Creates the checklist for moving from Lovable output to GitHub/code work. |
+| `lovable_github_handoff` | Creates the checklist for moving from Lovable.dev output to GitHub/code work. |
 | `lovable_connect_github_repo` | Plans the safe connection from Lovable project to GitHub repo, branch, checks, and PR workflow. |
 | `lovable_project_readiness` | Scores whether the project has enough evidence to continue safely. |
 | `lovable_project_context` | Creates a reusable project memory brief so OpenClaw can keep Lovable, GitHub, stack, verification, risk, and next-step context together. |
@@ -123,12 +145,12 @@ Use ClawKit for Lovable when:
 | `lovable_next_action_plan` | Chooses the next safe action: ask the user, prompt Lovable, inspect GitHub, edit code, verify, prepare PR, or ship. |
 | `lovable_iteration_brief` | Creates a focused follow-up prompt for Lovable UI iteration. |
 | `lovable_repo_doctor` | Reviews caller-supplied Git/package evidence for Git state, framework, scripts, and risks without reading files itself. |
-| `lovable_rescue_plan` | Diagnoses and plans repairs for existing Lovable apps. |
+| `lovable_rescue_plan` | Diagnoses and plans repairs for existing Lovable.dev apps. |
 | `lovable_sync_risk_report` | Decides whether it is safe to prompt Lovable again without losing or tangling work. |
 | `lovable_delivery_plan` | Plans the next best move: Lovable UI pass or OpenClaw engineering pass. |
 | `lovable_pr_summary` | Drafts a PR body that separates Lovable-generated and OpenClaw-coded work. |
 | `lovable_openclaw_integration_plan` | Plans an optional secure "OpenClaw Inside" feature for the app being built. |
-| `lovable_visible_result_check` | Verifies that Lovable's claimed change actually builds and appears on screen. |
+| `lovable_visible_result_check` | Verifies that Lovable.dev's claimed change actually builds and appears on screen. |
 | `lovable_model_strategy` | Helps the user choose a configured OpenClaw model/profile for the task. |
 | `lovable_starter_guide` | Educates the user before building with examples, workflow, choices, and guardrails. |
 | `lovable_mood_indicator` | Adds a playful frustration meter plus serious self-healing notes for the agent. |
@@ -173,24 +195,28 @@ Browser opening is optional. `lovable_build_url` returns a URL without opening a
 1. OpenClaw shows `lovable_starter_guide` when the user needs orientation.
 2. User describes the product or existing app problem.
 3. OpenClaw optionally calls `lovable_model_strategy`.
-4. OpenClaw calls `lovable_decide_route`.
-5. OpenClaw calls `lovable_make_prompt`.
-6. OpenClaw calls `lovable_build_url` or, with approval, `lovable_open_build_url`.
-7. User or OpenClaw monitors the Lovable result.
-8. Lovable project is synced/exported to GitHub.
-9. OpenClaw calls `lovable_connect_github_repo` with the repo URL and creates/opens a safe branch with trusted GitHub tools.
-10. OpenClaw calls `lovable_project_context` and `lovable_project_memory` to create or refresh reusable project memory.
-11. OpenClaw calls `lovable_session_brief` at the start of each later session.
-12. OpenClaw calls `lovable_next_action_plan` to choose the safest next move.
-13. OpenClaw calls `lovable_project_readiness` to check whether enough evidence exists for the next step.
-14. OpenClaw gathers Git/package evidence with trusted tools, then runs `lovable_repo_doctor` and `lovable_sync_risk_report`.
-15. For existing broken apps, OpenClaw calls `lovable_rescue_plan`.
-16. OpenClaw uses GitHub/local tools for code, tests, CI, security, and PR.
-17. OpenClaw runs `lovable_visible_result_check` to confirm the change is actually visible.
-18. OpenClaw records important choices with `lovable_decision_log`.
-19. OpenClaw refactors Lovable-generated code for maintainability before shipping.
-20. OpenClaw uses `lovable_iteration_brief` for another UI pass only when useful.
-21. OpenClaw uses `lovable_pr_summary` before opening a PR.
+4. OpenClaw calls `lovable_credit_smart_plan` so Lovable.dev credits are spent on the right work.
+5. OpenClaw calls `lovable_prompt_sequence` to limit prompting and define evidence gates.
+6. OpenClaw calls `lovable_credit_risk_audit` before spending credits on the next Lovable.dev prompt.
+7. OpenClaw calls `lovable_decide_route`.
+8. OpenClaw calls `lovable_make_prompt`.
+9. OpenClaw calls `lovable_build_url` or, with approval, `lovable_open_build_url`.
+10. User or OpenClaw monitors the Lovable.dev result.
+11. Lovable.dev project is synced/exported to GitHub.
+12. OpenClaw calls `lovable_connect_github_repo` with the repo URL and creates/opens a safe branch with trusted GitHub tools.
+13. OpenClaw calls `lovable_project_context` and `lovable_project_memory` to create or refresh reusable project memory.
+14. OpenClaw calls `lovable_session_brief` at the start of each later session.
+15. OpenClaw calls `lovable_next_action_plan` to choose the safest next move.
+16. OpenClaw calls `lovable_project_readiness` to check whether enough evidence exists for the next step.
+17. OpenClaw gathers Git/package evidence with trusted tools, then runs `lovable_repo_doctor` and `lovable_sync_risk_report`.
+18. For existing broken apps, OpenClaw calls `lovable_rescue_plan`.
+19. OpenClaw calls `lovable_stop_prompting_check` when prompts repeat, changes are invisible, or errors appear.
+20. OpenClaw uses GitHub/local tools for code, tests, CI, security, and PR.
+21. OpenClaw runs `lovable_visible_result_check` to confirm the change is actually visible.
+22. OpenClaw records important choices with `lovable_decision_log`.
+23. OpenClaw refactors Lovable.dev-generated code for maintainability before shipping.
+24. OpenClaw uses `lovable_iteration_brief` for another UI pass only when useful.
+25. OpenClaw uses `lovable_pr_summary` before opening a PR.
 
 ## GitHub Connection
 

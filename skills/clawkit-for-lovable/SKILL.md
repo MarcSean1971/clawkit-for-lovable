@@ -1,11 +1,11 @@
 ---
 name: clawkit-for-lovable
-description: Use Lovable as a product/UI generation surface while keeping GitHub, exact code changes, tests, security, and delivery under OpenClaw control.
+description: Use Lovable.dev as a product/UI generation surface while keeping credit control, GitHub, exact code changes, tests, security, and delivery under OpenClaw control.
 ---
 
 # ClawKit for Lovable
 
-Use this skill when a user asks OpenClaw to build, improve, rescue, harden, or ship an app with Lovable.
+Use this skill when a user asks OpenClaw to build, improve, rescue, harden, or ship an app with Lovable.dev.
 
 If the user is new, uncertain, or starting a project from scratch, call `lovable_starter_guide` before planning. The most important usability feature is teaching the user what is possible before they start, without making them read documentation.
 
@@ -15,7 +15,9 @@ ClawKit is an early public release. Be honest that it will improve continuously,
 
 ## Prime Directive
 
-Lovable is a specialist tool for product shaping, UI scaffolding, page generation, responsive layout, and visual iteration. OpenClaw remains the orchestrator and should use its own coding, shell, browser, GitHub, test, and review tools whenever precision matters.
+Lovable.dev is a specialist tool for product shaping, UI scaffolding, page generation, responsive layout, and visual iteration. OpenClaw remains the orchestrator and should use its own coding, shell, browser, GitHub, test, and review tools whenever precision matters.
+
+Before spending Lovable.dev credits, create a credit-smart plan. Use Lovable.dev for the work it is good at, then move to OpenClaw/GitHub for exact implementation, verification, refactoring, and shipping. The user should feel that ClawKit is protecting their credits, not merely generating prettier prompts.
 
 Lovable-generated code must be treated as a strong product draft, not production-quality architecture. Always expect OpenClaw to perform a maintainability pass before shipping: refactor messy components, separate concerns, remove duplication, improve naming, stabilize state/data flow, add tests, and make the code clean, scalable, and reviewable.
 
@@ -40,6 +42,14 @@ Use GitHub and OpenClaw code tools for:
 - Refactors, code review, documentation, and maintainability.
 - Any change that needs exact diffs or verification.
 
+Use Credit-Smart Planning for:
+
+- Rough ideas that need a plan before Lovable.dev credits are spent.
+- Users worried about expensive Lovable.dev iterations.
+- Broad feature lists that should be split into a small UI pass and OpenClaw engineering work.
+- Proposed prompts that include debugging, architecture, tests, GitHub, auth, billing, integrations, or backend correctness.
+- Deciding whether to stop prompting and switch to verification/code repair.
+
 Use Rescue mode for existing Lovable apps that are broken, messy, not visibly updated, or hard to extend. Existing-app rescue is a first-class workflow, not an edge case.
 
 Require explicit user approval before:
@@ -54,24 +64,28 @@ Require explicit user approval before:
 1. If helpful, call `lovable_starter_guide` to educate the user on options, workflow, and guardrails.
 2. Understand the user's app goal and success criteria.
 3. If model choice matters or the user asks, call `lovable_model_strategy`.
-4. Call `lovable_decide_route` to decide what belongs in Lovable versus OpenClaw/GitHub.
-5. For a new app or major UI pass, call `lovable_make_prompt`.
-6. Call `lovable_build_url` and show or open the URL only when appropriate.
-7. After Lovable creates or updates the app, sync/export to GitHub.
-8. Call `lovable_connect_github_repo` once the repo URL is known so OpenClaw has a safe branch/check/PR plan.
-9. Call `lovable_project_context` and `lovable_project_memory` to create or refresh reusable memory for the app.
-10. Call `lovable_session_brief` at the start of later sessions or before risky work.
-11. Call `lovable_next_action_plan` to choose the safest next move.
-12. Call `lovable_project_readiness` before major next steps such as another Lovable pass, engineering edits, PR, or deploy.
-13. Gather Git/package evidence with trusted tools, then call `lovable_repo_doctor` before code work.
-14. Call `lovable_sync_risk_report` before asking Lovable for another broad UI pass.
-15. For an existing broken or messy app, call `lovable_rescue_plan`.
-16. Use OpenClaw's GitHub/local coding tools to inspect the repo, run install/build/tests, and make precise changes.
-17. Call `lovable_visible_result_check` before accepting Lovable's completion claim.
-18. Record major decisions with `lovable_decision_log`.
-19. Run a hardening/refactor pass before considering the app production-ready.
-20. Use `lovable_iteration_brief` only when another Lovable UI pass is better than direct code edits.
-21. End with a PR, preview link, screenshots when available, verification notes, and remaining risks.
+4. Call `lovable_credit_smart_plan` before the first Lovable.dev prompt or any broad rebuild.
+5. Call `lovable_prompt_sequence` to limit prompts and define evidence gates.
+6. Call `lovable_credit_risk_audit` before spending credits on the next prompt.
+7. Call `lovable_decide_route` to decide what belongs in Lovable.dev versus OpenClaw/GitHub.
+8. For a new app or major UI pass, call `lovable_make_prompt`.
+9. Call `lovable_build_url` and show or open the URL only when appropriate.
+10. After Lovable.dev creates or updates the app, sync/export to GitHub.
+11. Call `lovable_connect_github_repo` once the repo URL is known so OpenClaw has a safe branch/check/PR plan.
+12. Call `lovable_project_context` and `lovable_project_memory` to create or refresh reusable memory for the app.
+13. Call `lovable_session_brief` at the start of later sessions or before risky work.
+14. Call `lovable_next_action_plan` to choose the safest next move.
+15. Call `lovable_project_readiness` before major next steps such as another Lovable.dev pass, engineering edits, PR, or deploy.
+16. Gather Git/package evidence with trusted tools, then call `lovable_repo_doctor` before code work.
+17. Call `lovable_sync_risk_report` before asking Lovable.dev for another broad UI pass.
+18. For an existing broken or messy app, call `lovable_rescue_plan`.
+19. Call `lovable_stop_prompting_check` when prompts repeat, changes are invisible, build/runtime errors appear, or maintainability work is needed.
+20. Use OpenClaw's GitHub/local coding tools to inspect the repo, run install/build/tests, and make precise changes.
+21. Call `lovable_visible_result_check` before accepting Lovable.dev's completion claim.
+22. Record major decisions with `lovable_decision_log`.
+23. Run a hardening/refactor pass before considering the app production-ready.
+24. Use `lovable_iteration_brief` only when another Lovable.dev UI pass is better than direct code edits.
+25. End with a PR, preview link, screenshots when available, verification notes, and remaining risks.
 
 ## Rescue Existing Apps
 

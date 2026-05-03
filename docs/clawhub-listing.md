@@ -6,17 +6,19 @@ ClawKit for Lovable
 
 ## Short Description
 
-Rescue Lovable apps from wasted credits, invisible changes, messy code, and weak architecture with OpenClaw.
+Reduce wasted Lovable.dev credits with credit-smart planning, rescue workflows, visible verification, GitHub handoff, and OpenClaw refactoring.
 
 ## Long Description
 
-ClawKit for Lovable is an independent OpenClaw plugin for Lovable users who are frustrated by wasted credits, repeated failed fixes, "done" messages that are not visible on screen, GitHub sync confusion, and generated code that becomes hard to maintain or scale.
+ClawKit for Lovable is an independent OpenClaw plugin for Lovable.dev users who are frustrated by wasted credits, repeated failed fixes, "done" messages that are not visible on screen, GitHub sync confusion, and generated code that becomes hard to maintain or scale.
 
-It turns Lovable.dev into one specialized UI/product tool inside a broader OpenClaw workflow. Lovable stays useful for fast screens, product flow, and visual iteration. OpenClaw handles the parts Lovable is not best at: GitHub source-of-truth workflows, repo inspection, build/test/typecheck checks, browser and screenshot verification, debugging, refactoring, architecture cleanup, PR summaries, project memory, and delivery discipline.
+It turns Lovable.dev into one specialized UI/product tool inside a broader OpenClaw workflow. Lovable.dev stays useful for fast screens, product flow, and visual iteration. OpenClaw handles the parts Lovable.dev is not best at: GitHub source-of-truth workflows, repo inspection, build/test/typecheck checks, browser and screenshot verification, debugging, refactoring, architecture cleanup, PR summaries, project memory, and delivery discipline.
 
-Use it to build new Lovable apps more safely, or to rescue existing Lovable apps that are blank, stale, broken, messy, expensive to keep prompting, or not production-ready. ClawKit helps OpenClaw decide whether the next action should be a narrow Lovable prompt, a GitHub/code fix, a visible-result check, a refactor pass, or a PR.
+Use it to build new Lovable.dev apps more safely, or to rescue existing Lovable.dev apps that are blank, stale, broken, messy, expensive to keep prompting, or not production-ready. ClawKit helps OpenClaw decide whether the next action should be a credit-smart Lovable.dev plan, a narrow Lovable.dev prompt, a GitHub/code fix, a visible-result check, a refactor pass, or a PR.
 
-The product promise: use Lovable for speed, then use ClawKit and OpenClaw to verify, clean up, harden, and ship.
+Credit-Smart Planning is the key workflow: ClawKit turns a rough idea into a staged Lovable.dev plan, limits prompt count, defines evidence gates, warns when a proposed prompt is likely to waste credits, and tells OpenClaw when to stop prompting and switch to GitHub, code, tests, browser checks, or refactoring.
+
+The product promise: use Lovable.dev for speed, then use ClawKit and OpenClaw to plan, verify, clean up, harden, and ship.
 
 This is an early public release. It is useful now, and it will be updated continuously. Constructive feedback, especially rescue cases and workflow suggestions, is welcome at:
 
@@ -47,11 +49,11 @@ clawhub package publish . \
   --family code-plugin \
   --name @clawkit/clawkit-for-lovable \
   --display-name "ClawKit for Lovable" \
-  --version 0.1.6 \
+  --version 0.1.7 \
   --source-repo MarcSean1971/clawkit-for-lovable \
   --source-commit "$(git rev-parse HEAD)" \
   --source-ref main \
-  --changelog "Improve Lovable pain-point marketing and marketplace positioning"
+  --changelog "Add Credit-Smart Planning for Lovable.dev credit control"
 ```
 
 Dry-run validation passed with these values.

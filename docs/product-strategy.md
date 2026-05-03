@@ -2,7 +2,7 @@
 
 ## Category
 
-ClawKit for Lovable is the OpenClaw control layer for serious Lovable users. It lets Lovable be great at UI generation without forcing Lovable to own every engineering task, every fix, every GitHub workflow, or every production-readiness decision.
+ClawKit for Lovable is the OpenClaw control layer for serious Lovable.dev users. It lets Lovable.dev be great at UI generation without forcing Lovable.dev to own every engineering task, every fix, every GitHub workflow, or every production-readiness decision.
 
 ClawKit is an early public release and should be positioned honestly. The product is useful today, but the fastest route to quality is constructive feedback from real rescue, hardening, and shipping workflows.
 
@@ -10,48 +10,54 @@ ClawKit is an early public release and should be positioned honestly. The produc
 
 The first winning use case is:
 
-> Stop wasting Lovable credits. Tell me what should go back to Lovable and what OpenClaw should fix in code.
+> Stop wasting Lovable.dev credits. Tell me what should go back to Lovable.dev and what OpenClaw should fix in code.
 
 An equally strong, and likely more immediately painful, use case is:
 
 > Rescue my existing Lovable app.
 
-This is stronger than "control Lovable from OpenClaw" because it speaks to real Lovable pain: repeated prompts, invisible results, blank screens, brittle code, weak architecture, GitHub confusion, and no clear path from exciting prototype to maintainable app. The durable output is a repo, branch, verification notes, visible-result proof, project memory, and a pull request.
+This is stronger than "control Lovable.dev from OpenClaw" because it speaks to real Lovable.dev pain: repeated prompts, invisible results, blank screens, brittle code, weak architecture, GitHub confusion, and no clear path from exciting prototype to maintainable app. The durable output is a repo, branch, verification notes, visible-result proof, project memory, and a pull request.
 
 ## Pain-Point Positioning
 
 Lead with the pain, not the tool list:
 
-- Lovable is fast, but repeated fixes can become expensive.
-- Lovable can say "done" while the screen remains wrong or unchanged.
-- Lovable-generated code often needs refactoring before it is scalable, maintainable, or reviewable.
-- Lovable is not a complete GitHub, testing, CI, security, debugging, and delivery workflow.
-- Users need a layer that chooses the best tool: Lovable for UI/product shape, OpenClaw for exact engineering.
+- Lovable.dev is fast, but repeated fixes can become expensive.
+- Lovable.dev can say "done" while the screen remains wrong or unchanged.
+- Lovable.dev-generated code often needs refactoring before it is scalable, maintainable, or reviewable.
+- Lovable.dev is not a complete GitHub, testing, CI, security, debugging, and delivery workflow.
+- Users need a layer that chooses the best tool: Lovable.dev for UI/product shape, OpenClaw for exact engineering.
+- Users need a plan that spends Lovable.dev credits on product shape instead of preventable repair loops.
 
 Core market line:
 
-> ClawKit turns Lovable from a credit-hungry prototype generator into one useful tool inside an OpenClaw-powered build, rescue, refactor, verify, and ship workflow.
+> ClawKit turns Lovable.dev from a credit-hungry prototype generator into one useful tool inside an OpenClaw-powered plan, build, rescue, refactor, verify, and ship workflow.
 
 ## Product Modes
 
-ClawKit should expose six simple modes:
+ClawKit should expose seven simple modes:
 
-- **Start**: build a new Lovable app from an idea.
-- **Rescue**: fix an existing Lovable app that is broken, invisible, messy, or hard to extend.
+- **Plan**: turn a rough idea into a credit-smart Lovable.dev prompt sequence before spending credits.
+- **Start**: build a new Lovable.dev app from an idea.
+- **Rescue**: fix an existing Lovable.dev app that is broken, invisible, messy, or hard to extend.
 - **Harden**: refactor and prepare generated code for production review.
-- **Ship**: turn Lovable output into a verified GitHub PR.
+- **Ship**: turn Lovable.dev output into a verified GitHub PR.
 - **Remember**: keep project memory, decision logs, session briefs, and next-action plans across Lovable, GitHub, checks, risks, and next actions.
 - **Inside**: add safe OpenClaw-powered assistant features to the app.
 
 Rescue is probably the highest-conversion mode because the user already has pain and a project to save.
+
+Plan is the best first-use mode because it protects users before the pain starts. It should make this promise obvious:
+
+> Spend Lovable.dev credits on product shape, not on repair loops OpenClaw can solve with GitHub, tests, browser checks, and code.
 
 ## Ideal Customer
 
 - Founders who prototype in Lovable but need production-quality code afterward.
 - Agencies that build many client apps and want repeatable delivery.
 - Builders operating OpenClaw from chat/phone who want remote product creation.
-- Teams that like Lovable's UI velocity but need GitHub review, CI, tests, and auditability.
-- Lovable users frustrated by credits spent on fixes that should have been code changes.
+- Teams that like Lovable.dev's UI velocity but need GitHub review, CI, tests, and auditability.
+- Lovable.dev users frustrated by credits spent on fixes that should have been code changes.
 - Non-developers who need OpenClaw to tell them when Lovable is no longer the right tool for the next step.
 
 ## Differentiation
@@ -68,8 +74,8 @@ Most automations either prompt Lovable or edit code. This plugin does both, with
 The MVP is successful when a user can:
 
 1. Give OpenClaw a product idea.
-2. Get a strong Lovable prompt and build URL.
-3. Generate the app in Lovable.
+2. Get a strong Lovable.dev prompt and build URL.
+3. Generate the app in Lovable.dev.
 4. Export/sync to GitHub.
 5. Have OpenClaw continue with code, verification, and a PR.
 
@@ -121,6 +127,25 @@ Project Memory v1 adds four habits:
 
 The product line should make this sentence true: before every big action, ClawKit can say what it knows, what changed, and what it will not touch.
 
+## Product Expansion: Credit-Smart Planning
+
+Credit-Smart Planning turns ClawKit from a prompt helper into a project framework.
+
+The user gives a rough idea. ClawKit turns it into:
+
+- A staged Lovable.dev build plan.
+- A limited prompt sequence.
+- Evidence gates after each prompt.
+- A list of work Lovable.dev should not attempt.
+- A handoff point where OpenClaw/GitHub should take over.
+- Stop-prompting rules when credits are being wasted.
+
+This is commercially important because it is easy for users to blame themselves when Lovable.dev output drifts or breaks. ClawKit should make the safer path explicit before money is spent:
+
+1. Use Lovable.dev for product direction, screens, UI structure, and visual iteration.
+2. Use OpenClaw for GitHub, debugging, exact code, architecture, tests, integrations, security, PRs, and shipping.
+3. Return to Lovable.dev only with a narrow UI/product prompt after verification.
+
 ## Product Expansion: OpenClaw Inside
 
 An optional expansion is letting the app being built include OpenClaw-powered features for its own users.
@@ -145,7 +170,7 @@ The key feature is not another command. It is the starter experience:
 - Explain what OpenClaw is good for.
 - Show copyable example requests.
 - Let the user choose model/profile, browser opening, GitHub handoff, and OpenClaw Inside.
-- Warn that Lovable's "done" is not enough until the change is visible.
+- Warn that Lovable.dev's "done" is not enough until the change is visible.
 
 ## Verification Layer
 
