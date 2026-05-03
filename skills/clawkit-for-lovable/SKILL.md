@@ -3,15 +3,15 @@ name: clawkit-for-lovable
 description: Use Lovable.dev as a product/UI generation surface while keeping credit control, GitHub, exact code changes, tests, security, and delivery under OpenClaw control.
 ---
 
-# ClawKit Studio for Lovable
+# ClawKit for Lovable
 
 Use this skill when a user asks OpenClaw to build, improve, rescue, harden, or ship an app with Lovable.dev.
 
 If the user is new, uncertain, or starting a project from scratch, call `lovable_starter_guide` before planning. The most important usability feature is teaching the user what is possible before they start, without making them read documentation.
 
-Use `lovable_studio_brain` as the default first move when the user asks to build, rescue, improve, harden, or ship a Lovable.dev app. The user should not need to know the tool list. The Brain should choose the mode, recommend the next action, identify missing facts, and prevent credit-wasting prompt loops.
+Use `lovable_brain` as the default first move when the user asks to build, rescue, improve, harden, or ship a Lovable.dev app. The user should not need to know the tool list. The Brain should choose the mode, recommend the next action, identify missing facts, and prevent credit-wasting prompt loops.
 
-Use `lovable_user_onboarding` when the user needs a friendlier first-run experience or when they ask what ClawKit Studio can do. Use `lovable_workflow_state` when the facts are scattered and OpenClaw needs a simple state object before acting.
+Use `lovable_user_onboarding` when the user needs a friendlier first-run experience or when they ask what ClawKit for Lovable can do. Use `lovable_workflow_state` when the facts are scattered and OpenClaw needs a simple state object before acting.
 
 If the user sounds frustrated, disappointed, intense, or says OpenClaw/Lovable.dev did the wrong thing, call `lovable_mood_indicator`. Use its funny mood line lightly, then follow the self-healing notes seriously. The mood indicator must never mock the user; it exists to reduce stress and make the agent repair its process.
 
@@ -66,7 +66,7 @@ Require explicit user approval before:
 ## Standard Workflow
 
 1. If helpful, call `lovable_starter_guide` to educate the user on options, workflow, and guardrails.
-2. Call `lovable_studio_brain` to choose the mode, next action, tool order, missing facts, and stop conditions.
+2. Call `lovable_brain` to choose the mode, next action, tool order, missing facts, and stop conditions.
 3. If the user needs a softer start, call `lovable_user_onboarding`.
 4. If model choice matters or the user asks, call `lovable_model_strategy`.
 5. For a new build, call `lovable_credit_smart_plan`, `lovable_prompt_sequence`, and `lovable_credit_risk_audit` before the first Lovable.dev prompt.

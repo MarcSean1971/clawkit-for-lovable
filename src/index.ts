@@ -1634,7 +1634,7 @@ function makeStudioBrain(params: {
               ? "I will package the work for delivery with verification evidence, screenshots or browser notes, risks, and a PR summary."
               : mode === "improve"
                 ? "I will decide whether the next improvement belongs in a narrow Lovable.dev UI prompt or in OpenClaw code tools."
-                : "I will ask only for the minimum details, then choose the correct ClawKit Studio workflow for the user.",
+                : "I will ask only for the minimum details, then choose the correct ClawKit for Lovable workflow for the user.",
     nextAction: workflowState.nextBestAction,
     why:
       stopPrompting
@@ -1683,17 +1683,17 @@ function makeUserOnboarding(params: {
   const goal = params.goal ?? "build or rescue a Lovable.dev app";
   const existing = params.hasExistingApp === true;
   return {
-    headline: "ClawKit Studio Brain lets you describe the outcome in plain language; OpenClaw chooses the Lovable.dev, GitHub, verification, or code workflow.",
+    headline: "ClawKit for Lovable Brain lets you describe the outcome in plain language; OpenClaw chooses the Lovable.dev, GitHub, verification, or code workflow.",
     shortestPath: existing
       ? [
           "Tell OpenClaw what is broken or what should change.",
           "Provide the Lovable.dev URL and GitHub repo if available.",
-          "Let ClawKit Studio verify the visible result before spending more Lovable.dev credits.",
+          "Let ClawKit for Lovable verify the visible result before spending more Lovable.dev credits.",
           "Move exact fixes, refactors, tests, and PR work into OpenClaw/GitHub.",
         ]
       : [
           "Describe the app idea roughly.",
-          "Let ClawKit Studio create a credit-smart plan before prompting Lovable.dev.",
+          "Let ClawKit for Lovable create a credit-smart plan before prompting Lovable.dev.",
           "Generate a short prompt sequence with evidence gates.",
           "Sync/export to GitHub when the product shape is clear.",
         ],
@@ -1721,13 +1721,13 @@ function makeUserOnboarding(params: {
     reassuringRules: [
       "The user does not need to know tool names.",
       "Lovable.dev is used for UI/product speed, not every engineering task.",
-      "ClawKit Studio should stop prompt loops before they waste credits.",
+      "ClawKit for Lovable should stop prompt loops before they waste credits.",
       "OpenClaw verifies visible results before accepting done.",
       "GitHub becomes the durable source of truth for serious work.",
     ],
     nextPrompt:
       params.wantsFastStart
-        ? "Tell me the app idea or existing problem, and I will choose the safest ClawKit Studio workflow."
+        ? "Tell me the app idea or existing problem, and I will choose the safest ClawKit for Lovable workflow."
         : "Tell me whether this is a new app or an existing Lovable.dev project, what outcome you want, and whether you already have a GitHub repo.",
   };
 }
@@ -2062,7 +2062,7 @@ function makeStarterGuide(params: {
   const goal = params.goal ?? "build a useful app with Lovable and OpenClaw";
 
   return {
-    headline: "ClawKit Studio for Lovable turns Lovable into one tool inside a guided app-building framework.",
+    headline: "ClawKit for Lovable turns Lovable into one tool inside a guided app-building framework.",
     whatThisDoes: [
       "Helps you decide what Lovable should do and what OpenClaw should do.",
       "Creates better Lovable prompts from rough ideas.",
@@ -2314,7 +2314,7 @@ async function makeRescuePlan(params: {
 
 export default definePluginEntry({
   id: "clawkit-for-lovable",
-  name: "ClawKit Studio for Lovable",
+  name: "ClawKit for Lovable",
   description:
     "Plans Lovable.dev work with credit-smart prompts and routes precise engineering through OpenClaw, GitHub, tests, and code tools.",
   register(api) {
@@ -2999,7 +2999,7 @@ export default definePluginEntry({
       name: "lovable_workflow_state",
       label: "Create Workflow State",
       description:
-        "Summarize a Lovable.dev project situation into a simple ClawKit Studio workflow state: mode, source of truth, app status, repo status, credit risk, stress level, blocker, and next action.",
+        "Summarize a Lovable.dev project situation into a simple ClawKit for Lovable workflow state: mode, source of truth, app status, repo status, credit risk, stress level, blocker, and next action.",
       parameters: Type.Object({
         projectName: Type.Optional(Type.String()),
         userGoal: Type.Optional(Type.String()),
@@ -3035,10 +3035,51 @@ export default definePluginEntry({
     });
 
     api.registerTool({
+      name: "lovable_brain",
+      label: "Run Lovable Brain",
+      description:
+        "Choose the next ClawKit for Lovable workflow automatically from the user's situation, so they do not need to know tool names or decide between Lovable.dev, GitHub, verification, code repair, or PR work.",
+      parameters: Type.Object({
+        projectName: Type.Optional(Type.String()),
+        userGoal: Type.Optional(Type.String()),
+        userMessage: Type.Optional(Type.String()),
+        hasExistingApp: Type.Optional(Type.Boolean()),
+        hasLovableProjectUrl: Type.Optional(Type.Boolean()),
+        hasGithubRepo: Type.Optional(Type.Boolean()),
+        hasLocalRepo: Type.Optional(Type.Boolean()),
+        hasDirtyGitState: Type.Optional(Type.Boolean()),
+        hasFailingBuild: Type.Optional(Type.Boolean()),
+        hasRuntimeErrors: Type.Optional(Type.Boolean()),
+        hasInvisibleChanges: Type.Optional(Type.Boolean()),
+        needsArchitectureRefactor: Type.Optional(Type.Boolean()),
+        readyForPr: Type.Optional(Type.Boolean()),
+        attemptedLovablePrompts: Type.Optional(Type.Number()),
+        sameIssueRepeated: Type.Optional(Type.Boolean()),
+        budgetSensitivity: Type.Optional(Type.Union([
+          Type.Literal("low"),
+          Type.Literal("medium"),
+          Type.Literal("high"),
+        ])),
+        userStress: Type.Optional(Type.Union([
+          Type.Literal("calm"),
+          Type.Literal("focused"),
+          Type.Literal("heated"),
+          Type.Literal("critical"),
+        ])),
+        wantsBrowserOpen: Type.Optional(Type.Boolean()),
+        wantsModelChoice: Type.Optional(Type.Boolean()),
+        knownFacts: optionalStringArray("Project facts already known to OpenClaw."),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makeStudioBrain(params));
+      },
+    });
+
+    api.registerTool({
       name: "lovable_studio_brain",
       label: "Run Studio Brain",
       description:
-        "Choose the next ClawKit Studio workflow automatically from the user's situation, so they do not need to know tool names or decide between Lovable.dev, GitHub, verification, code repair, or PR work.",
+        "Choose the next ClawKit for Lovable workflow automatically from the user's situation, so they do not need to know tool names or decide between Lovable.dev, GitHub, verification, code repair, or PR work.",
       parameters: Type.Object({
         projectName: Type.Optional(Type.String()),
         userGoal: Type.Optional(Type.String()),
@@ -3079,7 +3120,7 @@ export default definePluginEntry({
       name: "lovable_user_onboarding",
       label: "Guide User Onboarding",
       description:
-        "Give a friendly first-run guide that asks only the minimum questions and teaches users how to ask ClawKit Studio for new builds, rescues, improvements, hardening, and shipping.",
+        "Give a friendly first-run guide that asks only the minimum questions and teaches users how to ask ClawKit for Lovable for new builds, rescues, improvements, hardening, and shipping.",
       parameters: Type.Object({
         userLevel: Type.Optional(Type.Union([
           Type.Literal("beginner"),

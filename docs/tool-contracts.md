@@ -354,7 +354,7 @@ Output: JSON workflow state with:
 
 Use it when a session feels messy and OpenClaw needs a simple state object before choosing tools.
 
-## `lovable_studio_brain`
+## `lovable_brain`
 
 Input: user goal, latest message, project/app/repo evidence, credit sensitivity, frustration/stress hints, browser preference, and model-choice preference.
 
@@ -372,7 +372,7 @@ Output: JSON brain decision with:
 - Evidence needed.
 - Embedded workflow state.
 
-Use it as the default first tool when the user asks ClawKit Studio to build, rescue, improve, harden, or ship a Lovable.dev app. The user should not need to know tool names.
+Use it as the default first tool when the user asks ClawKit for Lovable to build, rescue, improve, harden, or ship a Lovable.dev app. The user should not need to know tool names.
 
 ## `lovable_user_onboarding`
 
@@ -387,7 +387,7 @@ Output: friendly first-run guide with:
 - Reassuring rules.
 - Next prompt.
 
-Use it to make ClawKit Studio feel like a guided framework rather than a long plugin menu.
+Use it to make ClawKit for Lovable feel like a guided framework rather than a long plugin menu.
 
 ## `lovable_starter_guide`
 

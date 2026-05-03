@@ -1,14 +1,14 @@
-# ClawKit Studio for Lovable
+# ClawKit for Lovable
 
-ClawKit Studio for Lovable is an independent OpenClaw plugin for people who love Lovable.dev's speed but are tired of wasted credits, invisible changes, fragile generated code, and apps that are hard to maintain after the first exciting demo.
+ClawKit for Lovable is an independent OpenClaw plugin for people who love Lovable.dev's speed but are tired of wasted credits, invisible changes, fragile generated code, and apps that are hard to maintain after the first exciting demo.
 
 It turns Lovable.dev into one focused UI/product tool inside a larger OpenClaw workflow. Lovable.dev can move fast on screens, layout, product flow, and visual polish. OpenClaw then brings the rest of the toolbelt: GitHub, local code editing, tests, browser verification, refactoring, PRs, project memory, and shipping discipline.
 
 The promise is simple:
 
-> Use Lovable.dev for speed. Use ClawKit Studio to stop the project becoming expensive, messy, invisible, or impossible to scale.
+> Use Lovable.dev for speed. Use ClawKit for Lovable to stop the project becoming expensive, messy, invisible, or impossible to scale.
 
-The install name remains `@clawkit/clawkit-for-lovable`, but the market-facing product name is **ClawKit Studio for Lovable** so users searching for Lovable, Lovable.dev, ClawKit, or Studio can immediately understand what it does.
+The install name remains `@clawkit/clawkit-for-lovable`, and the market-facing product name is **ClawKit for Lovable** so users searching for Lovable.dev help, Lovable rescue, or Lovable GitHub/refactoring workflows can immediately understand what it does.
 
 ClawKit is independent and is not affiliated with or endorsed by Lovable.dev.
 
@@ -23,9 +23,9 @@ Lovable.dev is powerful, but serious users often hit the same wall:
 - Fixing one screen breaks another route, layout, state flow, or build.
 - The user needs real engineering tools, not another broad prompt.
 
-ClawKit Studio sits above Lovable.dev and helps OpenClaw decide the right next move:
+ClawKit for Lovable sits above Lovable.dev and helps OpenClaw decide the right next move:
 
-- Run ClawKit Studio Brain so the user does not need to know tool names.
+- Run ClawKit for Lovable Brain so the user does not need to know tool names.
 - Create a credit-smart plan before spending Lovable.dev credits.
 - Send a narrow, high-quality prompt to Lovable.dev only when Lovable.dev is the right tool.
 - Stop wasting Lovable.dev credits on jobs OpenClaw should handle directly in code.
@@ -38,7 +38,7 @@ ClawKit Studio sits above Lovable.dev and helps OpenClaw decide the right next m
 
 The highest-leverage feature is planning before prompting. A rough idea can burn through Lovable.dev credits if it is sent as one broad request, especially when the project later needs debugging, refactoring, GitHub repair, or production logic.
 
-ClawKit Studio adds a Credit-Smart Planning layer:
+ClawKit for Lovable adds a Credit-Smart Planning layer:
 
 - Turn a rough app idea into a staged Lovable.dev plan.
 - Spend Lovable.dev credits on product shape, screens, visual direction, and workflow clarity.
@@ -51,9 +51,9 @@ Example request:
 
 > I have a rough idea for a client portal. Create a credit-smart Lovable.dev plan first, then give me the smallest prompt sequence that gets the UI direction right without wasting credits on backend details.
 
-## ClawKit Studio Brain
+## ClawKit for Lovable Brain
 
-ClawKit Studio Brain is the user-friendly orchestration layer. Instead of asking the user to choose between 20+ tools, OpenClaw can call `lovable_studio_brain` and get the next best workflow.
+ClawKit for Lovable Brain is the user-friendly orchestration layer. Instead of asking the user to choose between 20+ tools, OpenClaw can call `lovable_brain` and get the next best workflow. `lovable_studio_brain` remains as a backward-compatible alias for earlier installs, but the preferred Lovable product brain is `lovable_brain`.
 
 The user can simply say:
 
@@ -74,15 +74,15 @@ The Brain decides whether the situation is a new build, rescue, improvement, har
 - Stop conditions that prevent credit-wasting prompt loops.
 - Evidence needed before accepting “done”.
 
-This makes ClawKit Studio feel like a guided product framework rather than a command list.
+This makes ClawKit for Lovable feel like a guided product framework rather than a command list.
 
 ## Early Public Release
 
-ClawKit Studio for Lovable is an early public release. It is useful now for building, rescuing, verifying, refactoring, and shipping Lovable.dev projects with OpenClaw, and it will be updated continuously.
+ClawKit for Lovable is an early public release. It is useful now for building, rescuing, verifying, refactoring, and shipping Lovable.dev projects with OpenClaw, and it will be updated continuously.
 
 Constructive feedback is very welcome, especially:
 
-- Lovable.dev apps ClawKit Studio failed to rescue.
+- Lovable.dev apps ClawKit for Lovable failed to rescue.
 - Workflows that felt confusing.
 - Missing verification checks.
 - Places where OpenClaw should use Lovable.dev versus code tools differently.
@@ -100,7 +100,7 @@ The plugin assumes Lovable.dev output is a product draft, not finished architect
 
 > Build with Lovable.dev's speed. Rescue, verify, refactor, and ship with OpenClaw.
 
-> Lovable.dev got you 80% there. ClawKit Studio stops the last 20% from eating the whole project.
+> Lovable.dev got you 80% there. ClawKit for Lovable stops the last 20% from eating the whole project.
 
 Users can ask:
 
@@ -129,7 +129,7 @@ OpenClaw can then:
 
 ## What You Get
 
-With ClawKit Studio for Lovable, OpenClaw can help you move from a fragile Lovable.dev draft to a serious project workflow:
+With ClawKit for Lovable, OpenClaw can help you move from a fragile Lovable.dev draft to a serious project workflow:
 
 - **Better prompts**: narrower Lovable.dev prompts with acceptance criteria and preservation rules.
 - **Credit discipline**: stop using Lovable.dev for bugs, refactors, tests, GitHub work, and exact code changes.
@@ -142,7 +142,7 @@ With ClawKit Studio for Lovable, OpenClaw can help you move from a fragile Lovab
 
 ## When To Use It
 
-Use ClawKit Studio for Lovable when:
+Use ClawKit for Lovable when:
 
 - You built something in Lovable.dev and now it is buggy, blank, stale, or confusing.
 - You are spending too many Lovable.dev credits on repeated fixes.
@@ -181,7 +181,7 @@ Use ClawKit Studio for Lovable when:
 | `lovable_visible_result_check` | Verifies that Lovable.dev's claimed change actually builds and appears on screen. |
 | `lovable_model_strategy` | Helps the user choose a configured OpenClaw model/profile for the task. |
 | `lovable_workflow_state` | Turns messy project facts into a simple state: mode, source of truth, app status, repo status, credit risk, blocker, and next action. |
-| `lovable_studio_brain` | Chooses the next ClawKit Studio workflow automatically so the user does not need to know tool names. |
+| `lovable_brain` | Chooses the next ClawKit for Lovable workflow automatically so the user does not need to know tool names. |
 | `lovable_user_onboarding` | Gives a friendly first-run guide that asks only the minimum questions before choosing a workflow. |
 | `lovable_starter_guide` | Educates the user before building with examples, workflow, choices, and guardrails. |
 | `lovable_mood_indicator` | Adds a playful frustration meter plus serious self-healing notes for the agent. |
@@ -223,7 +223,7 @@ Browser opening is optional. `lovable_build_url` returns a URL without opening a
 
 ## Suggested User Flow
 
-1. OpenClaw calls `lovable_studio_brain` to choose the mode and next action.
+1. OpenClaw calls `lovable_brain` to choose the mode and next action.
 2. OpenClaw calls `lovable_user_onboarding` or `lovable_starter_guide` when the user needs orientation.
 3. User describes the product or existing app problem.
 4. OpenClaw optionally calls `lovable_model_strategy`.

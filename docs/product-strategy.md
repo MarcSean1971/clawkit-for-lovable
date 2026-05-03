@@ -2,7 +2,7 @@
 
 ## Category
 
-ClawKit Studio for Lovable is the OpenClaw control layer for serious Lovable.dev users. It lets Lovable.dev be great at UI generation without forcing Lovable.dev to own every engineering task, every fix, every GitHub workflow, or every production-readiness decision.
+ClawKit for Lovable is the OpenClaw control layer for serious Lovable.dev users. It lets Lovable.dev be great at UI generation without forcing Lovable.dev to own every engineering task, every fix, every GitHub workflow, or every production-readiness decision.
 
 ClawKit is an early public release and should be positioned honestly. The product is useful today, but the fastest route to quality is constructive feedback from real rescue, hardening, and shipping workflows.
 
@@ -51,9 +51,9 @@ Plan is the best first-use mode because it protects users before the pain starts
 
 > Spend Lovable.dev credits on product shape, not on repair loops OpenClaw can solve with GitHub, tests, browser checks, and code.
 
-## Product Expansion: ClawKit Studio Brain
+## Product Expansion: ClawKit for Lovable Brain
 
-ClawKit Studio Brain is the next usability leap. It turns the plugin from a set of tools into a guided product framework.
+ClawKit for Lovable Brain is the next usability leap. It turns the plugin from a set of tools into a guided product framework.
 
 The user should be able to say:
 
@@ -225,15 +225,15 @@ The user should not need to say "use Lovable.dev" or "use GitHub" every time. Op
 
 ## Naming
 
-Product name: **ClawKit Studio for Lovable**
+Product name: **ClawKit for Lovable**
 
 Package name: `@clawkit/clawkit-for-lovable`
 
 Technical plugin id: `clawkit-for-lovable`
 
-Marketplace display name: **ClawKit Studio for Lovable**
+Marketplace display name: **ClawKit for Lovable**
 
-The display name should stay Studio-branded for visibility. It includes the terms users are likely to search for: ClawKit, Studio, Lovable, and Lovable.dev. Do not rename the package id casually; the package id is the stable install surface.
+The display name must stay **ClawKit for Lovable** to remain distinct from **ClawKit Creative Studio for Lovable**. Do not rename the package id casually; the package id is the stable install surface.
 
 ## Pricing Possibilities
 
