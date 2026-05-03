@@ -1,7 +1,7 @@
 {
   "name": "@clawkit/clawkit-for-lovable",
-  "version": "0.1.5",
-  "description": "ClawKit for Lovable helps OpenClaw build, verify, refactor, and ship Lovable.dev projects through GitHub-ready workflows.",
+  "version": "0.1.6",
+  "description": "Rescue Lovable apps from wasted credits, invisible changes, messy code, and weak architecture with OpenClaw's GitHub, testing, browser, and refactoring tools.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

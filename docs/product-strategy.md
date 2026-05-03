@@ -2,7 +2,7 @@
 
 ## Category
 
-ClawKit for Lovable is an agentic app-building control plane. It lets Lovable be great at UI generation without forcing Lovable to own every engineering task.
+ClawKit for Lovable is the OpenClaw control layer for serious Lovable users. It lets Lovable be great at UI generation without forcing Lovable to own every engineering task, every fix, every GitHub workflow, or every production-readiness decision.
 
 ClawKit is an early public release and should be positioned honestly. The product is useful today, but the fastest route to quality is constructive feedback from real rescue, hardening, and shipping workflows.
 
@@ -10,13 +10,27 @@ ClawKit is an early public release and should be positioned honestly. The produc
 
 The first winning use case is:
 
-> Take my app idea to a GitHub PR.
+> Stop wasting Lovable credits. Tell me what should go back to Lovable and what OpenClaw should fix in code.
 
 An equally strong, and likely more immediately painful, use case is:
 
 > Rescue my existing Lovable app.
 
-This is stronger than "control Lovable from OpenClaw" because it produces durable engineering output: a repo, branch, verification notes, visible-result proof, and a pull request.
+This is stronger than "control Lovable from OpenClaw" because it speaks to real Lovable pain: repeated prompts, invisible results, blank screens, brittle code, weak architecture, GitHub confusion, and no clear path from exciting prototype to maintainable app. The durable output is a repo, branch, verification notes, visible-result proof, project memory, and a pull request.
+
+## Pain-Point Positioning
+
+Lead with the pain, not the tool list:
+
+- Lovable is fast, but repeated fixes can become expensive.
+- Lovable can say "done" while the screen remains wrong or unchanged.
+- Lovable-generated code often needs refactoring before it is scalable, maintainable, or reviewable.
+- Lovable is not a complete GitHub, testing, CI, security, debugging, and delivery workflow.
+- Users need a layer that chooses the best tool: Lovable for UI/product shape, OpenClaw for exact engineering.
+
+Core market line:
+
+> ClawKit turns Lovable from a credit-hungry prototype generator into one useful tool inside an OpenClaw-powered build, rescue, refactor, verify, and ship workflow.
 
 ## Product Modes
 
@@ -37,14 +51,17 @@ Rescue is probably the highest-conversion mode because the user already has pain
 - Agencies that build many client apps and want repeatable delivery.
 - Builders operating OpenClaw from chat/phone who want remote product creation.
 - Teams that like Lovable's UI velocity but need GitHub review, CI, tests, and auditability.
+- Lovable users frustrated by credits spent on fixes that should have been code changes.
+- Non-developers who need OpenClaw to tell them when Lovable is no longer the right tool for the next step.
 
 ## Differentiation
 
 Most automations either prompt Lovable or edit code. This plugin does both, with a routing policy:
 
 - Lovable handles taste, layout, page scaffolds, and quick product iteration.
-- OpenClaw handles exact implementation, repo control, tests, CI, refactoring, maintainability, security, and delivery.
+- OpenClaw handles exact implementation, repo control, tests, CI, browser verification, refactoring, maintainability, security, and delivery.
 - GitHub remains the source of truth.
+- Project Memory preserves what was decided so the project does not drift after each prompt.
 
 ## MVP Definition
 

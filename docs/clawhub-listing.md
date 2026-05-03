@@ -6,11 +6,17 @@ ClawKit for Lovable
 
 ## Short Description
 
-Build, rescue, verify, refactor, and ship Lovable.dev projects with OpenClaw.
+Rescue Lovable apps from wasted credits, invisible changes, messy code, and weak architecture with OpenClaw.
 
 ## Long Description
 
-ClawKit for Lovable is an independent OpenClaw plugin that turns Lovable.dev into one tool inside a safer full-stack delivery workflow. It helps OpenClaw create better Lovable prompts, optionally open Lovable in the browser, connect Lovable projects to GitHub repo workflows, keep project memory and decision logs, create session briefs, choose the next safe action, inspect and rescue existing Lovable apps, check project readiness and GitHub sync risk, verify that claimed changes actually build and appear on screen, refactor generated code, prepare PR summaries, and plan secure OpenClaw Inside assistant features.
+ClawKit for Lovable is an independent OpenClaw plugin for Lovable users who are frustrated by wasted credits, repeated failed fixes, "done" messages that are not visible on screen, GitHub sync confusion, and generated code that becomes hard to maintain or scale.
+
+It turns Lovable.dev into one specialized UI/product tool inside a broader OpenClaw workflow. Lovable stays useful for fast screens, product flow, and visual iteration. OpenClaw handles the parts Lovable is not best at: GitHub source-of-truth workflows, repo inspection, build/test/typecheck checks, browser and screenshot verification, debugging, refactoring, architecture cleanup, PR summaries, project memory, and delivery discipline.
+
+Use it to build new Lovable apps more safely, or to rescue existing Lovable apps that are blank, stale, broken, messy, expensive to keep prompting, or not production-ready. ClawKit helps OpenClaw decide whether the next action should be a narrow Lovable prompt, a GitHub/code fix, a visible-result check, a refactor pass, or a PR.
+
+The product promise: use Lovable for speed, then use ClawKit and OpenClaw to verify, clean up, harden, and ship.
 
 This is an early public release. It is useful now, and it will be updated continuously. Constructive feedback, especially rescue cases and workflow suggestions, is welcome at:
 
@@ -41,11 +47,11 @@ clawhub package publish . \
   --family code-plugin \
   --name @clawkit/clawkit-for-lovable \
   --display-name "ClawKit for Lovable" \
-  --version 0.1.5 \
+  --version 0.1.6 \
   --source-repo MarcSean1971/clawkit-for-lovable \
   --source-commit "$(git rev-parse HEAD)" \
   --source-ref main \
-  --changelog "Add Project Memory decision log and session planning tools"
+  --changelog "Improve Lovable pain-point marketing and marketplace positioning"
 ```
 
 Dry-run validation passed with these values.
@@ -62,6 +68,11 @@ Dry-run validation passed with these values.
 - PR
 - visible verification
 - vibe coding
+- wasted credits
+- messy code
+- maintainability
+- architecture
+- Lovable rescue
 
 ## Safety Notes
 
