@@ -6,10 +6,13 @@ ClawKit for Lovable is an independent OpenClaw plugin. Treat plugin installs lik
 
 - Local-first by default.
 - Browser opening is optional and should be performed by OpenClaw's trusted browser tools, not direct shell execution inside the plugin.
+- Lovable.dev browser walkthroughs are approval-gated. The plugin plans what to inspect; trusted browser tools perform navigation/clicking only after user approval.
+- Lovable MCP use is routed through the user's approved MCP client/configuration. The plugin plans MCP setup and workflow, but does not store OAuth tokens, API keys, or MCP credentials.
 - Repository inspection is evidence-based. ClawKit does not read local files directly; OpenClaw should gather Git/package facts with its trusted tools and pass them into ClawKit.
 - GitHub remains the source of truth.
 - Publishing, billing, production writes, destructive changes, and secret handling should require explicit user approval.
 - Lovable prompts should not include secrets, private customer data, production credentials, or sensitive internal data.
+- Lovable MCP prompts/messages should follow the same rule: no secrets, private customer data, production credentials, or sensitive internal data without explicit approval and redaction.
 
 ## What The Plugin Does Not Do
 
@@ -19,6 +22,7 @@ ClawKit for Lovable is an independent OpenClaw plugin. Treat plugin installs lik
 - It does not read local project files.
 - It does not run shell commands.
 - It does not perform network requests.
+- It does not directly log into Lovable.dev or call Lovable MCP.
 - It does not intentionally send secrets to Lovable, GitHub, OpenClaw, or any third party.
 
 ## Reporting Issues

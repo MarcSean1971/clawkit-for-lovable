@@ -6,7 +6,7 @@ ClawKit for Lovable
 
 ## Short Description
 
-ClawKit for Lovable adds a Brain for Lovable.dev projects: reduce wasted credits, rescue broken apps, verify visible results, hand off to GitHub, and refactor with OpenClaw.
+ClawKit for Lovable adds a Brain for Lovable.dev projects: reduce wasted credits, walk the real Lovable platform, use Lovable MCP when connected, rescue broken apps, verify visible results, hand off to GitHub, and refactor with OpenClaw.
 
 ## Long Description
 
@@ -17,6 +17,10 @@ It turns Lovable.dev into one specialized UI/product tool inside a broader OpenC
 Use it to build new Lovable.dev apps more safely, or to rescue existing Lovable.dev apps that are blank, stale, broken, messy, expensive to keep prompting, or not production-ready. ClawKit helps OpenClaw decide whether the next action should be a credit-smart Lovable.dev plan, a narrow Lovable.dev prompt, a GitHub/code fix, a visible-result check, a refactor pass, or a PR.
 
 Credit-Smart Planning is the key workflow: ClawKit for Lovable turns a rough idea into a staged Lovable.dev plan, limits prompt count, defines evidence gates, warns when a proposed prompt is likely to waste credits, and tells OpenClaw when to stop prompting and switch to GitHub, code, tests, browser checks, or refactoring.
+
+The new walkthrough layer lets OpenClaw ask for approval, open Lovable.dev with trusted browser tools, inspect the actual platform screens, press only approved buttons, capture screenshots or browser notes, and understand project/editor/preview/GitHub/build status before deciding the next action.
+
+The MCP layer helps OpenClaw connect to Lovable's research-preview MCP server when available, discover tools at runtime, and choose whether to use MCP, browser walkthrough, or GitHub/code tools for create, iterate, inspect, deploy, and handoff workflows.
 
 ClawKit for Lovable Brain is the user-friendly entry point. Users do not need to know tool names. They can describe the desired outcome in plain language, and the Brain chooses start, rescue, improve, harden, ship, or orient-user mode, then tells OpenClaw what to do next and what evidence is needed.
 
@@ -53,11 +57,11 @@ clawhub package publish . \
   --family code-plugin \
   --name @clawkit/clawkit-for-lovable \
   --display-name "ClawKit for Lovable" \
-  --version 0.1.10 \
+  --version 0.1.11 \
   --source-repo MarcSean1971/clawkit-for-lovable \
   --source-commit "$(git rev-parse HEAD)" \
   --source-ref main \
-  --changelog "Clarify ClawKit for Lovable branding and add preferred lovable_brain alias"
+  --changelog "Add Lovable platform walkthrough and MCP workflow planning"
 ```
 
 Dry-run validation passed with these values.
@@ -68,6 +72,8 @@ Dry-run validation passed with these values.
 - Lovable.dev
 - ClawKit for Lovable
 - ClawKit for Lovable
+- Lovable MCP
+- Lovable browser automation
 - OpenClaw
 - GitHub
 - AI app builder

@@ -1,8 +1,8 @@
 {
   "id": "clawkit-for-lovable",
   "name": "ClawKit for Lovable",
-  "description": "ClawKit for Lovable adds a Brain for Lovable.dev projects: credit-smart planning, rescue, visible verification, GitHub handoff, OpenClaw refactoring, tests, and maintainable architecture.",
-  "version": "0.1.10",
+  "description": "ClawKit for Lovable adds a Brain for Lovable.dev projects: credit-smart planning, Lovable browser walkthroughs, MCP routing, rescue, visible verification, GitHub handoff, OpenClaw refactoring, tests, and maintainable architecture.",
+  "version": "0.1.11",
   "skills": [
     "skills/clawkit-for-lovable"
   ],
@@ -16,6 +16,10 @@
       "lovable_stop_prompting_check",
       "lovable_build_url",
       "lovable_open_build_url",
+      "lovable_platform_walkthrough_plan",
+      "lovable_platform_observation_report",
+      "lovable_mcp_connection_plan",
+      "lovable_mcp_project_workflow",
       "lovable_github_handoff",
       "lovable_connect_github_repo",
       "lovable_project_readiness",

@@ -114,6 +114,8 @@ OpenClaw can then:
 
 - Show users what is possible before they start.
 - Help users choose a suitable configured OpenClaw model/profile.
+- Open Lovable.dev with user approval and walk through the actual platform screens with trusted browser tools.
+- Use Lovable MCP when connected, with browser and GitHub fallbacks.
 - Turn rough app ideas into credit-smart Lovable.dev plans and strong prompts.
 - Diagnose and rescue existing Lovable.dev apps that are broken, messy, invisible, expensive to keep prompting, or hard to extend.
 - Launch Lovable.dev's Build-with-URL flow.
@@ -163,6 +165,10 @@ Use ClawKit for Lovable when:
 | `lovable_stop_prompting_check` | Decides when to stop spending Lovable.dev credits and switch to verification, GitHub, code repair, or refactoring. |
 | `lovable_build_url` | Creates a Lovable.dev autosubmit Build-with-URL link. |
 | `lovable_open_build_url` | Prepares a Lovable.dev URL for OpenClaw's trusted browser tool to open after approval. |
+| `lovable_platform_walkthrough_plan` | Plans an approval-gated browser walkthrough of Lovable.dev so OpenClaw can inspect actual screens, buttons, preview state, GitHub settings, and build status. |
+| `lovable_platform_observation_report` | Turns browser observations from Lovable.dev into structured evidence, risks, next actions, and tool routing. |
+| `lovable_mcp_connection_plan` | Plans safe Lovable MCP setup, authentication, tool discovery, safety rules, and browser/GitHub fallbacks. |
+| `lovable_mcp_project_workflow` | Chooses whether to use Lovable MCP, browser walkthrough, or GitHub/code tools for project creation, iteration, inspection, deployment, or handoff. |
 | `lovable_github_handoff` | Creates the checklist for moving from Lovable.dev output to GitHub/code work. |
 | `lovable_connect_github_repo` | Plans the safe connection from Lovable.dev project to GitHub repo, branch, checks, and PR workflow. |
 | `lovable_project_readiness` | Scores whether the project has enough evidence to continue safely. |
@@ -211,7 +217,25 @@ openclaw plugins enable clawkit-for-lovable
 openclaw gateway restart
 ```
 
-Browser opening is optional. `lovable_build_url` returns a URL without opening anything. `lovable_open_build_url` prepares the URL for OpenClaw's trusted browser tool; the plugin itself does not execute shell or browser commands.
+## Lovable Platform Walkthrough
+
+ClawKit can now make Lovable.dev inspection a first-class workflow. `lovable_platform_walkthrough_plan` tells OpenClaw how to open Lovable.dev, confirm login state, inspect the dashboard/editor/preview/GitHub/status areas, press only approved buttons, and capture screenshots or browser notes.
+
+The plugin itself still does not secretly control the browser. OpenClaw uses its trusted browser capability or the user's own browser session, then passes observations into `lovable_platform_observation_report`. This keeps the workflow useful and marketplace-safe:
+
+- browser walkthrough for the actual Lovable.dev UI, screenshots, preview behavior, console errors, and visible proof;
+- Lovable MCP for programmatic project actions when connected;
+- GitHub/OpenClaw for source-of-truth engineering, tests, refactors, and PRs.
+
+Approval is required before submitting prompts that spend credits, changing GitHub connections, deploying, publishing, billing, deleting, or sending private data.
+
+## Lovable MCP
+
+Lovable documents an official Lovable MCP server at `https://mcp.lovable.dev` in research preview. `lovable_mcp_connection_plan` helps OpenClaw set up or reason about that connection, discover available tools at runtime, and decide when MCP is the right surface.
+
+Use MCP for programmatic Lovable work such as creating projects, sending approved iteration messages, inspecting project state, or checking deployment/status when the connected MCP exposes those tools. Use browser walkthrough when the actual visual result matters. Use GitHub/OpenClaw for exact code, architecture, tests, security, and PR delivery.
+
+Browser opening remains optional. `lovable_build_url` returns a URL without opening anything. `lovable_open_build_url` prepares the URL for OpenClaw's trusted browser tool; the plugin itself does not execute shell or browser commands.
 
 ```json
 {
@@ -231,21 +255,23 @@ Browser opening is optional. `lovable_build_url` returns a URL without opening a
 6. For an existing broken app, OpenClaw calls `lovable_stop_prompting_check`, `lovable_visible_result_check`, and `lovable_rescue_plan`.
 7. OpenClaw calls `lovable_decide_route`.
 8. OpenClaw calls `lovable_make_prompt` only when Lovable.dev is the right tool.
-9. OpenClaw calls `lovable_build_url` or, with approval, `lovable_open_build_url`.
-10. User or OpenClaw monitors the Lovable.dev result.
-11. Lovable.dev project is synced/exported to GitHub.
-12. OpenClaw calls `lovable_connect_github_repo` with the repo URL and creates/opens a safe branch with trusted GitHub tools.
-13. OpenClaw calls `lovable_project_context` and `lovable_project_memory` to create or refresh reusable project memory.
-14. OpenClaw calls `lovable_session_brief` at the start of each later session.
-15. OpenClaw calls `lovable_next_action_plan` to choose the safest next move.
-16. OpenClaw calls `lovable_project_readiness` to check whether enough evidence exists for the next step.
-17. OpenClaw gathers Git/package evidence with trusted tools, then runs `lovable_repo_doctor` and `lovable_sync_risk_report`.
-18. OpenClaw uses GitHub/local tools for code, tests, CI, security, and PR.
-19. OpenClaw runs `lovable_visible_result_check` to confirm the change is actually visible.
-20. OpenClaw records important choices with `lovable_decision_log`.
-21. OpenClaw refactors Lovable.dev-generated code for maintainability before shipping.
-22. OpenClaw uses `lovable_iteration_brief` for another UI pass only when useful.
-23. OpenClaw uses `lovable_pr_summary` before opening a PR.
+9. If Lovable MCP is connected or requested, OpenClaw calls `lovable_mcp_connection_plan` and `lovable_mcp_project_workflow`.
+10. OpenClaw calls `lovable_build_url` or, with approval, `lovable_open_build_url`.
+11. When actual Lovable.dev UI state matters, OpenClaw calls `lovable_platform_walkthrough_plan`, uses trusted browser tools, then calls `lovable_platform_observation_report`.
+12. User or OpenClaw monitors the Lovable.dev result.
+13. Lovable.dev project is synced/exported to GitHub.
+14. OpenClaw calls `lovable_connect_github_repo` with the repo URL and creates/opens a safe branch with trusted GitHub tools.
+15. OpenClaw calls `lovable_project_context` and `lovable_project_memory` to create or refresh reusable project memory.
+16. OpenClaw calls `lovable_session_brief` at the start of each later session.
+17. OpenClaw calls `lovable_next_action_plan` to choose the safest next move.
+18. OpenClaw calls `lovable_project_readiness` to check whether enough evidence exists for the next step.
+19. OpenClaw gathers Git/package evidence with trusted tools, then runs `lovable_repo_doctor` and `lovable_sync_risk_report`.
+20. OpenClaw uses GitHub/local tools for code, tests, CI, security, and PR.
+21. OpenClaw runs `lovable_visible_result_check` to confirm the change is actually visible.
+22. OpenClaw records important choices with `lovable_decision_log`.
+23. OpenClaw refactors Lovable.dev-generated code for maintainability before shipping.
+24. OpenClaw uses `lovable_iteration_brief` for another UI pass only when useful.
+25. OpenClaw uses `lovable_pr_summary` before opening a PR.
 
 ## GitHub Connection
 
@@ -412,7 +438,8 @@ Require user approval before:
 
 ## Roadmap
 
-- Playwright-backed Lovable.dev session adapter.
+- Lovable.dev browser walkthrough recipes for common dashboard/project/GitHub/deploy flows.
+- Deeper Lovable MCP tool mapping as the research-preview server stabilizes.
 - Project URL and screenshot extraction.
 - GitHub App/OAuth assisted handoff.
 - PR templates with before/after screenshots.

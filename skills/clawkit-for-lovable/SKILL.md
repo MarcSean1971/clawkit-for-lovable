@@ -46,6 +46,22 @@ Use GitHub and OpenClaw code tools for:
 - Refactors, code review, documentation, and maintainability.
 - Any change that needs exact diffs or verification.
 
+Use Lovable.dev browser walkthrough for:
+
+- Understanding the actual Lovable platform screens, not just a URL or prompt.
+- Opening the project dashboard/editor/preview with user approval.
+- Pressing only approved buttons and capturing what is visibly true.
+- Checking build status, preview state, GitHub/export/sync settings, deployment controls, and visible errors.
+- Gathering screenshots, browser notes, console errors, and prompt-history context before deciding the next action.
+
+Use Lovable MCP when connected for:
+
+- Programmatic Lovable project creation, iteration, inspection, status checks, or deployment workflows exposed by the connected MCP tools.
+- Sending only user-approved prompts or messages to Lovable.
+- Inspecting project/code/status evidence when the MCP tool exposes it.
+
+Lovable MCP is a research-preview integration surface. Discover available tools at runtime and keep a browser/GitHub fallback. Do not hard-code assumptions that a specific MCP tool will always exist.
+
 Use Credit-Smart Planning for:
 
 - Rough ideas that need a plan before Lovable.dev credits are spent.
@@ -73,9 +89,11 @@ Require explicit user approval before:
 6. For an existing broken or messy app, call `lovable_stop_prompting_check`, `lovable_visible_result_check`, and `lovable_rescue_plan`.
 7. Call `lovable_decide_route` to decide what belongs in Lovable.dev versus OpenClaw/GitHub.
 8. For a new app or major UI pass, call `lovable_make_prompt` only when the Brain says Lovable.dev is the right tool.
-9. Call `lovable_build_url` and show or open the URL only when appropriate.
-10. After Lovable.dev creates or updates the app, sync/export to GitHub.
-11. Call `lovable_connect_github_repo` once the repo URL is known so OpenClaw has a safe branch/check/PR plan.
+9. If the user wants direct Lovable MCP use, call `lovable_mcp_connection_plan` and `lovable_mcp_project_workflow`.
+10. Call `lovable_build_url` and show or open the URL only when appropriate.
+11. When OpenClaw needs to see the actual Lovable.dev platform, call `lovable_platform_walkthrough_plan`, use trusted browser tools after approval, then call `lovable_platform_observation_report`.
+12. After Lovable.dev creates or updates the app, sync/export to GitHub.
+13. Call `lovable_connect_github_repo` once the repo URL is known so OpenClaw has a safe branch/check/PR plan.
 12. Call `lovable_project_context` and `lovable_project_memory` to create or refresh reusable memory for the app.
 13. Call `lovable_session_brief` at the start of later sessions or before risky work.
 14. Call `lovable_next_action_plan` to choose the safest next move.
@@ -232,6 +250,23 @@ The verification standard is:
 ## Browser Opening
 
 Opening Lovable.dev in the browser is optional. Prefer `lovable_build_url` when the user wants a link, a dry run, or approval before leaving chat. Use `lovable_open_build_url` only when the user explicitly wants OpenClaw to open Lovable.dev or has approved the browser-launching side effect. The plugin itself must remain marketplace-safe and should not execute shell/browser commands; OpenClaw should use its own trusted browser capability.
+
+For deeper platform understanding, use `lovable_platform_walkthrough_plan` before touching Lovable.dev. The browser walkthrough must pause for manual login, collect visible evidence, and stop before credit-spending prompts, GitHub connection changes, deploys, billing, secrets, or destructive actions unless the user explicitly approves.
+
+After the walkthrough, call `lovable_platform_observation_report` and feed the result back into `lovable_brain`, `lovable_visible_result_check`, `lovable_connect_github_repo`, or `lovable_rescue_plan`.
+
+## Lovable MCP
+
+When the user asks to link into Lovable via MCP, call `lovable_mcp_connection_plan`.
+
+Use `lovable_mcp_project_workflow` to decide whether the next action belongs in Lovable MCP, browser walkthrough, or GitHub/OpenClaw code tools. MCP is best for programmatic actions. Browser walkthrough is best for what the user can actually see. GitHub/OpenClaw is best for exact code, tests, refactors, and PR work.
+
+Safety rules:
+
+- Require approval before MCP prompts that spend credits.
+- Require approval before deploy, publish, GitHub connection changes, billing, or production actions.
+- Do not send secrets, private customer data, or production credentials to Lovable MCP without explicit user approval.
+- Verify MCP results with browser/GitHub evidence before delivery.
 
 ## OpenClaw Inside Apps
 

@@ -272,6 +272,63 @@ type VisibleResultCheck = {
   nextSteps: string[];
 };
 
+type LovablePlatformWalkthroughPlan = {
+  projectName: string;
+  goal: string;
+  mode: "open-platform" | "inspect-existing-project" | "prompt-and-monitor" | "github-connection-check" | "visual-verification";
+  browserStartUrl: string;
+  requiresUserApproval: boolean;
+  requiresLoggedInSession: boolean;
+  trustedExecutor: string;
+  walkthroughSteps: string[];
+  buttonsAndAreasToInspect: string[];
+  evidenceToCapture: string[];
+  allowedActions: string[];
+  approvalRequiredBefore: string[];
+  stopConditions: string[];
+  observationSchema: Record<string, string>;
+  nextToolAfterWalkthrough: string;
+};
+
+type LovablePlatformObservationReport = {
+  projectName: string;
+  platformState: "unknown" | "logged-out" | "dashboard" | "project-open" | "preview-open" | "building" | "error" | "github-ready";
+  confidence: "low" | "medium" | "high";
+  findings: string[];
+  visibleEvidence: string[];
+  githubSignals: string[];
+  promptSignals: string[];
+  risks: string[];
+  recommendedNextAction: string;
+  nextTools: string[];
+};
+
+type LovableMcpConnectionPlan = {
+  status: "not-connected" | "connected" | "needs-auth" | "needs-tool-discovery";
+  serverUrl: string;
+  authMode: "oauth" | "api-key" | "unknown";
+  researchPreviewWarning: string;
+  connectionSteps: string[];
+  toolDiscoverySteps: string[];
+  useMcpFor: string[];
+  useBrowserFor: string[];
+  useGithubFor: string[];
+  safetyRules: string[];
+  fallbackPlan: string[];
+};
+
+type LovableMcpWorkflowPlan = {
+  projectName: string;
+  requestedAction: "create-project" | "iterate-project" | "inspect-project" | "deploy-project" | "sync-or-handoff" | "unknown";
+  preferredSurface: "lovable-mcp" | "browser-walkthrough" | "github-code-tools" | "ask-user";
+  reason: string;
+  mcpToolHints: string[];
+  browserFallback: string[];
+  githubFollowUp: string[];
+  evidenceNeeded: string[];
+  stopConditions: string[];
+};
+
 type ModelStrategy = {
   canUserChooseModel: boolean;
   recommendation: string;
@@ -1586,6 +1643,10 @@ function makeStudioBrain(params: {
   userStress?: "calm" | "focused" | "heated" | "critical";
   wantsBrowserOpen?: boolean;
   wantsModelChoice?: boolean;
+  wantsPlatformWalkthrough?: boolean;
+  hasPlatformObservation?: boolean;
+  hasLovableMcpConnected?: boolean;
+  wantsLovableMcp?: boolean;
   knownFacts?: string[];
 }): StudioBrain {
   const workflowState = makeWorkflowState(params);
@@ -1606,11 +1667,13 @@ function makeStudioBrain(params: {
   const stopPrompting = workflowState.creditRisk === "high" || params.hasFailingBuild || params.hasRuntimeErrors || params.hasInvisibleChanges || params.sameIssueRepeated;
   const recommendedToolOrder = [
     ...(needsMood ? ["lovable_mood_indicator"] : []),
-    "lovable_studio_brain",
+    "lovable_brain",
+    ...(params.wantsLovableMcp || params.hasLovableMcpConnected ? ["lovable_mcp_connection_plan", "lovable_mcp_project_workflow"] : []),
     ...(params.wantsModelChoice ? ["lovable_model_strategy"] : []),
     ...(mode === "orient-user" ? ["lovable_user_onboarding", "lovable_starter_guide"] : []),
     ...(mode === "start" ? ["lovable_credit_smart_plan", "lovable_prompt_sequence", "lovable_credit_risk_audit", "lovable_make_prompt"] : []),
     ...(params.wantsBrowserOpen && mode === "start" ? ["lovable_build_url or lovable_open_build_url"] : []),
+    ...(params.wantsPlatformWalkthrough || (params.hasLovableProjectUrl && !params.hasPlatformObservation) ? ["lovable_platform_walkthrough_plan", "lovable_platform_observation_report"] : []),
     ...(mode === "rescue" ? ["lovable_stop_prompting_check", "lovable_visible_result_check", "lovable_connect_github_repo", "lovable_repo_doctor", "lovable_rescue_plan"] : []),
     ...(mode === "improve" ? ["lovable_credit_risk_audit", "lovable_next_action_plan", "lovable_sync_risk_report", "lovable_iteration_brief or OpenClaw code tools"] : []),
     ...(mode === "harden" ? ["lovable_repo_doctor", "lovable_sync_risk_report", "OpenClaw code tools", "lovable_visible_result_check"] : []),
@@ -1656,6 +1719,7 @@ function makeStudioBrain(params: {
       "Choosing the workflow, preserving project memory, and asking for missing facts.",
       "GitHub/source-of-truth handoff, build/runtime diagnosis, exact code changes, tests, security, refactoring, and PR delivery.",
       "Stopping Lovable.dev prompt loops when the same issue repeats or evidence is missing.",
+      "Using approved Lovable MCP tools when connected, and using browser walkthrough when visual evidence or platform UI inspection is needed.",
     ],
     stopConditions: [
       "Stop before another broad Lovable.dev prompt if build/runtime errors, invisible changes, dirty Git state, or repeated failed prompts exist.",
@@ -1668,6 +1732,8 @@ function makeStudioBrain(params: {
       "GitHub repo URL or local repo path before exact engineering work.",
       "Build/typecheck/test result when implementation changed.",
       "Browser or screenshot evidence before accepting completion.",
+      "Lovable MCP connection/tool-discovery evidence when OpenClaw should operate Lovable programmatically.",
+      "Lovable.dev platform walkthrough observations when the actual UI state matters.",
     ],
     workflowState,
   };
@@ -2009,6 +2075,342 @@ function makeVisibleResultCheck(params: {
             "If the issue is visual/product mismatch, send a narrow `lovable_iteration_brief`.",
             "Re-run this visible-result check before PR or delivery.",
           ],
+  };
+}
+
+function makePlatformWalkthroughPlan(params: {
+  projectName?: string;
+  goal?: string;
+  lovableUrl?: string;
+  projectUrl?: string;
+  previewUrl?: string;
+  hasLoggedInSession?: boolean;
+  wantsPromptSubmission?: boolean;
+  wantsGithubCheck?: boolean;
+  wantsScreenshots?: boolean;
+  wantsVideoNotes?: boolean;
+  allowedActions?: string[];
+}): LovablePlatformWalkthroughPlan {
+  const projectName = params.projectName ?? "Lovable.dev project";
+  const goal = params.goal ?? "understand the current Lovable.dev project state";
+  const startUrl = params.projectUrl ?? params.lovableUrl ?? params.previewUrl ?? "https://lovable.dev";
+  const allowedActions = asList(params.allowedActions, [
+    "Navigate Lovable.dev pages.",
+    "Open the project dashboard, editor, preview, GitHub/settings areas, and build/status surfaces.",
+    "Take screenshots and record browser observations when approved.",
+  ]);
+  const mode: LovablePlatformWalkthroughPlan["mode"] =
+    params.wantsPromptSubmission
+      ? "prompt-and-monitor"
+      : params.wantsGithubCheck
+        ? "github-connection-check"
+        : params.previewUrl
+          ? "visual-verification"
+          : params.projectUrl || params.lovableUrl
+            ? "inspect-existing-project"
+            : "open-platform";
+
+  return {
+    projectName,
+    goal,
+    mode,
+    browserStartUrl: startUrl,
+    requiresUserApproval: true,
+    requiresLoggedInSession: params.hasLoggedInSession !== true,
+    trustedExecutor: "OpenClaw browser automation or the user's browser session, not hidden plugin-side automation.",
+    walkthroughSteps: [
+      "Ask for approval before opening or controlling Lovable.dev.",
+      "Open the Lovable.dev dashboard, project URL, preview URL, or generated Build-with-URL link.",
+      "Confirm whether the user is logged in; if not, pause and let the user sign in manually.",
+      "Identify the active project name, current route/screen, editor/build status, preview state, and last visible change.",
+      "Inspect project navigation, preview, prompts/messages, GitHub/export/sync area, deployment/status area, and any visible error surfaces.",
+      ...(params.wantsPromptSubmission ? ["Paste or submit only the user-approved prompt, then monitor Lovable.dev progress and capture the resulting project/preview URL."] : []),
+      ...(params.wantsGithubCheck ? ["Open the GitHub/export/sync settings and capture repo connection status without changing it unless approved."] : []),
+      "Capture evidence in the observation schema, then feed it to `lovable_platform_observation_report`.",
+    ],
+    buttonsAndAreasToInspect: [
+      "Project dashboard and project cards.",
+      "Current project editor/chat input and prompt history.",
+      "Preview/open app controls.",
+      "Build/status/progress/error indicators.",
+      "GitHub, export, sync, repository, or settings controls.",
+      "Deploy/share/custom-domain controls.",
+      "Browser console and visible runtime errors when previewing the app.",
+    ],
+    evidenceToCapture: [
+      "Lovable.dev URL, project URL, preview/deployed URL, and any GitHub repo URL shown.",
+      "Screenshot or browser notes for the dashboard/editor and preview.",
+      "Visible build state, error messages, missing screens, or stale UI observations.",
+      "Prompt submitted or prompt being considered, with user approval status.",
+      "GitHub connection/sync state and branch/repo names when visible.",
+      ...(params.wantsVideoNotes ? ["Short video notes or step-by-step interaction notes for dynamic flows."] : []),
+    ],
+    allowedActions,
+    approvalRequiredBefore: [
+      "Submitting a prompt that spends Lovable.dev credits.",
+      "Connecting, disconnecting, creating, or changing a GitHub repository.",
+      "Deploying, publishing, changing domains, connecting paid services, or modifying production settings.",
+      "Sending secrets, private customer data, or production credentials into Lovable.dev.",
+      "Deleting projects, overwriting work, or taking irreversible actions.",
+    ],
+    stopConditions: [
+      "Stop if the user is not logged in and needs to authenticate manually.",
+      "Stop if Lovable.dev shows private data, secrets, billing, or production settings not approved for capture.",
+      "Stop before credit-spending prompts, deploys, GitHub connection changes, billing, or destructive actions.",
+      "Stop if browser automation cannot identify the intended project or visible result with confidence.",
+    ],
+    observationSchema: {
+      projectName: "Visible Lovable.dev project name, if found.",
+      platformUrl: "Current Lovable.dev dashboard/editor URL.",
+      previewUrl: "Preview or deployed app URL, if found.",
+      loginState: "logged-in, logged-out, or unknown.",
+      currentScreen: "dashboard, project editor, preview, settings, GitHub area, deploy area, error page, or unknown.",
+      buildStatus: "idle, building, failed, succeeded, unknown.",
+      visibleResult: "What the browser actually shows.",
+      consoleErrors: "Browser console/runtime errors, if inspected.",
+      githubStatus: "not connected, connected, sync available, sync failed, unknown.",
+      screenshots: "Paths or references to approved screenshots.",
+      actionsTaken: "Navigation/clicks/typing performed by OpenClaw.",
+      approvals: "User approvals received before side effects.",
+    },
+    nextToolAfterWalkthrough: "lovable_platform_observation_report",
+  };
+}
+
+function makePlatformObservationReport(params: {
+  projectName?: string;
+  platformUrl?: string;
+  previewUrl?: string;
+  loginState?: "logged-in" | "logged-out" | "unknown";
+  currentScreen?: string;
+  buildStatus?: "idle" | "building" | "failed" | "succeeded" | "unknown";
+  visibleResult?: string;
+  expectedVisibleChanges?: string[];
+  consoleErrors?: string[];
+  githubStatus?: string;
+  screenshots?: string[];
+  promptHistoryNotes?: string[];
+  actionsTaken?: string[];
+  approvals?: string[];
+}): LovablePlatformObservationReport {
+  const findings: string[] = [];
+  const visibleEvidence = [
+    ...(params.previewUrl ? [`Preview URL: ${params.previewUrl}`] : []),
+    ...(params.visibleResult ? [`Visible result: ${params.visibleResult}`] : []),
+    ...asList(params.screenshots, []),
+  ];
+  const githubSignals = [
+    ...(params.githubStatus ? [`GitHub status: ${params.githubStatus}`] : []),
+  ];
+  const promptSignals = asList(params.promptHistoryNotes, []);
+  const consoleErrors = params.consoleErrors ?? [];
+  const expected = params.expectedVisibleChanges ?? [];
+  const missingExpected = expected.filter((change) => {
+    const needle = change.toLowerCase();
+    return !(params.visibleResult ?? "").toLowerCase().includes(needle);
+  });
+
+  if (params.loginState === "logged-out") {
+    findings.push("Lovable.dev is logged out; user sign-in is required before inspection can continue.");
+  }
+  if (!params.platformUrl && !params.previewUrl) {
+    findings.push("No Lovable.dev platform URL or preview URL was observed.");
+  }
+  if (params.buildStatus === "failed") {
+    findings.push("Lovable.dev shows a failed build/status.");
+  }
+  if (params.buildStatus === "building") {
+    findings.push("Lovable.dev is still building; wait before judging the visible result.");
+  }
+  if (consoleErrors.length > 0) {
+    findings.push(`${consoleErrors.length} console/runtime error(s) were observed.`);
+  }
+  if (expected.length > 0 && missingExpected.length > 0) {
+    findings.push(`${missingExpected.length} expected visible change(s) were not confirmed in the observed screen.`);
+  }
+
+  const platformState: LovablePlatformObservationReport["platformState"] =
+    params.loginState === "logged-out"
+      ? "logged-out"
+      : params.buildStatus === "failed" || consoleErrors.length > 0
+        ? "error"
+        : params.buildStatus === "building"
+          ? "building"
+          : /github|repo|sync/i.test(params.githubStatus ?? "")
+            ? "github-ready"
+            : params.previewUrl || /preview/i.test(params.currentScreen ?? "")
+              ? "preview-open"
+              : params.platformUrl
+                ? "project-open"
+                : "unknown";
+
+  const risks = [
+    ...(params.approvals?.length ? [] : ["No user approval evidence was supplied for side-effectful browser actions."]),
+    ...(params.githubStatus && !/connected|repo|sync/i.test(params.githubStatus) ? ["GitHub connection may still be missing or unclear."] : []),
+    ...(findings.length ? ["Do not accept Lovable.dev completion until findings are resolved or understood."] : []),
+  ];
+
+  return {
+    projectName: params.projectName ?? "Lovable.dev project",
+    platformState,
+    confidence: findings.length > 2 ? "low" : visibleEvidence.length || githubSignals.length ? "medium" : "low",
+    findings: findings.length ? findings : ["Lovable.dev platform walkthrough did not reveal an obvious blocker."],
+    visibleEvidence: visibleEvidence.length ? visibleEvidence : ["No screenshot or visible-result evidence supplied."],
+    githubSignals: githubSignals.length ? githubSignals : ["No GitHub/sync evidence supplied."],
+    promptSignals: promptSignals.length ? promptSignals : ["No prompt-history evidence supplied."],
+    risks,
+    recommendedNextAction:
+      platformState === "logged-out"
+        ? "Ask the user to sign in, then repeat the platform walkthrough."
+        : platformState === "error"
+          ? "Run `lovable_visible_result_check`, connect GitHub if needed, then fix build/runtime blockers with OpenClaw code tools."
+          : platformState === "building"
+            ? "Wait for Lovable.dev to finish, then capture preview evidence before spending another prompt."
+            : platformState === "github-ready"
+              ? "Run `lovable_connect_github_repo`, repo doctor, and sync-risk checks before engineering work."
+              : "Refresh project memory, then let `lovable_brain` choose between another narrow Lovable.dev prompt and OpenClaw/GitHub work.",
+    nextTools:
+      platformState === "error"
+        ? ["lovable_visible_result_check", "lovable_connect_github_repo", "lovable_repo_doctor", "lovable_rescue_plan"]
+        : platformState === "github-ready"
+          ? ["lovable_connect_github_repo", "lovable_repo_doctor", "lovable_sync_risk_report"]
+          : ["lovable_project_memory", "lovable_brain", "lovable_next_action_plan"],
+  };
+}
+
+function makeMcpConnectionPlan(params: {
+  mcpServerUrl?: string;
+  mcpConnected?: boolean;
+  authMode?: "oauth" | "api-key" | "unknown";
+  availableTools?: string[];
+  desiredOutcome?: string;
+  clientName?: string;
+}): LovableMcpConnectionPlan {
+  const serverUrl = params.mcpServerUrl ?? "https://mcp.lovable.dev";
+  const authMode = params.authMode ?? "oauth";
+  const connected = params.mcpConnected === true;
+  const hasTools = Boolean(params.availableTools?.length);
+  const status: LovableMcpConnectionPlan["status"] =
+    connected && hasTools ? "connected" : connected ? "needs-tool-discovery" : authMode === "unknown" ? "needs-auth" : "not-connected";
+
+  return {
+    status,
+    serverUrl,
+    authMode,
+    researchPreviewWarning:
+      "Lovable MCP is documented by Lovable as a research-preview server, so tool names, parameters, and response shapes may change. ClawKit should discover tools at runtime and keep a browser/GitHub fallback.",
+    connectionSteps: [
+      `Add the Lovable MCP server URL: ${serverUrl}.`,
+      authMode === "api-key"
+        ? "Use API-key authentication only through the user's approved MCP/client secret store."
+        : "Use OAuth and let the user authenticate in the browser when the MCP client requests it.",
+      "Restart or refresh the OpenClaw/MCP client so the Lovable tools appear.",
+      "Run MCP tool discovery before choosing project actions.",
+      "Record the available Lovable MCP tools in project memory for this session.",
+    ],
+    toolDiscoverySteps: [
+      "List available Lovable MCP tools through OpenClaw's MCP client.",
+      "Identify tools for creating projects, sending messages/prompts, inspecting project/code state, deployment/status, and project listing.",
+      "Map discovered tool names into `lovable_mcp_project_workflow` rather than hard-coding names.",
+    ],
+    useMcpFor: [
+      "Creating a Lovable project from a user-approved prompt.",
+      "Sending approved iteration messages/prompts to an existing Lovable project.",
+      "Inspecting project metadata, code, history, deployment status, or Lovable-side diagnostics when the MCP tool exposes them.",
+      "Programmatic workflows where browser visuals are not required.",
+    ],
+    useBrowserFor: [
+      "Understanding the actual Lovable.dev UI, preview, visual result, screenshots, and console behavior.",
+      "User login/OAuth steps that require human action.",
+      "Confirming what is visible before accepting Lovable.dev completion.",
+    ],
+    useGithubFor: [
+      "Durable source-of-truth code work, branches, PRs, tests, refactors, security, and production hardening.",
+      "Exact diffs and maintainability cleanup after Lovable generates or changes the app.",
+    ],
+    safetyRules: [
+      "Do not submit MCP prompts that spend credits without user approval.",
+      "Do not deploy, publish, change billing, connect production services, or alter GitHub settings without explicit approval.",
+      "Do not pass secrets or private customer data into Lovable MCP unless the user explicitly approves and the data is safe to share.",
+      "Treat MCP output as evidence, not proof; verify builds, repo state, and visible browser behavior before delivery.",
+    ],
+    fallbackPlan: [
+      "If MCP is unavailable, use `lovable_platform_walkthrough_plan` with OpenClaw browser tools.",
+      "If browser inspection is unavailable, use Build-with-URL links plus GitHub handoff.",
+      "If Lovable output is broken or invisible, move to GitHub/OpenClaw code repair instead of repeated prompts.",
+    ],
+  };
+}
+
+function makeMcpWorkflowPlan(params: {
+  projectName?: string;
+  requestedAction?: "create-project" | "iterate-project" | "inspect-project" | "deploy-project" | "sync-or-handoff" | "unknown";
+  userGoal?: string;
+  mcpConnected?: boolean;
+  availableTools?: string[];
+  projectIdOrUrl?: string;
+  hasGithubRepo?: boolean;
+  needsVisualVerification?: boolean;
+  hasUserApproval?: boolean;
+}): LovableMcpWorkflowPlan {
+  const action = params.requestedAction ?? "unknown";
+  const tools = params.availableTools ?? [];
+  const hasTool = (pattern: RegExp) => tools.some((tool) => pattern.test(tool));
+  const needsApproval = (action === "create-project" || action === "iterate-project" || action === "deploy-project") && !params.hasUserApproval;
+  const preferredSurface: LovableMcpWorkflowPlan["preferredSurface"] =
+    needsApproval
+      ? "ask-user"
+      : !params.mcpConnected
+        ? "browser-walkthrough"
+        : action === "deploy-project"
+          ? "ask-user"
+          : action === "inspect-project" && params.needsVisualVerification
+            ? "browser-walkthrough"
+            : action === "sync-or-handoff" || params.hasGithubRepo
+              ? "github-code-tools"
+              : "lovable-mcp";
+
+  return {
+    projectName: params.projectName ?? "Lovable.dev project",
+    requestedAction: action,
+    preferredSurface,
+    reason:
+      preferredSurface === "ask-user"
+        ? "The requested MCP action can spend credits, deploy, or change account/project state, so explicit user approval is required first."
+        : preferredSurface === "browser-walkthrough"
+          ? "Browser walkthrough is the best next surface because MCP is unavailable or the task needs visual evidence from the actual Lovable UI."
+          : preferredSurface === "github-code-tools"
+            ? "GitHub/OpenClaw should own source-of-truth, exact code, verification, refactoring, and PR work."
+            : "Lovable MCP is connected and the requested action can be handled programmatically before browser/GitHub verification.",
+    mcpToolHints: [
+      ...(hasTool(/create|project/i) || action !== "create-project" ? [] : ["Look for a Lovable MCP tool that creates projects or lists templates."]),
+      ...(hasTool(/message|prompt|chat|iterate/i) || action !== "iterate-project" ? [] : ["Look for a Lovable MCP tool that sends a message/prompt to a project."]),
+      ...(hasTool(/inspect|file|code|diff|status/i) || action !== "inspect-project" ? [] : ["Look for Lovable MCP tools that inspect project/code/status/diffs."]),
+      ...(hasTool(/deploy|publish/i) || action !== "deploy-project" ? [] : ["Look for deployment/status tools, but require approval before using them."]),
+      "Discover exact tool names at runtime because Lovable MCP is research preview.",
+    ],
+    browserFallback: [
+      "Run `lovable_platform_walkthrough_plan`.",
+      "Use OpenClaw browser tools to open Lovable.dev, inspect project/preview/GitHub/status surfaces, and capture evidence.",
+      "Feed observations into `lovable_platform_observation_report`.",
+    ],
+    githubFollowUp: [
+      "Connect or confirm GitHub repo.",
+      "Run repo doctor and sync-risk checks.",
+      "Use OpenClaw code tools for exact implementation, refactoring, tests, security, and PR.",
+    ],
+    evidenceNeeded: [
+      "MCP connection status and discovered Lovable MCP tools.",
+      "User approval for prompts, deployments, GitHub changes, or credit-spending actions.",
+      "Project URL or project id for existing-project actions.",
+      "Browser/screenshot evidence before accepting visible completion.",
+      "GitHub/local repo evidence before exact engineering work.",
+    ],
+    stopConditions: [
+      "Stop if user approval is missing for credit-spending, deploy, GitHub, billing, or production actions.",
+      "Stop if MCP tool behavior is unclear or tool schema changed; fall back to browser walkthrough or ask the user.",
+      "Stop if Lovable says done but preview/browser evidence does not confirm the visible result.",
+    ],
   };
 }
 
@@ -2488,6 +2890,115 @@ export default definePluginEntry({
       },
       { optional: true },
     );
+
+    api.registerTool({
+      name: "lovable_platform_walkthrough_plan",
+      label: "Plan Lovable Walkthrough",
+      description:
+        "Create an approval-gated browser walkthrough plan so OpenClaw can open Lovable.dev, inspect the actual platform screens, press approved buttons, capture evidence, and understand the project state.",
+      parameters: Type.Object({
+        projectName: Type.Optional(Type.String()),
+        goal: Type.Optional(Type.String({ description: "What OpenClaw should learn or accomplish inside Lovable.dev." })),
+        lovableUrl: Type.Optional(Type.String({ description: "Lovable.dev dashboard or general Lovable URL." })),
+        projectUrl: Type.Optional(Type.String({ description: "Specific Lovable.dev project/editor URL, if known." })),
+        previewUrl: Type.Optional(Type.String({ description: "Lovable preview/deployed URL, if known." })),
+        hasLoggedInSession: Type.Optional(Type.Boolean({ description: "Whether the user is already logged into Lovable.dev in the browser." })),
+        wantsPromptSubmission: Type.Optional(Type.Boolean({ description: "Whether the user wants OpenClaw to submit an approved prompt." })),
+        wantsGithubCheck: Type.Optional(Type.Boolean({ description: "Whether OpenClaw should inspect GitHub/export/sync settings in Lovable.dev." })),
+        wantsScreenshots: Type.Optional(Type.Boolean({ description: "Whether screenshots should be captured by trusted browser tools." })),
+        wantsVideoNotes: Type.Optional(Type.Boolean({ description: "Whether dynamic flows should be recorded as notes or video by trusted tools." })),
+        allowedActions: optionalStringArray("User-approved actions OpenClaw may perform in the browser."),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makePlatformWalkthroughPlan(params));
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_platform_observation_report",
+      label: "Report Lovable Observations",
+      description:
+        "Turn OpenClaw browser observations from Lovable.dev into structured project evidence, risks, next actions, and tool routing.",
+      parameters: Type.Object({
+        projectName: Type.Optional(Type.String()),
+        platformUrl: Type.Optional(Type.String()),
+        previewUrl: Type.Optional(Type.String()),
+        loginState: Type.Optional(Type.Union([
+          Type.Literal("logged-in"),
+          Type.Literal("logged-out"),
+          Type.Literal("unknown"),
+        ])),
+        currentScreen: Type.Optional(Type.String()),
+        buildStatus: Type.Optional(Type.Union([
+          Type.Literal("idle"),
+          Type.Literal("building"),
+          Type.Literal("failed"),
+          Type.Literal("succeeded"),
+          Type.Literal("unknown"),
+        ])),
+        visibleResult: Type.Optional(Type.String()),
+        expectedVisibleChanges: optionalStringArray("Visible changes the user expected to confirm."),
+        consoleErrors: optionalStringArray("Browser console/runtime errors observed."),
+        githubStatus: Type.Optional(Type.String()),
+        screenshots: optionalStringArray("Screenshot paths, URLs, or references captured by trusted browser tools."),
+        promptHistoryNotes: optionalStringArray("Notes from the visible Lovable prompt/message history."),
+        actionsTaken: optionalStringArray("Browser actions OpenClaw performed after approval."),
+        approvals: optionalStringArray("User approvals received before side-effectful actions."),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makePlatformObservationReport(params));
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_mcp_connection_plan",
+      label: "Plan Lovable MCP",
+      description:
+        "Plan a safe connection to Lovable's MCP server, including OAuth/API-key setup, tool discovery, safety rules, and browser/GitHub fallbacks.",
+      parameters: Type.Object({
+        mcpServerUrl: Type.Optional(Type.String({ description: "Lovable MCP server URL. Defaults to https://mcp.lovable.dev." })),
+        mcpConnected: Type.Optional(Type.Boolean({ description: "Whether OpenClaw already has the Lovable MCP connected." })),
+        authMode: Type.Optional(Type.Union([
+          Type.Literal("oauth"),
+          Type.Literal("api-key"),
+          Type.Literal("unknown"),
+        ])),
+        availableTools: optionalStringArray("Lovable MCP tools discovered by OpenClaw, if already known."),
+        desiredOutcome: Type.Optional(Type.String({ description: "What the user wants to do through Lovable MCP." })),
+        clientName: Type.Optional(Type.String({ description: "OpenClaw/Codex/MCP client name, if relevant." })),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makeMcpConnectionPlan(params));
+      },
+    });
+
+    api.registerTool({
+      name: "lovable_mcp_project_workflow",
+      label: "Plan MCP Project Workflow",
+      description:
+        "Choose whether to use Lovable MCP, browser walkthrough, or GitHub/code tools for creating, iterating, inspecting, deploying, or handing off a Lovable project.",
+      parameters: Type.Object({
+        projectName: Type.Optional(Type.String()),
+        requestedAction: Type.Optional(Type.Union([
+          Type.Literal("create-project"),
+          Type.Literal("iterate-project"),
+          Type.Literal("inspect-project"),
+          Type.Literal("deploy-project"),
+          Type.Literal("sync-or-handoff"),
+          Type.Literal("unknown"),
+        ])),
+        userGoal: Type.Optional(Type.String()),
+        mcpConnected: Type.Optional(Type.Boolean()),
+        availableTools: optionalStringArray("Lovable MCP tools discovered by OpenClaw."),
+        projectIdOrUrl: Type.Optional(Type.String()),
+        hasGithubRepo: Type.Optional(Type.Boolean()),
+        needsVisualVerification: Type.Optional(Type.Boolean()),
+        hasUserApproval: Type.Optional(Type.Boolean()),
+      }),
+      async execute(_id, params: any) {
+        return jsonText(makeMcpWorkflowPlan(params));
+      },
+    });
 
     api.registerTool({
       name: "lovable_github_handoff",
@@ -3068,6 +3579,10 @@ export default definePluginEntry({
         ])),
         wantsBrowserOpen: Type.Optional(Type.Boolean()),
         wantsModelChoice: Type.Optional(Type.Boolean()),
+        wantsPlatformWalkthrough: Type.Optional(Type.Boolean()),
+        hasPlatformObservation: Type.Optional(Type.Boolean()),
+        hasLovableMcpConnected: Type.Optional(Type.Boolean()),
+        wantsLovableMcp: Type.Optional(Type.Boolean()),
         knownFacts: optionalStringArray("Project facts already known to OpenClaw."),
       }),
       async execute(_id, params: any) {
@@ -3109,6 +3624,10 @@ export default definePluginEntry({
         ])),
         wantsBrowserOpen: Type.Optional(Type.Boolean()),
         wantsModelChoice: Type.Optional(Type.Boolean()),
+        wantsPlatformWalkthrough: Type.Optional(Type.Boolean()),
+        hasPlatformObservation: Type.Optional(Type.Boolean()),
+        hasLovableMcpConnected: Type.Optional(Type.Boolean()),
+        wantsLovableMcp: Type.Optional(Type.Boolean()),
         knownFacts: optionalStringArray("Project facts already known to OpenClaw."),
       }),
       async execute(_id, params: any) {

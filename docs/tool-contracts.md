@@ -98,6 +98,76 @@ Side effect: none inside the plugin. It returns the URL and instructions for Ope
 
 This tool is optional because it has an external side effect.
 
+## `lovable_platform_walkthrough_plan`
+
+Input: Lovable.dev URL, project URL, preview URL, goal, login-session hint, screenshot/video preferences, GitHub-check preference, prompt-submission preference, and user-approved browser actions.
+
+Output: approval-gated browser walkthrough plan with:
+
+- Browser start URL.
+- Required login and approval notes.
+- Steps for OpenClaw's trusted browser tool.
+- Buttons and Lovable.dev areas to inspect.
+- Evidence to capture.
+- Actions allowed by the user.
+- Actions that require explicit approval.
+- Stop conditions.
+- Observation schema for the follow-up report.
+
+Use it when OpenClaw needs to open Lovable.dev, walk through the actual platform screens, press approved buttons, inspect preview/build/GitHub/deploy state, and familiarize itself with the project.
+
+## `lovable_platform_observation_report`
+
+Input: browser observations from Lovable.dev, including platform URL, preview URL, login state, current screen, build status, visible result, expected visible changes, console errors, GitHub status, screenshots, prompt-history notes, actions taken, and approvals.
+
+Output: structured platform report with:
+
+- Platform state.
+- Confidence.
+- Findings.
+- Visible evidence.
+- GitHub and prompt signals.
+- Risks.
+- Recommended next action.
+- Next ClawKit/OpenClaw tools.
+
+Use it after `lovable_platform_walkthrough_plan` and trusted browser inspection. It turns what OpenClaw saw on the Lovable.dev platform into routing evidence for `lovable_brain`, visible-result checks, GitHub handoff, or rescue mode.
+
+## `lovable_mcp_connection_plan`
+
+Input: Lovable MCP server URL, connection status, auth mode, discovered tools, desired outcome, and optional client name.
+
+Output: MCP connection plan with:
+
+- Connection status.
+- Default server URL.
+- OAuth/API-key setup guidance.
+- Research-preview warning.
+- Tool discovery steps.
+- What to use MCP for.
+- What to use browser walkthrough for.
+- What to use GitHub/OpenClaw for.
+- Safety rules and fallback plan.
+
+Use it when the user wants ClawKit to link into Lovable via MCP. Lovable MCP should be treated as research preview, so OpenClaw should discover tools at runtime instead of hard-coding tool names.
+
+## `lovable_mcp_project_workflow`
+
+Input: requested Lovable action, MCP connection state, discovered tools, project id/URL, GitHub availability, visual-verification need, and user approval state.
+
+Output: workflow decision with:
+
+- Requested action.
+- Preferred surface: Lovable MCP, browser walkthrough, GitHub/code tools, or ask user.
+- Reason.
+- MCP tool hints.
+- Browser fallback.
+- GitHub follow-up.
+- Evidence needed.
+- Stop conditions.
+
+Use it to choose the safest surface for create, iterate, inspect, deploy, and handoff workflows.
+
 ## `lovable_github_handoff`
 
 Input: project URL, repo URL, branch, and requested outcome.

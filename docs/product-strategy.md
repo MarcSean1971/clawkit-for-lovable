@@ -43,6 +43,8 @@ ClawKit should expose seven simple modes:
 - **Harden**: refactor and prepare generated code for production review.
 - **Ship**: turn Lovable.dev output into a verified GitHub PR.
 - **Remember**: keep project memory, decision logs, session briefs, and next-action plans across Lovable.dev, GitHub, checks, risks, and next actions.
+- **Walkthrough**: open Lovable.dev with approval, inspect the real platform screens, capture evidence, and understand project state.
+- **MCP**: use Lovable MCP when connected for programmatic create, iterate, inspect, and status workflows.
 - **Inside**: add safe OpenClaw-powered assistant features to the app.
 
 Rescue is probably the highest-conversion mode because the user already has pain and a project to save.
@@ -206,6 +208,49 @@ ClawKit should become known for not trusting fake completion. Every Lovable.dev 
 
 This is the difference between a fun demo and a product people trust.
 
+## Product Expansion: Lovable Platform Walkthrough
+
+ClawKit should not only create Lovable prompts; it should help OpenClaw understand the actual Lovable.dev platform state.
+
+The walkthrough layer is the answer to: "Open Lovable, look around, press the right approved buttons, and tell me what is really happening."
+
+This mode should inspect:
+
+- Dashboard/project identity.
+- Project editor and prompt history.
+- Build/progress/error state.
+- Preview and visible result.
+- GitHub/export/sync settings.
+- Deploy/share/custom-domain surfaces.
+- Console/runtime errors when previewing the app.
+
+The commercial promise is strong because it reduces the gap between what Lovable says and what the user sees. Browser walkthrough turns vague frustration into evidence: screenshots, URLs, visible status, GitHub state, prompt history, and next action.
+
+The plugin should stay marketplace-safe: it plans the walkthrough and structures evidence, while OpenClaw's trusted browser tools do the actual opening, clicking, screenshotting, and observation after approval.
+
+## Product Expansion: Lovable MCP Bridge
+
+Lovable now documents an official Lovable MCP server in research preview. ClawKit should support MCP as a first-class route, but with humility: tool names and schemas may change, so OpenClaw should discover MCP tools at runtime.
+
+Use MCP for programmatic Lovable actions:
+
+- Create a project from an approved prompt.
+- Send an approved iteration message.
+- Inspect project/code/status/deployment data when tools expose it.
+- Perform status or deployment workflows after approval.
+
+Use browser walkthrough for visual truth:
+
+- What the screen actually shows.
+- Whether a change is visible.
+- Screenshots, console errors, and human-facing UX state.
+
+Use GitHub/OpenClaw for durable engineering:
+
+- Source of truth, exact code, tests, refactors, security, PRs, and production hardening.
+
+The winning behavior is a three-surface brain: MCP when programmatic Lovable control is available, browser walkthrough when the actual platform/preview needs to be understood, and GitHub/OpenClaw when correctness matters.
+
 ## Delight Layer: Mood Indicator
 
 ClawKit should feel emotionally easier to work with than raw AI coding. The mood indicator is a small but memorable feature:
@@ -244,10 +289,11 @@ The display name must stay **ClawKit for Lovable** to remain distinct from **Cla
 
 ## Next Technical Milestones
 
-1. Browser automation adapter for logged-in Lovable.dev sessions.
-2. Screenshot capture and UI regression notes.
-3. Persistable project memory handoff files when the user approves writing into the repo.
-4. GitHub repo creation/export helpers.
-5. Build/test command detection.
-6. PR generation with generated-vs-coded change sections.
-7. Approval hooks for publish, deploy, billing, and production branches.
+1. Browser walkthrough recipes for logged-in Lovable.dev dashboard, project, preview, GitHub, and deploy flows.
+2. Lovable MCP tool discovery and project workflow mapping as the research-preview server stabilizes.
+3. Screenshot capture and UI regression notes.
+4. Persistable project memory handoff files when the user approves writing into the repo.
+5. GitHub repo creation/export helpers.
+6. Build/test command detection.
+7. PR generation with generated-vs-coded change sections.
+8. Approval hooks for publish, deploy, billing, and production branches.
