@@ -53,7 +53,7 @@ Example request:
 
 ## ClawKit for Lovable Brain
 
-ClawKit for Lovable Brain is the user-friendly orchestration layer. Instead of asking the user to choose between 20+ tools, OpenClaw can call `lovable_brain` and get the next best workflow. `lovable_studio_brain` remains as a backward-compatible alias for earlier installs, but the preferred Lovable product brain is `lovable_brain`.
+ClawKit for Lovable Brain is the user-friendly orchestration layer. Instead of asking the user to choose between 30+ tools, OpenClaw can call `lovable_brain` and get the next best workflow. `lovable_studio_brain` remains as a backward-compatible alias for earlier installs, but the preferred Lovable product brain is `lovable_brain`.
 
 The user can simply say:
 
@@ -63,7 +63,7 @@ Or:
 
 > Rescue this Lovable.dev app and make it production-ready.
 
-The Brain decides whether the situation is a new build, rescue, improvement, hardening pass, shipping pass, or user-orientation moment. It returns:
+The Brain decides whether the situation is a new build, rescue, improvement, hardening pass, PR shipping pass, live publishing pass, or user-orientation moment. It returns:
 
 - The recommended mode.
 - The next action and why.
@@ -123,6 +123,7 @@ OpenClaw can then:
 - Check whether the project is ready for Lovable.dev UI work, OpenClaw engineering, PR, or deploy steps.
 - Route UI/product work to Lovable.dev.
 - Verify that Lovable.dev's promised changes actually appear on screen.
+- Publish or update a live project only after approval, access checks, and live URL verification.
 - Route exact engineering work to GitHub and local code tools instead of burning more Lovable.dev credits.
 - Keep a reusable project memory brief with URLs, repo state, stack, risks, and do-not-touch rules.
 - Maintain a decision log and session brief so each new run starts from the latest agreed source of truth.
@@ -135,9 +136,13 @@ With ClawKit for Lovable, OpenClaw can help you move from a fragile Lovable.dev 
 
 - **Better prompts**: narrower Lovable.dev prompts with acceptance criteria and preservation rules.
 - **Credit discipline**: stop using Lovable.dev for bugs, refactors, tests, GitHub work, and exact code changes.
+- **Prompt linting**: check a proposed Lovable prompt before spending credits.
 - **Rescue mode**: diagnose blank screens, invisible changes, build errors, runtime failures, routing issues, and messy generated code.
 - **GitHub handoff**: treat GitHub as the source of truth, with branches, PRs, verification notes, and generated-vs-coded sections.
 - **Visible proof**: do not accept “done” until the build works and the expected change appears in browser or screenshot evidence.
+- **Visual QA**: convert desktop/mobile screenshots and browser observations into pass/fail findings.
+- **Project dashboard**: summarize mode, source of truth, status, confidence, blockers, approvals, links, and next best action in one readable card.
+- **Client handoff**: produce a clean report with live/preview/repo links, what was built, verification, access notes, limitations, next steps, and maintenance plan.
 - **Maintainability pass**: refactor Lovable.dev output into cleaner modules, better boundaries, stable state flow, reusable components, and reviewable code.
 - **Project memory**: remember the goal, source of truth, routes, known bugs, decisions, do-not-change rules, and next action.
 - **Tool routing**: let OpenClaw choose Lovable.dev, GitHub, local code tools, browser tools, or PR tooling based on the task.
@@ -185,6 +190,16 @@ Use ClawKit for Lovable when:
 | `lovable_pr_summary` | Drafts a PR body that separates Lovable.dev-generated and OpenClaw-coded work. |
 | `lovable_openclaw_integration_plan` | Plans an optional secure "OpenClaw Inside" feature for the app being built. |
 | `lovable_visible_result_check` | Verifies that Lovable.dev's claimed change actually builds and appears on screen. |
+| `lovable_publish_readiness` | Checks whether a project is ready to publish, including build, visible result, access, secrets, and approval evidence. |
+| `lovable_publish_plan` | Creates an approval-gated publish plan using Lovable MCP, browser walkthrough, or GitHub/external deployment. |
+| `lovable_publish_project` | Prepares the trusted execution route after explicit approval; OpenClaw then uses MCP, browser, or external deploy tools. |
+| `lovable_publish_result_report` | Records the live URL, access level, verification, risks, and rollback or unpublish notes after publishing. |
+| `lovable_project_dashboard` | Creates a readable ClawKit state card with links, status, confidence, blockers, approvals, evidence, risks, and next action. |
+| `lovable_publish_confidence` | Scores whether the project is ready to publish and returns a clear go/no-go verdict. |
+| `lovable_client_handoff_report` | Generates a client-ready delivery report with what was built, links, verification, limitations, and maintenance plan. |
+| `lovable_prompt_lint` | Reviews a Lovable prompt for broad scope, missing guardrails, credit-waste risk, and work OpenClaw should handle instead. |
+| `lovable_visual_qa_report` | Checks screenshot/browser/mobile observations against expected UI, layout, console, and network evidence. |
+| `lovable_end_to_end_plan` | Plans the full path from idea or existing app to preview, GitHub handoff, hardening, publish, and handoff. |
 | `lovable_model_strategy` | Helps the user choose a configured OpenClaw model/profile for the task. |
 | `lovable_workflow_state` | Turns messy project facts into a simple state: mode, source of truth, app status, repo status, credit risk, blocker, and next action. |
 | `lovable_brain` | Chooses the next ClawKit for Lovable workflow automatically so the user does not need to know tool names. |
@@ -272,6 +287,54 @@ Browser opening remains optional. `lovable_build_url` returns a URL without open
 23. OpenClaw refactors Lovable.dev-generated code for maintainability before shipping.
 24. OpenClaw uses `lovable_iteration_brief` for another UI pass only when useful.
 25. OpenClaw uses `lovable_pr_summary` before opening a PR.
+26. If the user wants the app live, OpenClaw runs `lovable_publish_readiness`, `lovable_publish_plan`, asks for explicit approval, publishes through Lovable MCP or an approved browser/external deploy route, then runs `lovable_publish_result_report`.
+27. OpenClaw uses `lovable_project_dashboard` throughout the workflow and `lovable_client_handoff_report` when the project is ready to review, ship, or hand off.
+
+## Prompt Lint, Visual QA, And End-To-End Planning
+
+`lovable_prompt_lint` is the preflight check before spending Lovable credits. It flags prompts that are too broad, missing preserve/change/avoid/acceptance sections, or asking Lovable to handle work better suited to OpenClaw, such as auth, billing, database, security, tests, CI, deployment, or refactoring.
+
+`lovable_visual_qa_report` is the post-Lovable visual check. Feed it expected screens/elements plus desktop/mobile screenshot observations, console errors, and network errors. It returns pass, needs-review, or fail with concrete next steps.
+
+`lovable_end_to_end_plan` is the flagship “take this from idea to live” planner. It lays out the phases from orientation and credit-smart planning through Lovable UI generation, visible verification, GitHub hardening, publish, and client handoff.
+
+## Publish Mode
+
+Users can ask:
+
+> Use ClawKit to publish this Lovable project.
+
+Or:
+
+> Publish the verified version and give me the live URL.
+
+Publishing is intentionally approval-gated because it creates or updates a live site. On some Lovable plans, anyone with the published link can access the app; Business and Enterprise workspaces may allow workspace-only access depending on settings. Project/editor access and published website access are separate.
+
+Publish Mode follows this rhythm:
+
+1. `lovable_publish_readiness` checks project id/URL, preview URL, build status, visible proof, console errors, secrets/env readiness, desired access, and available publish surface.
+2. `lovable_publish_plan` chooses Lovable MCP, guided browser walkthrough, or GitHub/external deployment.
+3. OpenClaw asks for the exact approval phrase: `Yes, publish this Lovable project now.`
+4. `lovable_publish_project` returns the trusted execution route. The plugin itself does not secretly publish; OpenClaw uses the approved Lovable MCP tool, browser workflow, or external host workflow.
+5. `lovable_publish_result_report` records the live URL, access level, verification, risks, and rollback/unpublish notes.
+
+Use Lovable MCP when connected and a deploy/publish tool is discovered. Use browser walkthrough when the actual Lovable Publish modal needs inspection. Use GitHub/external deployment when the user wants Vercel, Netlify, Railway, VPS, or another host as the production surface.
+
+## Dashboard And Handoff
+
+For a friendlier user experience, ClawKit can summarize the whole project in one state card:
+
+> Show me the ClawKit dashboard for this Lovable project.
+
+`lovable_project_dashboard` returns a readable card plus structured fields for the agent: mode, source of truth, status, confidence, credit risk, publish confidence, links, current blocker, next best action, approvals, verified evidence, and risks.
+
+Before publishing, `lovable_publish_confidence` gives a clear score and verdict such as `do-not-publish`, `needs-review`, `ready-with-approval`, or `ready`.
+
+When a project is ready for a client, agency, or internal stakeholder, use:
+
+> Create a client handoff report.
+
+`lovable_client_handoff_report` creates a handoff pack with live URL, preview URL, repository URL, what was built, verification, access/ownership notes, known limitations, next recommendations, and maintenance plan.
 
 ## GitHub Connection
 

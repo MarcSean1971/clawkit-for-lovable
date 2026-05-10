@@ -930,31 +930,37 @@ function makeWorkflowState(params) {
     const hasRepo = Boolean(params.hasGithubRepo || params.hasLocalRepo);
     const hasHardFailure = Boolean(params.hasFailingBuild || params.hasRuntimeErrors);
     const repeatedPromptRisk = Boolean((params.attemptedLovablePrompts ?? 0) >= 2 && params.sameIssueRepeated);
-    const mode = params.readyForPr
-        ? "ship"
-        : params.hasFailingBuild || params.hasRuntimeErrors || params.hasInvisibleChanges || goal.includes("rescue") || goal.includes("fix")
-            ? "rescue"
-            : params.needsArchitectureRefactor || goal.includes("refactor") || goal.includes("maintain")
-                ? "harden"
-                : params.hasExistingApp || params.hasLovableProjectUrl || hasRepo
-                    ? "improve"
-                    : params.userGoal
-                        ? "new-build"
-                        : "unknown";
-    const sourceOfTruth = params.hasLocalRepo ? "local-repo" : params.hasGithubRepo ? "github" : params.hasLovableProjectUrl ? "lovable.dev" : "unknown";
-    const appStatus = params.readyForPr
-        ? "ready-for-pr"
-        : params.hasInvisibleChanges
-            ? "invisible-change"
-            : hasHardFailure
-                ? "broken"
-                : params.needsArchitectureRefactor
-                    ? "needs-refactor"
+    const mode = params.wantsPublish || goal.includes("publish") || goal.includes("deploy") || goal.includes("live url") || goal.includes("go live")
+        ? "publish"
+        : params.readyForPr
+            ? "ship"
+            : params.hasFailingBuild || params.hasRuntimeErrors || params.hasInvisibleChanges || goal.includes("rescue") || goal.includes("fix")
+                ? "rescue"
+                : params.needsArchitectureRefactor || goal.includes("refactor") || goal.includes("maintain")
+                    ? "harden"
                     : params.hasExistingApp || params.hasLovableProjectUrl || hasRepo
-                        ? "generated"
+                        ? "improve"
                         : params.userGoal
-                            ? "idea"
-                            : "ready-for-verification";
+                            ? "new-build"
+                            : "unknown";
+    const sourceOfTruth = params.hasLocalRepo ? "local-repo" : params.hasGithubRepo ? "github" : params.hasLovableProjectUrl ? "lovable.dev" : "unknown";
+    const appStatus = params.alreadyPublished
+        ? "published"
+        : mode === "publish"
+            ? "ready-to-publish"
+            : params.readyForPr
+                ? "ready-for-pr"
+                : params.hasInvisibleChanges
+                    ? "invisible-change"
+                    : hasHardFailure
+                        ? "broken"
+                        : params.needsArchitectureRefactor
+                            ? "needs-refactor"
+                            : params.hasExistingApp || params.hasLovableProjectUrl || hasRepo
+                                ? "generated"
+                                : params.userGoal
+                                    ? "idea"
+                                    : "ready-for-verification";
     const repoStatus = params.hasDirtyGitState
         ? "dirty"
         : params.hasLocalRepo
@@ -972,7 +978,8 @@ function makeWorkflowState(params) {
     const missingInfo = [
         ...(!params.userGoal ? ["User goal or desired visible outcome."] : []),
         ...(!params.hasLovableProjectUrl && mode !== "new-build" ? ["Lovable.dev project or preview URL."] : []),
-        ...(!hasRepo && mode !== "new-build" ? ["GitHub repo URL or local repo path."] : []),
+        ...(!hasRepo && mode !== "new-build" && mode !== "publish" ? ["GitHub repo URL or local repo path."] : []),
+        ...(mode === "publish" ? ["Explicit publish approval, desired website access, and latest visible-result verification."] : []),
         ...(mode === "rescue" && !params.hasInvisibleChanges && !hasHardFailure ? ["Observed failure: blank screen, runtime error, failed build, or missing visible change."] : []),
     ];
     return {
@@ -991,9 +998,11 @@ function makeWorkflowState(params) {
                     ? "Lovable.dev claimed a change but the screen does not show it."
                     : params.hasDirtyGitState
                         ? "Git state is dirty; avoid broad Lovable.dev prompts."
-                        : !hasRepo && mode !== "new-build"
+                        : !hasRepo && mode !== "new-build" && mode !== "publish"
                             ? "GitHub/source-of-truth handoff is missing."
-                            : "No hard blocker recorded yet.",
+                            : mode === "publish"
+                                ? "Publishing requires explicit approval plus final visible-result and access checks."
+                                : "No hard blocker recorded yet.",
         nextBestAction: mode === "new-build"
             ? "Create a credit-smart plan, then a short Lovable.dev prompt sequence."
             : mode === "rescue"
@@ -1002,9 +1011,11 @@ function makeWorkflowState(params) {
                     ? "Use OpenClaw/GitHub for maintainability refactor, tests, and architecture cleanup."
                     : mode === "ship"
                         ? "Prepare PR summary with verification evidence and residual risks."
-                        : mode === "improve"
-                            ? "Run a credit-risk audit, then choose a narrow Lovable.dev UI pass or OpenClaw code work."
-                            : "Orient the user and ask for the minimum project facts.",
+                        : mode === "publish"
+                            ? "Run publish readiness, get explicit approval, publish through Lovable MCP or guided browser, then verify the live URL."
+                            : mode === "improve"
+                                ? "Run a credit-risk audit, then choose a narrow Lovable.dev UI pass or OpenClaw code work."
+                                : "Orient the user and ask for the minimum project facts.",
         knownFacts: asList(params.knownFacts, [
             `Mode: ${mode}.`,
             `Source of truth: ${sourceOfTruth}.`,
@@ -1023,11 +1034,13 @@ function makeStudioBrain(params) {
             ? "rescue"
             : workflowState.mode === "harden"
                 ? "harden"
-                : workflowState.mode === "ship"
-                    ? "ship"
-                    : workflowState.mode === "improve"
-                        ? "improve"
-                        : "orient-user";
+                : workflowState.mode === "publish"
+                    ? "publish"
+                    : workflowState.mode === "ship"
+                        ? "ship"
+                        : workflowState.mode === "improve"
+                            ? "improve"
+                            : "orient-user";
     const needsMood = workflowState.userStress === "heated" || workflowState.userStress === "critical";
     const needsRepo = workflowState.sourceOfTruth === "unknown" && mode !== "start";
     const stopPrompting = workflowState.creditRisk === "high" || params.hasFailingBuild || params.hasRuntimeErrors || params.hasInvisibleChanges || params.sameIssueRepeated;
@@ -1037,13 +1050,17 @@ function makeStudioBrain(params) {
         ...(params.wantsLovableMcp || params.hasLovableMcpConnected ? ["lovable_mcp_connection_plan", "lovable_mcp_project_workflow"] : []),
         ...(params.wantsModelChoice ? ["lovable_model_strategy"] : []),
         ...(mode === "orient-user" ? ["lovable_user_onboarding", "lovable_starter_guide"] : []),
-        ...(mode === "start" ? ["lovable_credit_smart_plan", "lovable_prompt_sequence", "lovable_credit_risk_audit", "lovable_make_prompt"] : []),
+        ...(mode === "start" ? ["lovable_end_to_end_plan", "lovable_credit_smart_plan", "lovable_prompt_sequence", "lovable_prompt_lint", "lovable_credit_risk_audit", "lovable_make_prompt"] : []),
         ...(params.wantsBrowserOpen && mode === "start" ? ["lovable_build_url or lovable_open_build_url"] : []),
         ...(params.wantsPlatformWalkthrough || (params.hasLovableProjectUrl && !params.hasPlatformObservation) ? ["lovable_platform_walkthrough_plan", "lovable_platform_observation_report"] : []),
-        ...(mode === "rescue" ? ["lovable_stop_prompting_check", "lovable_visible_result_check", "lovable_connect_github_repo", "lovable_repo_doctor", "lovable_rescue_plan"] : []),
+        ...(mode === "rescue" ? ["lovable_stop_prompting_check", "lovable_visible_result_check", "lovable_visual_qa_report", "lovable_connect_github_repo", "lovable_repo_doctor", "lovable_rescue_plan"] : []),
         ...(mode === "improve" ? ["lovable_credit_risk_audit", "lovable_next_action_plan", "lovable_sync_risk_report", "lovable_iteration_brief or OpenClaw code tools"] : []),
         ...(mode === "harden" ? ["lovable_repo_doctor", "lovable_sync_risk_report", "OpenClaw code tools", "lovable_visible_result_check"] : []),
         ...(mode === "ship" ? ["lovable_project_readiness", "lovable_visible_result_check", "lovable_pr_summary"] : []),
+        ...(mode === "publish" ? ["lovable_publish_readiness", "lovable_visible_result_check", "lovable_publish_plan", "lovable_publish_project", "lovable_publish_result_report"] : []),
+        "lovable_project_dashboard",
+        ...(mode === "publish" ? ["lovable_publish_confidence"] : []),
+        ...(mode === "ship" || mode === "publish" ? ["lovable_client_handoff_report"] : []),
         "lovable_project_memory",
         "lovable_decision_log",
     ];
@@ -1057,17 +1074,21 @@ function makeStudioBrain(params) {
                 ? "I will stop blind Lovable.dev prompting, verify what is actually visible, inspect the repo state, and fix the real blocker with OpenClaw where appropriate."
                 : mode === "harden"
                     ? "I will treat the Lovable.dev output as a draft and use OpenClaw/GitHub to make the code cleaner, scalable, testable, and reviewable."
-                    : mode === "ship"
-                        ? "I will package the work for delivery with verification evidence, screenshots or browser notes, risks, and a PR summary."
-                        : mode === "improve"
-                            ? "I will decide whether the next improvement belongs in a narrow Lovable.dev UI prompt or in OpenClaw code tools."
-                            : "I will ask only for the minimum details, then choose the correct ClawKit for Lovable workflow for the user.",
+                    : mode === "publish"
+                        ? "I will verify the current app, confirm website access and explicit approval, publish through Lovable MCP or an approved browser walkthrough, then verify the live URL."
+                        : mode === "ship"
+                            ? "I will package the work for delivery with verification evidence, screenshots or browser notes, risks, and a PR summary."
+                            : mode === "improve"
+                                ? "I will decide whether the next improvement belongs in a narrow Lovable.dev UI prompt or in OpenClaw code tools."
+                                : "I will ask only for the minimum details, then choose the correct ClawKit for Lovable workflow for the user.",
         nextAction: workflowState.nextBestAction,
         why: stopPrompting
             ? "The situation has high credit-waste risk, so OpenClaw should gather evidence before another Lovable.dev prompt."
             : mode === "start"
                 ? "A rough idea is cheapest when planned first, then turned into a small prompt sequence."
-                : "The current state determines whether Lovable.dev, GitHub, browser verification, code repair, or PR tooling should lead.",
+                : mode === "publish"
+                    ? "Publishing creates or updates a live site, so it needs final evidence, access checks, and explicit user approval."
+                    : "The current state determines whether Lovable.dev, GitHub, browser verification, code repair, or PR tooling should lead.",
         recommendedToolOrder,
         askUserFor: [
             ...workflowState.missingInfo,
@@ -1083,6 +1104,7 @@ function makeStudioBrain(params) {
             "GitHub/source-of-truth handoff, build/runtime diagnosis, exact code changes, tests, security, refactoring, and PR delivery.",
             "Stopping Lovable.dev prompt loops when the same issue repeats or evidence is missing.",
             "Using approved Lovable MCP tools when connected, and using browser walkthrough when visual evidence or platform UI inspection is needed.",
+            "Publishing only after explicit approval, then verifying the live URL and recording rollback or unpublish notes.",
         ],
         stopConditions: [
             "Stop before another broad Lovable.dev prompt if build/runtime errors, invisible changes, dirty Git state, or repeated failed prompts exist.",
@@ -1097,6 +1119,7 @@ function makeStudioBrain(params) {
             "Browser or screenshot evidence before accepting completion.",
             "Lovable MCP connection/tool-discovery evidence when OpenClaw should operate Lovable programmatically.",
             "Lovable.dev platform walkthrough observations when the actual UI state matters.",
+            "Publish approval phrase, desired website access, deployed URL, and live-site verification before declaring the project published.",
         ],
         workflowState,
     };
@@ -1381,6 +1404,632 @@ function makeVisibleResultCheck(params) {
             ],
     };
 }
+function makePublishReadiness(params) {
+    const projectName = params.projectName ?? "Lovable.dev project";
+    const publishTarget = params.publishTarget ?? "lovable";
+    const blockers = [
+        ...(!params.projectIdOrUrl ? ["Project id or Lovable project URL is missing."] : []),
+        ...(params.buildPassed === false ? ["Build or verification is failing."] : []),
+        ...(params.hasConsoleErrors ? ["Browser console/runtime errors are still present."] : []),
+        ...(params.hasSecretsConfigured === false ? ["Required secrets or deployment environment variables are not confirmed."] : []),
+        ...(publishTarget === "external" && !params.hasGithubRepo ? ["External deployment needs a GitHub repo or deployable source of truth."] : []),
+    ];
+    const missingEvidence = [
+        ...(!params.previewUrl ? ["Preview URL for final visual verification."] : []),
+        ...(params.visibleResultVerified !== true ? ["Visible-result proof for the version about to be published."] : []),
+        ...(!params.desiredAccess || params.desiredAccess === "unknown" ? ["Desired website access: public, workspace/internal, or custom domain."] : []),
+        ...(!params.hasLovableMcpConnected && !params.hasLoggedInBrowserSession && publishTarget === "lovable" ? ["Either Lovable MCP connection or a logged-in browser session."] : []),
+    ];
+    const approvalRequired = [
+        "Explicit user approval to publish or update the live site.",
+        "Confirmation of website access expectations before publishing.",
+        "Confirmation that no secrets, private customer data, or unfinished production flows will be exposed.",
+    ];
+    const score = [
+        Boolean(params.projectIdOrUrl),
+        Boolean(params.previewUrl),
+        params.buildPassed !== false,
+        params.visibleResultVerified === true,
+        params.hasConsoleErrors !== true,
+        params.hasSecretsConfigured !== false,
+        Boolean(params.desiredAccess && params.desiredAccess !== "unknown"),
+        params.hasUserApproval === true,
+        publishTarget === "external" ? Boolean(params.hasGithubRepo) : Boolean(params.hasLovableMcpConnected || params.hasLoggedInBrowserSession),
+    ].filter(Boolean).length;
+    const readiness = blockers.length > 0
+        ? "blocked"
+        : params.hasUserApproval !== true
+            ? "needs-approval"
+            : missingEvidence.length > 0
+                ? "needs-verification"
+                : "ready";
+    return {
+        projectName,
+        readiness,
+        score,
+        blockers,
+        missingEvidence,
+        approvalRequired,
+        recommendedNextAction: readiness === "ready"
+            ? "Proceed with `lovable_publish_project`, then verify the live URL and record the publish result."
+            : readiness === "needs-approval"
+                ? "Show the publish plan and ask the user for explicit approval before any live deployment."
+                : readiness === "needs-verification"
+                    ? "Complete missing verification and access checks before publishing."
+                    : "Resolve blockers before trying to publish.",
+        requiredPrePublishChecks: [
+            "Confirm the exact project id or Lovable project URL.",
+            "Run build/typecheck/test or record why a check is unavailable.",
+            "Open preview and confirm the expected visible result.",
+            "Check browser console/network errors.",
+            "Confirm website access: public, workspace/internal, or custom domain.",
+            "Confirm secrets/environment variables are configured outside browser-exposed code.",
+            "Get explicit approval before publishing or updating the live site.",
+        ],
+    };
+}
+function choosePublishPath(params) {
+    const tools = params.availableMcpTools ?? [];
+    const hasDeployTool = tools.some((tool) => /deploy|publish/i.test(tool));
+    if (params.publishTarget === "external") {
+        return params.hasGithubRepo ? "github-external-deploy" : "ask-user";
+    }
+    if (params.hasLovableMcpConnected && hasDeployTool) {
+        return "lovable-mcp";
+    }
+    if (params.hasLoggedInBrowserSession) {
+        return "browser-walkthrough";
+    }
+    return "ask-user";
+}
+function makePublishPlan(params) {
+    const projectName = params.projectName ?? "Lovable.dev project";
+    const preferredPath = choosePublishPath(params);
+    const accessExpectation = params.desiredAccess ?? (params.customDomain ? "custom-domain" : "unknown");
+    return {
+        projectName,
+        publishGoal: params.publishGoal ?? "Publish the current verified Lovable project snapshot to a live URL.",
+        preferredPath,
+        reason: preferredPath === "lovable-mcp"
+            ? "Lovable MCP is connected and a deploy/publish tool was discovered, so the safest programmatic path is an approved MCP deployment followed by live URL verification."
+            : preferredPath === "browser-walkthrough"
+                ? "Lovable MCP is unavailable or lacks a deploy tool, but a logged-in browser session can perform an approval-gated Publish modal walkthrough."
+                : preferredPath === "github-external-deploy"
+                    ? "The user wants an external deployment and a GitHub source of truth is available."
+                    : "ClawKit needs either Lovable MCP with a deploy tool, a logged-in browser session, or a GitHub/external deploy target before publishing.",
+        accessExpectation,
+        approvalPhrase: "Yes, publish this Lovable project now.",
+        steps: preferredPath === "lovable-mcp"
+            ? [
+                "Confirm pre-publish readiness and explicit approval.",
+                "Use the discovered Lovable MCP deploy/publish tool for the approved project id.",
+                "Capture the returned live URL and deployment status.",
+                "Open the live URL and verify the expected visible result.",
+                "Record publish result, access expectation, and rollback/unpublish notes.",
+            ]
+            : preferredPath === "browser-walkthrough"
+                ? [
+                    "Run `lovable_platform_walkthrough_plan` with allowed action `Open Publish modal only`.",
+                    "Open the Lovable project in a logged-in browser session.",
+                    "Open the Publish modal, configure website address and access exactly as approved.",
+                    "Pause for final confirmation before clicking Publish or Update.",
+                    "Capture the live URL, then verify it in the browser.",
+                ]
+                : preferredPath === "github-external-deploy"
+                    ? [
+                        "Confirm GitHub is the source of truth and the branch is ready.",
+                        "Run repo doctor and project verification commands.",
+                        "Use the user's approved external host workflow to deploy from GitHub.",
+                        "Capture the production URL, build logs, and deployment status.",
+                        "Verify the live URL in the browser.",
+                    ]
+                    : [
+                        "Ask the user to connect Lovable MCP, sign in for a browser walkthrough, or provide a GitHub/external deployment target.",
+                    ],
+        safetyChecks: [
+            "Publishing is a live side effect and must be explicitly approved.",
+            "On some Lovable plans, published URLs may be accessible to anyone with the link.",
+            "Changing project/editor access is separate from website access.",
+            "Future Lovable changes are not automatically published; publish/update is needed again.",
+            "Do not publish secrets, private customer data, unfinished auth/billing flows, or production writes without review.",
+        ],
+        rollbackNotes: [
+            "If the live site is wrong, stop and do not republish blindly.",
+            "Use Lovable project settings or the Publish modal to unpublish when needed.",
+            "For external hosts, roll back through the host's deployment history or Git revert workflow.",
+            "Record the live URL and publish decision in project memory.",
+        ],
+        nextTools: [
+            "lovable_publish_readiness",
+            ...(preferredPath === "browser-walkthrough" ? ["lovable_platform_walkthrough_plan", "lovable_platform_observation_report"] : []),
+            ...(preferredPath === "github-external-deploy" ? ["lovable_repo_doctor", "lovable_project_readiness"] : []),
+            "lovable_publish_project",
+            "lovable_publish_result_report",
+        ],
+    };
+}
+function makePublishProjectPlan(params) {
+    const projectName = params.projectName ?? "Lovable.dev project";
+    const preferredPath = choosePublishPath(params);
+    const approved = params.hasExplicitApproval === true || params.approvalText === "Yes, publish this Lovable project now.";
+    const mcpToolHint = (params.availableMcpTools ?? []).find((tool) => /deploy|publish/i.test(tool)) ?? null;
+    const canProceed = Boolean(approved && params.projectIdOrUrl && preferredPath !== "ask-user");
+    return {
+        projectName,
+        canProceed,
+        preferredPath,
+        reason: !approved
+            ? "Explicit user approval is missing. Publishing must not proceed."
+            : !params.projectIdOrUrl
+                ? "Project id or URL is missing."
+                : preferredPath === "ask-user"
+                    ? "No executable publish surface is available yet."
+                    : "Approval and a publish route are available. OpenClaw should execute this through the trusted surface, then report the result.",
+        mcpToolHint,
+        browserInstructions: [
+            "Open the Lovable project in a logged-in browser session.",
+            "Open the Publish modal.",
+            `Set website access to ${params.desiredAccess ?? "the user-approved value"}.`,
+            "Click Publish or Update only after the explicit approval phrase has been received.",
+            "Copy the live URL and verify it in a fresh browser tab.",
+        ],
+        githubDeployInstructions: [
+            `Deploy through ${params.externalHost ?? "the approved external host"} from the verified GitHub branch.`,
+            "Capture build/deploy logs and the live URL.",
+            "Verify the live URL and record rollback instructions.",
+        ],
+        expectedResult: [
+            "Live URL returned or visible in Lovable/external host.",
+            "Website access matches the approved setting.",
+            "Published app displays the expected user-visible result.",
+            "Result is recorded with screenshots, risks, and rollback/unpublish notes.",
+        ],
+        stopConditions: [
+            "Stop if approval is missing or ambiguous.",
+            "Stop if the Publish modal shows unexpected access, billing, domain, or workspace policy changes.",
+            "Stop if build, preview, or visible-result verification fails.",
+            "Stop if Lovable MCP tool schema differs from the expected deploy/publish action.",
+        ],
+    };
+}
+function makePublishResultReport(params) {
+    const status = params.status ?? (params.liveUrl ? "published" : "unknown");
+    const accessLevel = params.accessLevel ?? "unknown";
+    const verification = asList(params.verification, [
+        status === "published" ? "Live URL was captured; browser verification still needs to be recorded." : "Publish result has not been verified.",
+    ]);
+    const risks = asList(params.risks, [
+        accessLevel === "public" ? "Anyone with the published URL may be able to access the app." : "Website access should be rechecked in Lovable or the hosting provider.",
+    ]);
+    return {
+        projectName: params.projectName ?? "Lovable.dev project",
+        status,
+        liveUrl: params.liveUrl ?? null,
+        accessLevel,
+        verification,
+        risks,
+        followUp: [
+            "Open the live URL and confirm the expected screen and workflow.",
+            "Record screenshots or browser notes in project memory and PR/release notes.",
+            "If the live result is wrong, unpublish or roll back before more prompting.",
+            "Remember that later Lovable changes require another Publish/Update action.",
+        ],
+        summary: status === "published"
+            ? `Published via ${params.publishSurface ?? "unknown surface"}${params.liveUrl ? ` at ${params.liveUrl}` : ""}.`
+            : "Publish did not complete or the result is unknown; do not treat the project as live until verified.",
+    };
+}
+function clampScore(score) {
+    return Math.max(0, Math.min(100, Math.round(score)));
+}
+function makePublishConfidence(params) {
+    const boosts = [];
+    const penalties = [];
+    const blockers = [];
+    let score = 20;
+    const add = (condition, points, boost, penalty, blocker) => {
+        if (condition === true) {
+            score += points;
+            boosts.push(boost);
+        }
+        else {
+            score -= Math.ceil(points / 2);
+            penalties.push(penalty);
+            if (blocker) {
+                blockers.push(blocker);
+            }
+        }
+    };
+    add(params.hasProjectUrl, 10, "Project URL/id is known.", "Project URL/id is missing.", "Identify the Lovable project before publishing.");
+    add(params.hasPreviewUrl, 10, "Preview URL is available.", "Preview URL is missing.", "Open the preview before publishing.");
+    add(params.buildPassed !== false, 15, "Build/verification is not failing.", "Build or verification is failing.", "Fix build or verification failures first.");
+    add(params.visibleResultVerified, 20, "Expected visible result is verified.", "Visible result has not been verified.", "Verify the current preview visually.");
+    add(params.hasConsoleErrors === false, 10, "No console/runtime errors reported.", "Console/runtime errors are unknown or present.");
+    add(params.hasSecretsConfigured !== false, 10, "Secrets/env readiness is not blocked.", "Secrets/env readiness is not confirmed.");
+    add(params.desiredAccessKnown, 10, "Website access expectation is known.", "Website access is not confirmed.", "Confirm public, workspace/internal, or custom-domain access.");
+    add(params.hasPublishRoute, 10, "Publish route is available.", "No publish route is confirmed.", "Connect Lovable MCP, use browser walkthrough, or choose an external host.");
+    add(params.hasRollbackPlan, 5, "Rollback/unpublish plan is recorded.", "Rollback/unpublish plan is missing.");
+    add(params.hasExplicitApproval, 10, "Explicit publish approval is present.", "Explicit publish approval is missing.", "Ask for explicit approval before publishing.");
+    add(params.hasLiveUrlVerification, 10, "Live URL verification is already recorded.", "Live URL verification will be required after publishing.");
+    const finalScore = clampScore(score);
+    const verdict = blockers.length > 0 || params.buildPassed === false
+        ? "do-not-publish"
+        : finalScore >= 90 && params.hasExplicitApproval
+            ? "ready"
+            : finalScore >= 75
+                ? "ready-with-approval"
+                : "needs-review";
+    return {
+        projectName: params.projectName ?? "Lovable.dev project",
+        score: finalScore,
+        level: finalScore >= 80 ? "high" : finalScore >= 55 ? "medium" : "low",
+        verdict,
+        blockers,
+        boosts,
+        penalties,
+        nextAction: verdict === "ready"
+            ? "Publish through the approved route, then run `lovable_publish_result_report`."
+            : verdict === "ready-with-approval"
+                ? "Ask for explicit approval, then publish and verify the live URL."
+                : verdict === "needs-review"
+                    ? "Complete missing checks before asking for publish approval."
+                    : "Do not publish yet; resolve blockers first.",
+    };
+}
+function makeProjectDashboard(params) {
+    const projectName = params.projectName ?? "Lovable.dev project";
+    const risks = asList(params.risks, []);
+    const verifiedEvidence = asList(params.verifiedEvidence, [
+        ...(params.buildPassed === true ? ["Build/checks passed."] : []),
+        ...(params.visibleResultVerified === true ? ["Expected visible result was verified."] : []),
+        ...(params.liveUrl ? [`Live URL recorded: ${params.liveUrl}.`] : []),
+    ]);
+    const missingSignals = [
+        !params.lovableProjectUrl,
+        !params.previewUrl,
+        params.buildPassed !== true,
+        params.visibleResultVerified !== true,
+        risks.length > 0,
+    ].filter(Boolean).length;
+    const confidence = clampScore(100 - missingSignals * 14 + verifiedEvidence.length * 4);
+    const publishConfidence = params.publishScore === undefined ? null : clampScore(params.publishScore);
+    const sourceOfTruth = params.sourceOfTruth ?? (params.githubRepoUrl ? "github" : params.localRepoPath ? "local-repo" : params.liveUrl ? "deployed-app" : params.lovableProjectUrl ? "lovable" : "unknown");
+    const status = params.status ?? (params.liveUrl ? "published" : params.visibleResultVerified ? "verified" : params.buildPassed === false ? "broken" : params.previewUrl ? "needs-verification" : "idea");
+    const currentBlocker = params.currentBlocker ?? (params.buildPassed === false ? "Build or verification is failing." : params.visibleResultVerified !== true ? "Visible-result proof is still missing." : "No hard blocker recorded.");
+    const nextBestAction = params.nextBestAction ?? (status === "published" ? "Verify live URL and prepare client handoff." : status === "verified" ? "Run publish readiness or prepare PR." : "Gather preview/build/visible evidence.");
+    const needsApproval = asList(params.needsApproval, [
+        ...(status !== "published" && publishConfidence !== null ? ["Explicit approval before publishing."] : []),
+    ]);
+    const links = {
+        lovableProjectUrl: params.lovableProjectUrl ?? null,
+        previewUrl: params.previewUrl ?? null,
+        githubRepoUrl: params.githubRepoUrl ?? null,
+        localRepoPath: params.localRepoPath ?? null,
+        liveUrl: params.liveUrl ?? null,
+    };
+    const markdownCard = [
+        `# ${projectName}`,
+        "",
+        `Mode: ${params.mode ?? "unknown"}`,
+        `Source of truth: ${sourceOfTruth}`,
+        `Status: ${status}`,
+        `Confidence: ${confidence}%`,
+        `Credit risk: ${params.creditRisk ?? "medium"}`,
+        `Publish confidence: ${publishConfidence === null ? "not checked" : `${publishConfidence}%`}`,
+        "",
+        `Current blocker: ${currentBlocker}`,
+        `Next best action: ${nextBestAction}`,
+        "",
+        "Verified evidence:",
+        ...asList(verifiedEvidence, ["No verification evidence recorded yet."]).map((item) => `- ${item}`),
+        "",
+        "Needs approval:",
+        ...asList(needsApproval, ["No approval needed for the next read-only step."]).map((item) => `- ${item}`),
+        "",
+        "Risks:",
+        ...asList(risks, ["No known risks recorded."]).map((item) => `- ${item}`),
+    ].join("\n");
+    return {
+        projectName,
+        mode: params.mode ?? "unknown",
+        sourceOfTruth,
+        status,
+        confidence,
+        creditRisk: params.creditRisk ?? "medium",
+        publishConfidence,
+        links,
+        currentBlocker,
+        nextBestAction,
+        needsApproval,
+        verifiedEvidence,
+        risks,
+        markdownCard,
+    };
+}
+function makeClientHandoffReport(params) {
+    const projectName = params.projectName ?? "Lovable.dev project";
+    const whatWasBuilt = [
+        ...asList(params.whatWasBuilt, []),
+        ...asList(params.lovableWork, []).map((item) => `Lovable UI/product: ${item}`),
+        ...asList(params.openClawWork, []).map((item) => `OpenClaw engineering: ${item}`),
+    ];
+    const status = params.status ?? (params.liveUrl ? "published" : params.previewUrl ? "ready-for-review" : "draft");
+    const verification = asList(params.verification, ["Verification evidence has not been recorded yet."]);
+    const accessAndOwnership = asList(params.accessNotes, [
+        params.liveUrl ? "Live website access should match the approved publish settings." : "No live URL recorded yet.",
+        params.repositoryUrl ? "GitHub repository is available as the engineering source of truth." : "GitHub source-of-truth handoff is not recorded.",
+    ]);
+    const knownLimitations = asList(params.knownLimitations, ["Client/product review may still be needed before broader rollout."]);
+    const nextRecommendations = asList(params.nextRecommendations, [
+        status === "published" ? "Verify the live URL after each future publish/update." : "Publish only after final approval and visible-result verification.",
+        "Keep future feature requests small and route exact engineering work through GitHub/OpenClaw.",
+    ]);
+    const maintenancePlan = asList(params.maintenancePlan, [
+        "Use Lovable.dev for narrow UI/product iteration.",
+        "Use OpenClaw/GitHub for code changes, tests, security, integrations, and release notes.",
+        "Record decisions, do-not-change rules, and verification evidence after each meaningful change.",
+    ]);
+    const summary = params.productGoal
+        ? `${projectName} was prepared around this goal: ${params.productGoal}`
+        : `${projectName} is ready for handoff with the status: ${status}.`;
+    const markdown = [
+        `# ${projectName} Handoff`,
+        "",
+        `Status: ${status}`,
+        params.liveUrl ? `Live URL: ${params.liveUrl}` : "Live URL: not published yet",
+        params.previewUrl ? `Preview URL: ${params.previewUrl}` : "Preview URL: not recorded",
+        params.repositoryUrl ? `Repository: ${params.repositoryUrl}` : "Repository: not recorded",
+        "",
+        "## Summary",
+        summary,
+        "",
+        "## What Was Built",
+        ...asList(whatWasBuilt, ["No build summary recorded yet."]).map((item) => `- ${item}`),
+        "",
+        "## Verification",
+        ...verification.map((item) => `- ${item}`),
+        "",
+        "## Access And Ownership",
+        ...accessAndOwnership.map((item) => `- ${item}`),
+        "",
+        "## Known Limitations",
+        ...knownLimitations.map((item) => `- ${item}`),
+        "",
+        "## Recommended Next Steps",
+        ...nextRecommendations.map((item) => `- ${item}`),
+        "",
+        "## Maintenance Plan",
+        ...maintenancePlan.map((item) => `- ${item}`),
+    ].join("\n");
+    return {
+        projectName,
+        audience: params.audience ?? "client",
+        status,
+        liveUrl: params.liveUrl ?? null,
+        previewUrl: params.previewUrl ?? null,
+        repositoryUrl: params.repositoryUrl ?? null,
+        summary,
+        whatWasBuilt: asList(whatWasBuilt, ["No build summary recorded yet."]),
+        verification,
+        accessAndOwnership,
+        knownLimitations,
+        nextRecommendations,
+        maintenancePlan,
+        markdown,
+    };
+}
+function makePromptLint(params) {
+    const projectName = params.projectName ?? "Lovable.dev project";
+    const prompt = params.prompt.trim();
+    const lower = prompt.toLowerCase();
+    const riskySignals = [
+        "fix bug",
+        "typescript",
+        "database",
+        "migration",
+        "rls",
+        "auth",
+        "billing",
+        "stripe",
+        "webhook",
+        "security",
+        "production",
+        "refactor",
+        "test",
+        "ci",
+        "deploy",
+        "publish",
+    ];
+    const broadSignals = ["everything", "entire app", "all pages", "make it production", "complete app", "full platform"];
+    const findings = [
+        ...riskySignals.filter((signal) => lower.includes(signal)).map((signal) => `Prompt mentions ${signal}; OpenClaw should own exact engineering/security work.`),
+        ...broadSignals.filter((signal) => lower.includes(signal)).map((signal) => `Prompt is broad around "${signal}" and should be split.`),
+        ...(prompt.length > 2200 ? ["Prompt is long; Lovable is more reliable with a focused one-screen or one-workflow request."] : []),
+        ...(!params.hasGithubRepo && params.hasExistingApp ? ["Existing app has no GitHub source-of-truth evidence; avoid broad Lovable prompts."] : []),
+    ];
+    const missingSections = [
+        ...(params.preserveRules?.length ? [] : ["Preserve"]),
+        ...(lower.includes("change:") || lower.includes("make:") ? [] : ["Change"]),
+        ...(lower.includes("avoid:") ? [] : ["Avoid"]),
+        ...(params.acceptanceCriteria?.length || lower.includes("acceptance") ? [] : ["Acceptance criteria"]),
+        ...(lower.includes("github") ? [] : ["GitHub handoff expectation"]),
+    ];
+    const highRisk = findings.length >= 4 || riskySignals.some((signal) => lower.includes(signal)) && broadSignals.some((signal) => lower.includes(signal));
+    const riskLevel = highRisk ? "high" : findings.length || missingSections.length > 2 ? "medium" : "low";
+    const shouldSendToLovable = riskLevel === "low";
+    const splitIntoPrompts = [
+        "Prompt 1: one app shell or one workflow with clear visual direction.",
+        "Prompt 2: one focused UI/product refinement after screenshot review.",
+        "Prompt 3: final polish only after GitHub/preview verification.",
+    ];
+    const rewrittenPrompt = [
+        "Preserve:",
+        ...asList(params.preserveRules, ["Existing routes, navigation, data assumptions, and any working UI not mentioned below."]).map((item) => `- ${item}`),
+        "",
+        "Change:",
+        `- ${prompt}`,
+        "",
+        "Avoid:",
+        "- Do not implement security-sensitive backend logic, billing, webhooks, database migrations, or production secrets.",
+        "- Do not refactor unrelated code or redesign unrelated screens.",
+        "",
+        "Acceptance criteria:",
+        ...asList(params.acceptanceCriteria, ["The requested UI is visible in preview.", "The layout works on desktop and mobile.", "The app remains easy to sync/export to GitHub."]).map((item) => `- ${item}`),
+        "",
+        "After this:",
+        "- Sync/export to GitHub so OpenClaw can verify, refactor, test, and implement exact logic.",
+    ].join("\n");
+    return {
+        projectName,
+        riskLevel,
+        shouldSendToLovable,
+        findings: findings.length ? findings : ["Prompt is focused enough for Lovable.dev UI/product work."],
+        missingSections,
+        splitIntoPrompts: riskLevel === "low" ? [] : splitIntoPrompts,
+        rewrittenPrompt,
+        useOpenClawInsteadFor: [
+            "Exact TypeScript/runtime fixes.",
+            "Auth, billing, database, webhooks, secrets, security, tests, CI, deployment, and refactoring.",
+            "GitHub branching, PRs, verification, and production hardening.",
+        ],
+        nextAction: shouldSendToLovable ? "Send the rewritten prompt after user approval." : "Do not send yet; split the prompt or move engineering work to OpenClaw.",
+    };
+}
+function makeVisualQaReport(params) {
+    const projectName = params.projectName ?? "Lovable.dev project";
+    const observations = [...asList(params.screenshotObservations, []), ...asList(params.mobileObservations, [])];
+    const expectedElements = asList(params.expectedElements, []);
+    const missingExpectedElements = expectedElements.filter((element) => !observations.some((observation) => observation.toLowerCase().includes(element.toLowerCase())));
+    const layoutSignals = ["overlap", "cut off", "cropped", "hidden", "misaligned", "overflow", "too small", "too large"];
+    const mobileSignals = ["mobile", "narrow", "responsive", "touch", "viewport"];
+    const layoutRisks = observations.filter((item) => layoutSignals.some((signal) => item.toLowerCase().includes(signal)));
+    const mobileRisks = asList(params.mobileObservations, []).filter((item) => mobileSignals.some((signal) => item.toLowerCase().includes(signal)) || layoutSignals.some((signal) => item.toLowerCase().includes(signal)));
+    const consoleAndNetworkRisks = [
+        ...asList(params.consoleErrors, []).map((item) => `Console: ${item}`),
+        ...asList(params.networkErrors, []).map((item) => `Network: ${item}`),
+    ];
+    const findings = [
+        ...(params.buildPassed === false ? ["Build/checks failed, so visual QA is blocked."] : []),
+        ...(observations.length === 0 ? ["No screenshot or browser observations were provided."] : []),
+        ...(missingExpectedElements.length ? [`${missingExpectedElements.length} expected element(s) were not confirmed in screenshots.`] : []),
+        ...(layoutRisks.length ? [`${layoutRisks.length} layout risk observation(s) found.`] : []),
+        ...(mobileRisks.length ? [`${mobileRisks.length} mobile/responsive risk observation(s) found.`] : []),
+        ...(consoleAndNetworkRisks.length ? [`${consoleAndNetworkRisks.length} console/network risk(s) found.`] : []),
+    ];
+    const status = params.buildPassed === false || missingExpectedElements.length > 0 || consoleAndNetworkRisks.length > 0
+        ? "fail"
+        : findings.length > 0
+            ? "needs-review"
+            : "pass";
+    return {
+        projectName,
+        status,
+        confidence: observations.length > 1 ? "high" : observations.length ? "medium" : "low",
+        findings: findings.length ? findings : ["Visual QA passed based on the provided observations."],
+        missingExpectedElements,
+        layoutRisks,
+        mobileRisks,
+        consoleAndNetworkRisks,
+        requiredScreenshots: asList(params.expectedScreens, ["Main desktop screen", "Main mobile screen", "Key workflow success state", "Empty/loading/error state when relevant"]),
+        nextSteps: status === "pass"
+            ? ["Record screenshots in the dashboard or handoff report.", "Proceed to publish readiness or PR summary."]
+            : ["Do not accept the visual result yet.", "Fix build/runtime blockers with OpenClaw or send a narrow Lovable iteration brief for visual-only issues.", "Re-run visual QA with desktop and mobile screenshots."],
+    };
+}
+function makeEndToEndPlan(params) {
+    const projectName = params.projectName ?? "Lovable.dev project";
+    const outcome = params.outcome ?? "Take the project from idea or current state to a verified deliverable.";
+    const mode = params.hasExistingApp ? (params.wantsPublish ? "rescue-to-live" : "existing-app") : outcome ? "new-build" : "unknown";
+    const phases = [
+        {
+            phase: "Orient",
+            owner: "OpenClaw",
+            goal: "Create workflow state, dashboard, constraints, and missing-facts list.",
+            tools: ["lovable_brain", "lovable_project_dashboard", "lovable_project_context"],
+            exitCriteria: ["Goal is clear.", "Source of truth is known or explicitly missing.", "Do-not-touch rules are recorded."],
+        },
+        {
+            phase: "Plan Before Credits",
+            owner: "OpenClaw",
+            goal: "Create a credit-smart Lovable plan and lint any prompt before sending it.",
+            tools: ["lovable_credit_smart_plan", "lovable_prompt_sequence", "lovable_prompt_lint"],
+            exitCriteria: ["Prompt is focused.", "Acceptance criteria are explicit.", "Engineering work is routed away from Lovable."],
+        },
+        {
+            phase: "Lovable UI/Product Pass",
+            owner: "Lovable.dev",
+            goal: "Generate or refine the UI/product shape.",
+            tools: ["lovable_make_prompt", "lovable_build_url", "lovable_mcp_project_workflow"],
+            exitCriteria: ["Preview exists.", "Expected screens are visible.", "Project can be synced/exported to GitHub."],
+        },
+        {
+            phase: "Verify What Is Visible",
+            owner: "Browser",
+            goal: "Confirm the screen, mobile layout, console, and network behavior.",
+            tools: ["lovable_visible_result_check", "lovable_visual_qa_report", "lovable_platform_observation_report"],
+            exitCriteria: ["Desktop/mobile screenshots or observations are recorded.", "Console/network risks are understood."],
+        },
+        {
+            phase: "GitHub Handoff And Hardening",
+            owner: "GitHub",
+            goal: "Make GitHub the source of truth and use OpenClaw for exact engineering work.",
+            tools: ["lovable_connect_github_repo", "lovable_repo_doctor", "lovable_sync_risk_report"],
+            exitCriteria: ["Repo/branch state is safe.", "Verification commands are known.", "Hard blockers are fixed in code."],
+        },
+        {
+            phase: "Ship Or Publish",
+            owner: "OpenClaw",
+            goal: params.wantsPublish ? "Publish the verified app to a live URL after approval." : "Prepare a verified PR or review package.",
+            tools: params.wantsPublish
+                ? ["lovable_publish_readiness", "lovable_publish_confidence", "lovable_publish_plan", "lovable_publish_project", "lovable_publish_result_report"]
+                : ["lovable_project_readiness", "lovable_pr_summary"],
+            exitCriteria: params.wantsPublish
+                ? ["Explicit approval is recorded.", "Live URL is verified.", "Rollback/unpublish notes are recorded."]
+                : ["PR summary exists.", "Verification evidence and risks are recorded."],
+        },
+        {
+            phase: "Handoff",
+            owner: "OpenClaw",
+            goal: "Create a clear delivery report for the user or stakeholder.",
+            tools: ["lovable_project_dashboard", "lovable_client_handoff_report", "lovable_project_memory"],
+            exitCriteria: ["Links, verification, limitations, next steps, and maintenance plan are captured."],
+        },
+    ];
+    return {
+        projectName,
+        outcome,
+        mode,
+        phases,
+        firstUserQuestions: [
+            "Is this a new app or an existing Lovable project?",
+            "Should the final deliverable be a PR, a live URL, or both?",
+            "What must not be changed?",
+            "Do you want Lovable MCP/browser use, or should OpenClaw only prepare prompts and links?",
+        ],
+        creditGuardrails: [
+            `Budget sensitivity: ${params.budgetSensitivity ?? "medium"}.`,
+            "Use Lovable for product shape, screens, layout, and visual polish.",
+            "Use OpenClaw for code correctness, tests, auth, billing, database, deployment, security, and refactors.",
+            "Stop prompting Lovable when build/runtime/visible-result evidence fails.",
+            ...asList(params.knownConstraints, []).map((item) => `Constraint: ${item}`),
+        ],
+        approvalGates: [
+            "Opening or controlling Lovable.dev in the browser.",
+            "Submitting prompts that spend credits.",
+            "Connecting GitHub or production services.",
+            "Publishing or updating a live URL.",
+            "Sending secrets or private customer data to Lovable or MCP tools.",
+        ],
+        finalDeliverables: [
+            "ClawKit dashboard.",
+            "Preview URL and/or live URL.",
+            "GitHub repo/PR summary when available.",
+            "Verification notes and screenshots/observations.",
+            ...(params.wantsClientHandoff ? ["Client handoff report."] : []),
+            "Known limitations, risks, and next recommended steps.",
+        ],
+    };
+}
 function makePlatformWalkthroughPlan(params) {
     const projectName = params.projectName ?? "Lovable.dev project";
     const goal = params.goal ?? "understand the current Lovable.dev project state";
@@ -1605,13 +2254,15 @@ function makeMcpWorkflowPlan(params) {
         ? "ask-user"
         : !params.mcpConnected
             ? "browser-walkthrough"
-            : action === "deploy-project"
-                ? "ask-user"
-                : action === "inspect-project" && params.needsVisualVerification
+            : action === "deploy-project" && hasTool(/deploy|publish/i)
+                ? "lovable-mcp"
+                : action === "deploy-project"
                     ? "browser-walkthrough"
-                    : action === "sync-or-handoff" || params.hasGithubRepo
-                        ? "github-code-tools"
-                        : "lovable-mcp";
+                    : action === "inspect-project" && params.needsVisualVerification
+                        ? "browser-walkthrough"
+                        : action === "sync-or-handoff" || params.hasGithubRepo
+                            ? "github-code-tools"
+                            : "lovable-mcp";
     return {
         projectName: params.projectName ?? "Lovable.dev project",
         requestedAction: action,
@@ -2612,6 +3263,298 @@ export default definePluginEntry({
             },
         });
         api.registerTool({
+            name: "lovable_publish_readiness",
+            label: "Check Publish Readiness",
+            description: "Check whether a Lovable project is ready to publish or update a live URL, including verification, access, secrets, approval, and available publish surface.",
+            parameters: Type.Object({
+                projectName: Type.Optional(Type.String()),
+                projectIdOrUrl: Type.Optional(Type.String({ description: "Lovable project id, editor URL, or project URL." })),
+                previewUrl: Type.Optional(Type.String({ description: "Preview URL for the exact version to publish." })),
+                buildPassed: Type.Optional(Type.Boolean()),
+                visibleResultVerified: Type.Optional(Type.Boolean()),
+                hasConsoleErrors: Type.Optional(Type.Boolean()),
+                hasSecretsConfigured: Type.Optional(Type.Boolean()),
+                desiredAccess: Type.Optional(Type.Union([
+                    Type.Literal("public"),
+                    Type.Literal("workspace"),
+                    Type.Literal("custom-domain"),
+                    Type.Literal("unknown"),
+                ])),
+                hasUserApproval: Type.Optional(Type.Boolean()),
+                hasLovableMcpConnected: Type.Optional(Type.Boolean()),
+                hasDeployTool: Type.Optional(Type.Boolean()),
+                hasLoggedInBrowserSession: Type.Optional(Type.Boolean()),
+                hasGithubRepo: Type.Optional(Type.Boolean()),
+                publishTarget: Type.Optional(Type.Union([
+                    Type.Literal("lovable"),
+                    Type.Literal("external"),
+                ])),
+            }),
+            async execute(_id, params) {
+                return jsonText(makePublishReadiness(params));
+            },
+        });
+        api.registerTool({
+            name: "lovable_publish_plan",
+            label: "Plan Publish",
+            description: "Create an approval-gated publishing plan for Lovable MCP, Lovable browser walkthrough, or external GitHub deployment.",
+            parameters: Type.Object({
+                projectName: Type.Optional(Type.String()),
+                publishGoal: Type.Optional(Type.String()),
+                projectIdOrUrl: Type.Optional(Type.String()),
+                previewUrl: Type.Optional(Type.String()),
+                publishTarget: Type.Optional(Type.Union([
+                    Type.Literal("lovable"),
+                    Type.Literal("external"),
+                ])),
+                desiredAccess: Type.Optional(Type.Union([
+                    Type.Literal("public"),
+                    Type.Literal("workspace"),
+                    Type.Literal("custom-domain"),
+                    Type.Literal("unknown"),
+                ])),
+                hasLovableMcpConnected: Type.Optional(Type.Boolean()),
+                availableMcpTools: optionalStringArray("Lovable MCP tools discovered by OpenClaw."),
+                hasLoggedInBrowserSession: Type.Optional(Type.Boolean()),
+                hasGithubRepo: Type.Optional(Type.Boolean()),
+                customDomain: Type.Optional(Type.String()),
+            }),
+            async execute(_id, params) {
+                return jsonText(makePublishPlan(params));
+            },
+        });
+        api.registerTool({
+            name: "lovable_publish_project",
+            label: "Publish Project",
+            description: "Prepare the explicit publish execution route after approval. The plugin does not secretly deploy; OpenClaw must use the trusted Lovable MCP, browser, or GitHub/external host surface and then report the result.",
+            parameters: Type.Object({
+                projectName: Type.Optional(Type.String()),
+                projectIdOrUrl: Type.Optional(Type.String()),
+                publishTarget: Type.Optional(Type.Union([
+                    Type.Literal("lovable"),
+                    Type.Literal("external"),
+                ])),
+                desiredAccess: Type.Optional(Type.Union([
+                    Type.Literal("public"),
+                    Type.Literal("workspace"),
+                    Type.Literal("custom-domain"),
+                    Type.Literal("unknown"),
+                ])),
+                hasExplicitApproval: Type.Optional(Type.Boolean()),
+                approvalText: Type.Optional(Type.String({ description: "Use the exact phrase: Yes, publish this Lovable project now." })),
+                hasLovableMcpConnected: Type.Optional(Type.Boolean()),
+                availableMcpTools: optionalStringArray("Lovable MCP tools discovered by OpenClaw."),
+                hasLoggedInBrowserSession: Type.Optional(Type.Boolean()),
+                hasGithubRepo: Type.Optional(Type.Boolean()),
+                externalHost: Type.Optional(Type.String()),
+            }),
+            async execute(_id, params) {
+                return jsonText(makePublishProjectPlan(params));
+            },
+        });
+        api.registerTool({
+            name: "lovable_publish_result_report",
+            label: "Report Publish Result",
+            description: "Record the Lovable or external deployment result: live URL, access level, verification, risks, follow-up, and rollback/unpublish notes.",
+            parameters: Type.Object({
+                projectName: Type.Optional(Type.String()),
+                status: Type.Optional(Type.Union([
+                    Type.Literal("published"),
+                    Type.Literal("failed"),
+                    Type.Literal("unknown"),
+                ])),
+                liveUrl: Type.Optional(Type.String()),
+                accessLevel: Type.Optional(Type.Union([
+                    Type.Literal("public"),
+                    Type.Literal("workspace"),
+                    Type.Literal("custom-domain"),
+                    Type.Literal("unknown"),
+                ])),
+                verification: optionalStringArray("Live URL verification evidence."),
+                risks: optionalStringArray("Known post-publish risks or limitations."),
+                publishSurface: Type.Optional(Type.Union([
+                    Type.Literal("lovable-mcp"),
+                    Type.Literal("browser-walkthrough"),
+                    Type.Literal("github-external-deploy"),
+                    Type.Literal("unknown"),
+                ])),
+            }),
+            async execute(_id, params) {
+                return jsonText(makePublishResultReport(params));
+            },
+        });
+        api.registerTool({
+            name: "lovable_project_dashboard",
+            label: "Show Project Dashboard",
+            description: "Create a user-friendly ClawKit dashboard card summarizing mode, source of truth, status, confidence, links, blockers, approvals, evidence, risks, and next best action.",
+            parameters: Type.Object({
+                projectName: Type.Optional(Type.String()),
+                mode: Type.Optional(Type.Union([
+                    Type.Literal("plan"),
+                    Type.Literal("start"),
+                    Type.Literal("rescue"),
+                    Type.Literal("improve"),
+                    Type.Literal("harden"),
+                    Type.Literal("ship"),
+                    Type.Literal("publish"),
+                    Type.Literal("unknown"),
+                ])),
+                sourceOfTruth: Type.Optional(Type.Union([
+                    Type.Literal("lovable"),
+                    Type.Literal("github"),
+                    Type.Literal("local-repo"),
+                    Type.Literal("deployed-app"),
+                    Type.Literal("unknown"),
+                ])),
+                status: Type.Optional(Type.Union([
+                    Type.Literal("idea"),
+                    Type.Literal("building"),
+                    Type.Literal("generated"),
+                    Type.Literal("broken"),
+                    Type.Literal("needs-verification"),
+                    Type.Literal("verified"),
+                    Type.Literal("ready-to-ship"),
+                    Type.Literal("published"),
+                ])),
+                lovableProjectUrl: Type.Optional(Type.String()),
+                previewUrl: Type.Optional(Type.String()),
+                githubRepoUrl: Type.Optional(Type.String()),
+                localRepoPath: Type.Optional(Type.String()),
+                liveUrl: Type.Optional(Type.String()),
+                creditRisk: Type.Optional(Type.Union([
+                    Type.Literal("low"),
+                    Type.Literal("medium"),
+                    Type.Literal("high"),
+                ])),
+                buildPassed: Type.Optional(Type.Boolean()),
+                visibleResultVerified: Type.Optional(Type.Boolean()),
+                publishScore: Type.Optional(Type.Number()),
+                currentBlocker: Type.Optional(Type.String()),
+                nextBestAction: Type.Optional(Type.String()),
+                needsApproval: optionalStringArray("Approvals needed before side-effectful work."),
+                verifiedEvidence: optionalStringArray("Evidence already verified."),
+                risks: optionalStringArray("Known risks or caveats."),
+            }),
+            async execute(_id, params) {
+                return jsonText(makeProjectDashboard(params));
+            },
+        });
+        api.registerTool({
+            name: "lovable_publish_confidence",
+            label: "Score Publish Confidence",
+            description: "Create a publish confidence score and verdict from readiness signals so the user gets a clear go/no-go before making a Lovable project live.",
+            parameters: Type.Object({
+                projectName: Type.Optional(Type.String()),
+                hasProjectUrl: Type.Optional(Type.Boolean()),
+                hasPreviewUrl: Type.Optional(Type.Boolean()),
+                buildPassed: Type.Optional(Type.Boolean()),
+                visibleResultVerified: Type.Optional(Type.Boolean()),
+                hasConsoleErrors: Type.Optional(Type.Boolean()),
+                hasSecretsConfigured: Type.Optional(Type.Boolean()),
+                desiredAccessKnown: Type.Optional(Type.Boolean()),
+                hasExplicitApproval: Type.Optional(Type.Boolean()),
+                hasPublishRoute: Type.Optional(Type.Boolean()),
+                hasRollbackPlan: Type.Optional(Type.Boolean()),
+                hasLiveUrlVerification: Type.Optional(Type.Boolean()),
+            }),
+            async execute(_id, params) {
+                return jsonText(makePublishConfidence(params));
+            },
+        });
+        api.registerTool({
+            name: "lovable_client_handoff_report",
+            label: "Create Client Handoff",
+            description: "Generate a client-ready handoff report with live/preview/repo links, what was built, verification, access notes, limitations, next steps, and maintenance plan.",
+            parameters: Type.Object({
+                projectName: Type.Optional(Type.String()),
+                audience: Type.Optional(Type.Union([
+                    Type.Literal("client"),
+                    Type.Literal("internal"),
+                    Type.Literal("agency"),
+                    Type.Literal("investor"),
+                    Type.Literal("team"),
+                ])),
+                status: Type.Optional(Type.Union([
+                    Type.Literal("draft"),
+                    Type.Literal("ready-for-review"),
+                    Type.Literal("published"),
+                    Type.Literal("blocked"),
+                ])),
+                liveUrl: Type.Optional(Type.String()),
+                previewUrl: Type.Optional(Type.String()),
+                repositoryUrl: Type.Optional(Type.String()),
+                productGoal: Type.Optional(Type.String()),
+                whatWasBuilt: optionalStringArray("Plain-language features/workflows delivered."),
+                lovableWork: optionalStringArray("Lovable-generated UI/product work."),
+                openClawWork: optionalStringArray("OpenClaw engineering, verification, refactor, or publish work."),
+                verification: optionalStringArray("Build/test/browser/live verification evidence."),
+                accessNotes: optionalStringArray("Access, ownership, roles, domain, and credential notes."),
+                knownLimitations: optionalStringArray("Limitations, caveats, or client review needs."),
+                nextRecommendations: optionalStringArray("Recommended next product or engineering steps."),
+                maintenancePlan: optionalStringArray("Ongoing maintenance and change workflow."),
+            }),
+            async execute(_id, params) {
+                return jsonText(makeClientHandoffReport(params));
+            },
+        });
+        api.registerTool({
+            name: "lovable_prompt_lint",
+            label: "Lint Lovable Prompt",
+            description: "Review a proposed Lovable prompt for credit-waste risk, missing preserve/change/avoid/acceptance sections, over-broad scope, and work OpenClaw should handle instead.",
+            parameters: Type.Object({
+                projectName: Type.Optional(Type.String()),
+                prompt: Type.String(),
+                preserveRules: optionalStringArray("Things Lovable must preserve."),
+                acceptanceCriteria: optionalStringArray("Visible acceptance criteria for the prompt."),
+                knownRisks: optionalStringArray("Known risks or do-not-touch areas."),
+                hasGithubRepo: Type.Optional(Type.Boolean()),
+                hasExistingApp: Type.Optional(Type.Boolean()),
+            }),
+            async execute(_id, params) {
+                return jsonText(makePromptLint(params));
+            },
+        });
+        api.registerTool({
+            name: "lovable_visual_qa_report",
+            label: "Create Visual QA Report",
+            description: "Turn screenshot/browser/mobile observations into a visual QA report that checks expected elements, layout risks, mobile risks, console errors, network errors, and next steps.",
+            parameters: Type.Object({
+                projectName: Type.Optional(Type.String()),
+                expectedScreens: optionalStringArray("Screens or states that should be captured."),
+                expectedElements: optionalStringArray("Visible elements that should appear in screenshots or browser observations."),
+                screenshotObservations: optionalStringArray("Desktop screenshot or browser observations."),
+                mobileObservations: optionalStringArray("Mobile/narrow viewport observations."),
+                consoleErrors: optionalStringArray("Browser console errors."),
+                networkErrors: optionalStringArray("Network/API errors observed in browser tools."),
+                buildPassed: Type.Optional(Type.Boolean()),
+            }),
+            async execute(_id, params) {
+                return jsonText(makeVisualQaReport(params));
+            },
+        });
+        api.registerTool({
+            name: "lovable_end_to_end_plan",
+            label: "Plan Idea To Live",
+            description: "Create a full ClawKit path from idea or existing Lovable app to verified preview, GitHub handoff, hardening, publish, and client handoff.",
+            parameters: Type.Object({
+                projectName: Type.Optional(Type.String()),
+                outcome: Type.Optional(Type.String()),
+                hasExistingApp: Type.Optional(Type.Boolean()),
+                wantsPublish: Type.Optional(Type.Boolean()),
+                wantsGithubHandoff: Type.Optional(Type.Boolean()),
+                wantsClientHandoff: Type.Optional(Type.Boolean()),
+                budgetSensitivity: Type.Optional(Type.Union([
+                    Type.Literal("low"),
+                    Type.Literal("medium"),
+                    Type.Literal("high"),
+                ])),
+                knownConstraints: optionalStringArray("Do-not-touch rules, product constraints, or delivery constraints."),
+            }),
+            async execute(_id, params) {
+                return jsonText(makeEndToEndPlan(params));
+            },
+        });
+        api.registerTool({
             name: "lovable_model_strategy",
             label: "Choose Model Strategy",
             description: "Help the user choose which configured OpenClaw LLM/model profile to use for planning, Lovable prompting, coding, debugging, review, or fast iteration.",
@@ -2653,6 +3596,8 @@ export default definePluginEntry({
                 hasInvisibleChanges: Type.Optional(Type.Boolean()),
                 needsArchitectureRefactor: Type.Optional(Type.Boolean()),
                 readyForPr: Type.Optional(Type.Boolean()),
+                wantsPublish: Type.Optional(Type.Boolean()),
+                alreadyPublished: Type.Optional(Type.Boolean()),
                 attemptedLovablePrompts: Type.Optional(Type.Number()),
                 sameIssueRepeated: Type.Optional(Type.Boolean()),
                 budgetSensitivity: Type.Optional(Type.Union([
@@ -2691,6 +3636,8 @@ export default definePluginEntry({
                 hasInvisibleChanges: Type.Optional(Type.Boolean()),
                 needsArchitectureRefactor: Type.Optional(Type.Boolean()),
                 readyForPr: Type.Optional(Type.Boolean()),
+                wantsPublish: Type.Optional(Type.Boolean()),
+                alreadyPublished: Type.Optional(Type.Boolean()),
                 attemptedLovablePrompts: Type.Optional(Type.Number()),
                 sameIssueRepeated: Type.Optional(Type.Boolean()),
                 budgetSensitivity: Type.Optional(Type.Union([
@@ -2734,6 +3681,8 @@ export default definePluginEntry({
                 hasInvisibleChanges: Type.Optional(Type.Boolean()),
                 needsArchitectureRefactor: Type.Optional(Type.Boolean()),
                 readyForPr: Type.Optional(Type.Boolean()),
+                wantsPublish: Type.Optional(Type.Boolean()),
+                alreadyPublished: Type.Optional(Type.Boolean()),
                 attemptedLovablePrompts: Type.Optional(Type.Number()),
                 sameIssueRepeated: Type.Optional(Type.Boolean()),
                 budgetSensitivity: Type.Optional(Type.Union([

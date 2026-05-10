@@ -59,6 +59,7 @@ Use Lovable MCP when connected for:
 - Programmatic Lovable project creation, iteration, inspection, status checks, or deployment workflows exposed by the connected MCP tools.
 - Sending only user-approved prompts or messages to Lovable.
 - Inspecting project/code/status evidence when the MCP tool exposes it.
+- Publishing with a discovered deploy/publish tool only after explicit user approval.
 
 Lovable MCP is a research-preview integration surface. Discover available tools at runtime and keep a browser/GitHub fallback. Do not hard-code assumptions that a specific MCP tool will always exist.
 
@@ -75,6 +76,7 @@ Use Rescue mode for existing Lovable.dev apps that are broken, messy, not visibl
 Require explicit user approval before:
 
 - Publishing or deploying publicly.
+- Updating an already-published live site.
 - Connecting GitHub, billing, payment, or production services.
 - Sending secrets or private customer data to Lovable.dev.
 - Deleting data, overwriting production branches, or making irreversible changes.
@@ -86,26 +88,30 @@ Require explicit user approval before:
 3. If the user needs a softer start, call `lovable_user_onboarding`.
 4. If model choice matters or the user asks, call `lovable_model_strategy`.
 5. For a new build, call `lovable_credit_smart_plan`, `lovable_prompt_sequence`, and `lovable_credit_risk_audit` before the first Lovable.dev prompt.
-6. For an existing broken or messy app, call `lovable_stop_prompting_check`, `lovable_visible_result_check`, and `lovable_rescue_plan`.
-7. Call `lovable_decide_route` to decide what belongs in Lovable.dev versus OpenClaw/GitHub.
-8. For a new app or major UI pass, call `lovable_make_prompt` only when the Brain says Lovable.dev is the right tool.
-9. If the user wants direct Lovable MCP use, call `lovable_mcp_connection_plan` and `lovable_mcp_project_workflow`.
-10. Call `lovable_build_url` and show or open the URL only when appropriate.
-11. When OpenClaw needs to see the actual Lovable.dev platform, call `lovable_platform_walkthrough_plan`, use trusted browser tools after approval, then call `lovable_platform_observation_report`.
-12. After Lovable.dev creates or updates the app, sync/export to GitHub.
-13. Call `lovable_connect_github_repo` once the repo URL is known so OpenClaw has a safe branch/check/PR plan.
-12. Call `lovable_project_context` and `lovable_project_memory` to create or refresh reusable memory for the app.
-13. Call `lovable_session_brief` at the start of later sessions or before risky work.
-14. Call `lovable_next_action_plan` to choose the safest next move.
-15. Call `lovable_project_readiness` before major next steps such as another Lovable.dev pass, engineering edits, PR, or deploy.
-16. Gather Git/package evidence with trusted tools, then call `lovable_repo_doctor` before code work.
-17. Call `lovable_sync_risk_report` before asking Lovable.dev for another broad UI pass.
-18. Use OpenClaw's GitHub/local coding tools to inspect the repo, run install/build/tests, and make precise changes.
-19. Call `lovable_visible_result_check` before accepting Lovable.dev's completion claim.
-20. Record major decisions with `lovable_decision_log`.
-21. Run a hardening/refactor pass before considering the app production-ready.
-22. Use `lovable_iteration_brief` only when another Lovable.dev UI pass is better than direct code edits.
-23. End with a PR, preview link, screenshots when available, verification notes, and remaining risks.
+6. Call `lovable_prompt_lint` before sending any substantial Lovable.dev prompt.
+7. For an existing broken or messy app, call `lovable_stop_prompting_check`, `lovable_visible_result_check`, and `lovable_rescue_plan`.
+8. Call `lovable_decide_route` to decide what belongs in Lovable.dev versus OpenClaw/GitHub.
+9. For a new app or major UI pass, call `lovable_make_prompt` only when the Brain says Lovable.dev is the right tool.
+10. If the user wants direct Lovable MCP use, call `lovable_mcp_connection_plan` and `lovable_mcp_project_workflow`.
+11. Call `lovable_build_url` and show or open the URL only when appropriate.
+12. When OpenClaw needs to see the actual Lovable.dev platform, call `lovable_platform_walkthrough_plan`, use trusted browser tools after approval, then call `lovable_platform_observation_report`.
+13. After Lovable.dev creates or updates the app, run `lovable_visual_qa_report`, then sync/export to GitHub.
+14. Call `lovable_connect_github_repo` once the repo URL is known so OpenClaw has a safe branch/check/PR plan.
+15. Call `lovable_project_context` and `lovable_project_memory` to create or refresh reusable memory for the app.
+16. Call `lovable_session_brief` at the start of later sessions or before risky work.
+17. Call `lovable_next_action_plan` to choose the safest next move.
+18. Call `lovable_project_readiness` before major next steps such as another Lovable.dev pass, engineering edits, PR, or deploy.
+19. Gather Git/package evidence with trusted tools, then call `lovable_repo_doctor` before code work.
+20. Call `lovable_sync_risk_report` before asking Lovable.dev for another broad UI pass.
+21. Use OpenClaw's GitHub/local coding tools to inspect the repo, run install/build/tests, and make precise changes.
+22. Call `lovable_visible_result_check` before accepting Lovable.dev's completion claim.
+23. Record major decisions with `lovable_decision_log`.
+24. Run a hardening/refactor pass before considering the app production-ready.
+25. Use `lovable_iteration_brief` only when another Lovable.dev UI pass is better than direct code edits.
+26. If the user wants the app live, call `lovable_publish_readiness`, `lovable_publish_plan`, ask for explicit approval, call `lovable_publish_project`, use the trusted MCP/browser/external deploy surface, then call `lovable_publish_result_report`.
+27. Use `lovable_project_dashboard` whenever the user needs a friendly status view or the workflow feels complex.
+28. Use `lovable_client_handoff_report` when the project is ready for client, agency, stakeholder, or internal delivery.
+29. End with a PR, preview/live link, screenshots when available, verification notes, access notes, and remaining risks.
 
 ## Rescue Existing Apps
 
@@ -246,6 +252,54 @@ The verification standard is:
 - Expected user-visible changes are confirmed in browser or screenshot observations.
 - Browser console and network errors are checked.
 - If not visible, OpenClaw fixes build/runtime issues directly or sends a narrow Lovable.dev iteration brief for visual mismatch.
+
+## Publish Mode
+
+Use Publish mode when the user asks to publish, deploy, update the live site, go live, or get a live URL.
+
+Publishing is a live side effect. Do not publish silently. Require the exact approval phrase when practical: `Yes, publish this Lovable project now.`
+
+Before publishing:
+
+- Call `lovable_publish_readiness`.
+- Confirm project id or Lovable project URL.
+- Confirm preview URL and visible-result proof for the current version.
+- Confirm build/typecheck/test status or why unavailable.
+- Confirm website access: public, workspace/internal, custom domain, or unknown.
+- Confirm secrets/environment variables are configured safely.
+- Confirm the publish route: Lovable MCP, browser walkthrough, or GitHub/external deploy.
+
+Use `lovable_publish_plan` to choose the route:
+
+- Lovable MCP when connected and a deploy/publish tool is discovered.
+- Browser walkthrough when OpenClaw must inspect the Lovable Publish modal.
+- GitHub/external deploy when the user wants Vercel, Netlify, Railway, VPS, or another host.
+
+Use `lovable_publish_project` only after approval. The plugin returns the execution route; OpenClaw still performs the actual side effect through trusted tools.
+
+After publishing, call `lovable_publish_result_report` with the live URL, access level, verification evidence, risks, and rollback/unpublish notes. Remind the user that later Lovable changes need another Publish/Update action before they appear live.
+
+## Dashboard And Handoff
+
+Use `lovable_project_dashboard` to make ClawKit feel like a guided product system instead of a tool list. It should be used:
+
+- At the start of a messy existing-project session.
+- After a rescue diagnosis.
+- Before publish approval.
+- After publish result reporting.
+- Whenever the user asks for status, dashboard, summary, or what is next.
+
+Use `lovable_publish_confidence` before publishing when the user needs a clear go/no-go score. Treat low confidence or `do-not-publish` as a stop signal.
+
+Use `lovable_client_handoff_report` when the user asks to deliver, hand off, share with a client, summarize for stakeholders, or close a project phase. Include live URL, preview URL, repo URL, what was built, verification, access/ownership notes, limitations, recommended next steps, and maintenance plan.
+
+## Prompt Lint, Visual QA, And End-To-End Planning
+
+Use `lovable_end_to_end_plan` when the user asks to take a project from idea to live, from draft to production, or from broken app to verified deliverable.
+
+Use `lovable_prompt_lint` before sending substantial Lovable.dev prompts. It should protect credits by catching broad prompts, missing guardrail sections, missing acceptance criteria, and prompts that ask Lovable.dev to do OpenClaw/GitHub work.
+
+Use `lovable_visual_qa_report` after Lovable.dev generates or changes UI, before publish, and before handoff. It should check expected elements, desktop/mobile observations, layout issues, console errors, network errors, and required screenshots.
 
 ## Browser Opening
 

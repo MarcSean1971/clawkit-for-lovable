@@ -42,7 +42,13 @@ ClawKit should expose seven simple modes:
 - **Rescue**: fix an existing Lovable.dev app that is broken, invisible, messy, or hard to extend.
 - **Harden**: refactor and prepare generated code for production review.
 - **Ship**: turn Lovable.dev output into a verified GitHub PR.
+- **Publish**: deploy or update the verified project to a live URL after access checks and explicit approval.
 - **Remember**: keep project memory, decision logs, session briefs, and next-action plans across Lovable.dev, GitHub, checks, risks, and next actions.
+- **Dashboard**: show one calm project state card with status, confidence, links, blockers, approvals, evidence, and next action.
+- **Handoff**: generate client-ready delivery reports with verification, access notes, limitations, recommendations, and maintenance plan.
+- **Prompt Lint**: prevent credit-wasting Lovable prompts before they are sent.
+- **Visual QA**: turn screenshots and browser observations into a concrete pass/fail report.
+- **End-to-End**: guide the whole path from idea or existing app to verified PR, live URL, and handoff.
 - **Walkthrough**: open Lovable.dev with approval, inspect the real platform screens, capture evidence, and understand project state.
 - **MCP**: use Lovable MCP when connected for programmatic create, iterate, inspect, and status workflows.
 - **Inside**: add safe OpenClaw-powered assistant features to the app.

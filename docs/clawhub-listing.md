@@ -6,7 +6,7 @@ ClawKit for Lovable
 
 ## Short Description
 
-ClawKit for Lovable adds a Brain for Lovable.dev projects: reduce wasted credits, walk the real Lovable platform, use Lovable MCP when connected, rescue broken apps, verify visible results, hand off to GitHub, and refactor with OpenClaw.
+ClawKit for Lovable adds a Brain for Lovable.dev projects: reduce wasted credits, walk the real Lovable platform, use Lovable MCP when connected, rescue broken apps, verify visible results, publish safely, hand off to GitHub, and refactor with OpenClaw.
 
 ## Long Description
 
@@ -22,11 +22,13 @@ The new walkthrough layer lets OpenClaw ask for approval, open Lovable.dev with 
 
 The MCP layer helps OpenClaw connect to Lovable's research-preview MCP server when available, discover tools at runtime, and choose whether to use MCP, browser walkthrough, or GitHub/code tools for create, iterate, inspect, deploy, and handoff workflows.
 
-ClawKit for Lovable Brain is the user-friendly entry point. Users do not need to know tool names. They can describe the desired outcome in plain language, and the Brain chooses start, rescue, improve, harden, ship, or orient-user mode, then tells OpenClaw what to do next and what evidence is needed.
+ClawKit for Lovable Brain is the user-friendly entry point. Users do not need to know tool names. They can describe the desired outcome in plain language, and the Brain chooses start, rescue, improve, harden, ship, publish, or orient-user mode, then tells OpenClaw what to do next and what evidence is needed.
+
+The latest release adds the wow layer: Publish Mode, publish confidence scoring, project dashboards, client handoff reports, prompt linting, visual QA, and an end-to-end idea-to-live planner.
 
 Search visibility note: the product name intentionally stays **ClawKit for Lovable** to distinguish it from **ClawKit Creative Studio for Lovable**. The package stays `@clawkit/clawkit-for-lovable` for install stability.
 
-The product promise: use Lovable.dev for speed, then use ClawKit for Lovable and OpenClaw to plan, verify, clean up, harden, and ship.
+The product promise: use Lovable.dev for speed, then use ClawKit for Lovable and OpenClaw to plan, verify, clean up, harden, publish, and ship.
 
 This is an early public release. It is useful now, and it will be updated continuously. Constructive feedback, especially rescue cases and workflow suggestions, is welcome at:
 
@@ -57,11 +59,11 @@ clawhub package publish . \
   --family code-plugin \
   --name @clawkit/clawkit-for-lovable \
   --display-name "ClawKit for Lovable" \
-  --version 0.1.11 \
+  --version 0.1.12 \
   --source-repo MarcSean1971/clawkit-for-lovable \
   --source-commit "$(git rev-parse HEAD)" \
   --source-ref main \
-  --changelog "Add Lovable platform walkthrough and MCP workflow planning"
+  --changelog "Add Publish Mode, dashboards, client handoff, prompt linting, visual QA, and end-to-end planning"
 ```
 
 Dry-run validation passed with these values.

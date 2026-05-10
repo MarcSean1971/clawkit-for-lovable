@@ -1,7 +1,7 @@
 {
   "name": "@clawkit/clawkit-for-lovable",
-  "version": "0.1.11",
-  "description": "ClawKit for Lovable adds a Brain for Lovable.dev projects: credit-smart planning, platform walkthroughs, MCP routing, rescue, visible verification, GitHub handoff, and OpenClaw refactoring.",
+  "version": "0.1.12",
+  "description": "ClawKit for Lovable adds a Brain for Lovable.dev projects: credit-smart planning, prompt linting, visual QA, dashboards, platform walkthroughs, MCP routing, rescue, visible verification, GitHub handoff, publishing, client handoff, and OpenClaw refactoring.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

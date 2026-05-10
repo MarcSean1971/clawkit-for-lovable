@@ -391,6 +391,182 @@ Output: JSON verification report with:
 
 Use this whenever Lovable.dev claims success or when the user says the change is not visible.
 
+## `lovable_publish_readiness`
+
+Input: project id/URL, preview URL, build result, visible-result status, console error status, secrets/env readiness, desired website access, approval state, MCP/browser/GitHub availability, and publish target.
+
+Output: JSON readiness report with:
+
+- Readiness: blocked, needs approval, needs verification, or ready.
+- Score.
+- Blockers.
+- Missing evidence.
+- Approval requirements.
+- Recommended next action.
+- Required pre-publish checks.
+
+Use it before publishing or updating a Lovable live URL.
+
+## `lovable_publish_plan`
+
+Input: publish goal, project id/URL, preview URL, desired access, Lovable MCP state, discovered MCP tools, browser session state, GitHub availability, and optional custom domain.
+
+Output: approval-gated publish plan with:
+
+- Preferred path: Lovable MCP, browser walkthrough, GitHub/external deploy, or ask user.
+- Reason.
+- Website access expectation.
+- Exact approval phrase.
+- Steps.
+- Safety checks.
+- Rollback/unpublish notes.
+- Next tools.
+
+Use it to explain how the project will be published before any live side effect.
+
+## `lovable_publish_project`
+
+Input: project id/URL, publish target, desired access, explicit approval evidence, Lovable MCP state, discovered MCP tools, browser session state, GitHub availability, and optional external host.
+
+Output: execution-route plan with:
+
+- Whether OpenClaw can proceed.
+- Preferred publish path.
+- Reason.
+- MCP deploy/publish tool hint when discovered.
+- Browser instructions.
+- GitHub/external deploy instructions.
+- Expected result.
+- Stop conditions.
+
+This tool does not secretly publish. OpenClaw must execute the publish through its trusted Lovable MCP, browser, or external deployment tools after explicit approval.
+
+## `lovable_publish_result_report`
+
+Input: publish status, live URL, access level, verification evidence, risks, and publish surface.
+
+Output: JSON result report with:
+
+- Status.
+- Live URL.
+- Access level.
+- Verification.
+- Risks.
+- Follow-up.
+- Summary.
+
+Use it immediately after publishing to record the live URL, verify the live site, and preserve rollback/unpublish notes.
+
+## `lovable_project_dashboard`
+
+Input: project name, mode, source of truth, status, Lovable/preview/GitHub/local/live links, credit risk, build/visible status, publish score, blocker, next action, approvals, evidence, and risks.
+
+Output: JSON dashboard with:
+
+- Project name.
+- Mode.
+- Source of truth.
+- Status.
+- Confidence score.
+- Credit risk.
+- Publish confidence.
+- Links.
+- Current blocker.
+- Next best action.
+- Required approvals.
+- Verified evidence.
+- Risks.
+- Markdown card.
+
+Use it throughout the workflow so the user always has a calm, readable project state.
+
+## `lovable_publish_confidence`
+
+Input: publish readiness booleans such as project URL, preview URL, build result, visible verification, console errors, secrets readiness, access known, explicit approval, publish route, rollback plan, and live URL verification.
+
+Output: JSON confidence report with:
+
+- Score.
+- Level.
+- Verdict.
+- Blockers.
+- Boosts.
+- Penalties.
+- Next action.
+
+Use it before publishing to give a clear go/no-go signal.
+
+## `lovable_client_handoff_report`
+
+Input: project name, audience, status, live/preview/repo links, product goal, what was built, Lovable work, OpenClaw work, verification, access notes, limitations, next recommendations, and maintenance plan.
+
+Output: JSON handoff report with:
+
+- Summary.
+- Links.
+- What was built.
+- Verification.
+- Access and ownership.
+- Known limitations.
+- Next recommendations.
+- Maintenance plan.
+- Markdown report.
+
+Use it when the project is ready for client, stakeholder, agency, or internal delivery.
+
+## `lovable_prompt_lint`
+
+Input: proposed Lovable prompt, preserve rules, acceptance criteria, known risks, GitHub availability, and whether this is an existing app.
+
+Output: JSON lint report with:
+
+- Risk level.
+- Whether the prompt should be sent to Lovable.
+- Findings.
+- Missing sections.
+- Suggested prompt split.
+- Rewritten guarded prompt.
+- Work OpenClaw should handle instead.
+- Next action.
+
+Use it before spending Lovable credits on a prompt.
+
+## `lovable_visual_qa_report`
+
+Input: expected screens, expected visible elements, desktop screenshot/browser observations, mobile observations, console errors, network errors, and build status.
+
+Output: JSON visual QA report with:
+
+- Status: pass, needs review, or fail.
+- Confidence.
+- Findings.
+- Missing expected elements.
+- Layout risks.
+- Mobile risks.
+- Console/network risks.
+- Required screenshots.
+- Next steps.
+
+Use it after Lovable UI/product work and before PR, publish, or handoff.
+
+## `lovable_end_to_end_plan`
+
+Input: project name, desired outcome, whether an app already exists, publish/GitHub/client handoff preferences, budget sensitivity, and constraints.
+
+Output: phased delivery plan with:
+
+- Mode.
+- Phases.
+- Owner per phase.
+- Tools per phase.
+- Exit criteria.
+- First user questions.
+- Credit guardrails.
+- Approval gates.
+- Final deliverables.
+
+Use it when the user asks ClawKit to take a project from idea, draft, or broken app to a verified deliverable or live app.
+
 ## `lovable_model_strategy`
 
 Input: user preference, task type, available model/profile names, and cost sensitivity.
