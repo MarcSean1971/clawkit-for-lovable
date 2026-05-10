@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClawKit for Lovable Product Hunt Launch</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18212f;
+      --muted: #5c697a;
+      --line: #d9e1eb;
+      --panel: #ffffff;
+      --bg: #f5f7fb;
+      --accent: #e85d3f;
+      --accent2: #2662d9;
+      --good: #0c7c59;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    header {
+      padding: 44px 28px 28px;
+      background: #101828;
+      color: white;
+    }
+    main { max-width: 1120px; margin: 0 auto; padding: 28px; }
+    h1 { margin: 0 0 8px; font-size: 36px; letter-spacing: 0; }
+    h2 { margin: 0 0 14px; font-size: 20px; }
+    p { color: var(--muted); }
+    header p { color: #cdd6e3; max-width: 760px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+    a.button, button {
+      appearance: none;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      padding: 11px 14px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    a.secondary, button.secondary { background: white; color: var(--ink); border-color: var(--line); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; }
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+    }
+    label { display: block; color: var(--muted); font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+    textarea, input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      font: inherit;
+      color: var(--ink);
+      background: #fbfcff;
+    }
+    textarea { min-height: 130px; resize: vertical; }
+    .field { margin-bottom: 14px; }
+    .copy-row { display: flex; gap: 8px; align-items: center; }
+    .copy-row input { flex: 1; }
+    .copy-row button, .field button { padding: 9px 11px; background: var(--accent2); }
+    .ok { color: var(--good); font-size: 13px; margin-left: 8px; }
+    .assets { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .asset {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fbfcff;
+    }
+    .asset img { width: 100%; border-radius: 6px; display: block; }
+    code { background: #edf2f8; padding: 2px 5px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ClawKit for Lovable Product Hunt Launch</h1>
+    <p>Open Product Hunt, copy the prepared fields, upload the assets, and schedule or launch. Product Hunt still requires a logged-in personal account, so this page acts as the one-click launch cockpit.</p>
+    <div class="actions">
+      <a class="button" href="https://www.producthunt.com/posts/new" target="_blank" rel="noreferrer">Open Product Hunt Submit</a>
+      <a class="button secondary" href="https://clawhub.ai/plugins/%40clawkit%2Fclawkit-for-lovable" target="_blank" rel="noreferrer">Open ClawHub Page</a>
+      <a class="button secondary" href="https://github.com/MarcSean1971/clawkit-for-lovable" target="_blank" rel="noreferrer">Open GitHub Repo</a>
+    </div>
+  </header>
+  <main>
+    <div class="grid">
+      <section>
+        <h2>Submission Fields</h2>
+        <div class="field">
+          <label>Product URL</label>
+          <div class="copy-row"><input id="url" value="https://clawhub.ai/plugins/%40clawkit%2Fclawkit-for-lovable"><button onclick="copy('url')">Copy</button><span id="url-ok" class="ok"></span></div>
+        </div>
+        <div class="field">
+          <label>Name</label>
+          <div class="copy-row"><input id="name" value="ClawKit for Lovable"><button onclick="copy('name')">Copy</button><span id="name-ok" class="ok"></span></div>
+        </div>
+        <div class="field">
+          <label>Tagline, under 60 characters</label>
+          <div class="copy-row"><input id="tagline" value="Turn Lovable apps into verified, live products"><button onclick="copy('tagline')">Copy</button><span id="tagline-ok" class="ok"></span></div>
+        </div>
+        <div class="field">
+          <label>Description, under 500 characters</label>
+          <textarea id="description">ClawKit for Lovable is an OpenClaw plugin that helps makers plan, rescue, verify, refactor, publish, and hand off Lovable.dev projects without wasting credits. Use Lovable for fast UI/product work, then let OpenClaw handle GitHub, tests, visual QA, publish readiness, dashboards, client reports, and maintainable code.</textarea>
+          <button onclick="copy('description')">Copy description</button><span id="description-ok" class="ok"></span>
+        </div>
+        <div class="field">
+          <label>Tags</label>
+          <div class="copy-row"><input id="tags" value="AI Agents, Developer Tools, No-Code"><button onclick="copy('tags')">Copy</button><span id="tags-ok" class="ok"></span></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>First Maker Comment</h2>
+        <textarea id="comment">Hey Product Hunt,
+
+I built ClawKit for Lovable for the moment many Lovable.dev users hit after the first exciting demo: the UI looks promising, but the app still needs verification, GitHub discipline, clean code, publish confidence, and a sane handoff.
+
+ClawKit turns Lovable.dev into one specialist tool inside an OpenClaw workflow:
+
+- Plan before spending Lovable credits
+- Lint prompts so they do not ask Lovable to solve backend/security/refactor work
+- Rescue blank, stale, broken, or invisible Lovable changes
+- Verify real browser and screenshot results
+- Hand off to GitHub as source of truth
+- Refactor and harden generated code
+- Publish only after approval, access checks, and live URL verification
+- Generate dashboards and client handoff reports
+
+The big idea: use Lovable.dev for speed and product shape, then use OpenClaw for correctness, maintainability, publishing, and delivery.
+
+I would love feedback from Lovable users, vibe coders, agencies, and OpenClaw builders: where should ClawKit draw the line between prompting Lovable again and fixing the project directly in code?</textarea>
+        <button onclick="copy('comment')">Copy first comment</button><span id="comment-ok" class="ok"></span>
+      </section>
+    </div>
+
+    <section style="margin-top:18px">
+      <h2>Social Copy</h2>
+      <div class="grid">
+        <div class="field">
+          <label>X / Twitter</label>
+          <textarea id="xpost">Launching ClawKit for Lovable on Product Hunt.
+
+Lovable.dev is great for fast UI/product drafts. ClawKit helps OpenClaw plan, rescue, verify, refactor, publish, and hand off the project without burning credits on the wrong work.
+
+Would love feedback from Lovable + OpenClaw builders.</textarea>
+          <button onclick="copy('xpost')">Copy X post</button><span id="xpost-ok" class="ok"></span>
+        </div>
+        <div class="field">
+          <label>LinkedIn</label>
+          <textarea id="linkedin">I just launched ClawKit for Lovable: an OpenClaw plugin for turning Lovable.dev projects into verified, maintainable, publish-ready products.
+
+It helps makers plan before spending credits, lint Lovable prompts, rescue broken or invisible changes, verify screenshots and browser behavior, hand off to GitHub, publish safely, and generate client-ready reports.
+
+The workflow is simple: use Lovable.dev for speed and product shape, then use OpenClaw for correctness, refactoring, verification, publishing, and delivery.</textarea>
+          <button onclick="copy('linkedin')">Copy LinkedIn post</button><span id="linkedin-ok" class="ok"></span>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:18px">
+      <h2>Upload Assets</h2>
+      <p>Upload the thumbnail and at least two gallery images. The PNG files are in <code>docs/product-hunt/assets</code>.</p>
+      <div class="assets">
+        <div class="asset"><img src="assets/clawkit-ph-thumbnail.svg" alt="Thumbnail"><p>Thumbnail: 240x240</p></div>
+        <div class="asset"><img src="assets/clawkit-ph-gallery-1.svg" alt="Gallery 1"><p>Gallery 1: Problem and promise</p></div>
+        <div class="asset"><img src="assets/clawkit-ph-gallery-2.svg" alt="Gallery 2"><p>Gallery 2: Workflow</p></div>
+        <div class="asset"><img src="assets/clawkit-ph-gallery-3.svg" alt="Gallery 3"><p>Gallery 3: Publish dashboard</p></div>
+      </div>
+    </section>
+  </main>
+  <script>
+    async function copy(id) {
+      const el = document.getElementById(id);
+      await navigator.clipboard.writeText(el.value);
+      const ok = document.getElementById(id + '-ok');
+      if (ok) {
+        ok.textContent = 'Copied';
+        setTimeout(() => ok.textContent = '', 1400);
+      }
+    }
+  </script>
+</body>
+</html>

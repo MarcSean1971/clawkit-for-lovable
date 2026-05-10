@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1270" height="760" viewBox="0 0 1270 760">
+  <rect width="1270" height="760" fill="#f5f7fb"/>
+  <rect x="70" y="74" width="1130" height="612" rx="28" fill="#101828"/>
+  <text x="120" y="158" font-family="Arial, sans-serif" font-size="58" font-weight="700" fill="#ffffff">Lovable got you 80% there.</text>
+  <text x="120" y="224" font-family="Arial, sans-serif" font-size="42" fill="#cdd6e3">ClawKit rescues the last 20%.</text>
+  <rect x="120" y="292" width="310" height="96" rx="16" fill="#e85d3f"/>
+  <text x="275" y="352" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#ffffff">Plan</text>
+  <rect x="480" y="292" width="310" height="96" rx="16" fill="#2662d9"/>
+  <text x="635" y="352" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#ffffff">Verify</text>
+  <rect x="840" y="292" width="310" height="96" rx="16" fill="#0c7c59"/>
+  <text x="995" y="352" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#ffffff">Publish</text>
+  <text x="120" y="472" font-family="Arial, sans-serif" font-size="30" fill="#ffffff">Credit-smart Lovable prompts. GitHub handoff. Visual QA.</text>
+  <text x="120" y="520" font-family="Arial, sans-serif" font-size="30" fill="#ffffff">Refactors, publish confidence, dashboards, client reports.</text>
+  <text x="120" y="616" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#7db4ff">ClawKit for Lovable</text>
+</svg>

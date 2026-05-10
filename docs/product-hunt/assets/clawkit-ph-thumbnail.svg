@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <rect width="240" height="240" rx="40" fill="#101828"/>
+  <circle cx="188" cy="50" r="18" fill="#e85d3f"/>
+  <path d="M62 70h116v22H62zM62 109h84v22H62zM62 148h116v22H62z" fill="#ffffff"/>
+  <path d="M54 54h132v132H54z" fill="none" stroke="#7db4ff" stroke-width="8" rx="20"/>
+  <text x="120" y="213" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">ClawKit</text>
+</svg>

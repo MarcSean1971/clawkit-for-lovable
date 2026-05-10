@@ -232,6 +232,18 @@ openclaw plugins enable clawkit-for-lovable
 openclaw gateway restart
 ```
 
+## Product Hunt Launch Kit
+
+Prepared Product Hunt copy, images, and a local one-click launch cockpit live in `docs/product-hunt`.
+
+On Windows, run:
+
+```cmd
+scripts\launch-product-hunt.cmd
+```
+
+This opens Product Hunt's submit flow plus a local copy/paste cockpit for the product URL, tagline, description, first maker comment, social posts, and upload-ready launch assets.
+
 ## Lovable Platform Walkthrough
 
 ClawKit can now make Lovable.dev inspection a first-class workflow. `lovable_platform_walkthrough_plan` tells OpenClaw how to open Lovable.dev, confirm login state, inspect the dashboard/editor/preview/GitHub/status areas, press only approved buttons, and capture screenshots or browser notes.

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1270" height="760" viewBox="0 0 1270 760">
+  <rect width="1270" height="760" fill="#ffffff"/>
+  <text x="84" y="105" font-family="Arial, sans-serif" font-size="48" font-weight="700" fill="#18212f">From prompt loop to product workflow</text>
+  <text x="84" y="158" font-family="Arial, sans-serif" font-size="27" fill="#5c697a">Use Lovable for speed. Use OpenClaw for correctness.</text>
+  <g font-family="Arial, sans-serif">
+    <rect x="84" y="230" width="190" height="170" rx="18" fill="#f4f7fb" stroke="#d9e1eb"/>
+    <text x="179" y="294" text-anchor="middle" font-size="27" font-weight="700" fill="#18212f">1 Plan</text>
+    <text x="179" y="340" text-anchor="middle" font-size="20" fill="#5c697a">credit-smart</text>
+    <text x="179" y="368" text-anchor="middle" font-size="20" fill="#5c697a">prompt sequence</text>
+    <rect x="330" y="230" width="190" height="170" rx="18" fill="#f4f7fb" stroke="#d9e1eb"/>
+    <text x="425" y="294" text-anchor="middle" font-size="27" font-weight="700" fill="#18212f">2 Build</text>
+    <text x="425" y="340" text-anchor="middle" font-size="20" fill="#5c697a">Lovable UI</text>
+    <text x="425" y="368" text-anchor="middle" font-size="20" fill="#5c697a">product shape</text>
+    <rect x="576" y="230" width="190" height="170" rx="18" fill="#f4f7fb" stroke="#d9e1eb"/>
+    <text x="671" y="294" text-anchor="middle" font-size="27" font-weight="700" fill="#18212f">3 Verify</text>
+    <text x="671" y="340" text-anchor="middle" font-size="20" fill="#5c697a">screenshots</text>
+    <text x="671" y="368" text-anchor="middle" font-size="20" fill="#5c697a">browser checks</text>
+    <rect x="822" y="230" width="190" height="170" rx="18" fill="#f4f7fb" stroke="#d9e1eb"/>
+    <text x="917" y="294" text-anchor="middle" font-size="27" font-weight="700" fill="#18212f">4 Harden</text>
+    <text x="917" y="340" text-anchor="middle" font-size="20" fill="#5c697a">GitHub</text>
+    <text x="917" y="368" text-anchor="middle" font-size="20" fill="#5c697a">tests/refactor</text>
+    <rect x="1068" y="230" width="118" height="170" rx="18" fill="#e85d3f"/>
+    <text x="1127" y="294" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">5</text>
+    <text x="1127" y="340" text-anchor="middle" font-size="20" fill="#ffffff">Publish</text>
+  </g>
+  <rect x="84" y="500" width="1102" height="92" rx="18" fill="#101828"/>
+  <text x="122" y="558" font-family="Arial, sans-serif" font-size="28" fill="#ffffff">Dashboards, publish confidence, and client handoff reports built in.</text>
+</svg>
